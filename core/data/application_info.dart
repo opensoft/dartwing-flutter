@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:dart_wing/core/data/papertrail_settings.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'barcode_scanner_settings.dart';
+import 'papertrail_settings.dart';
 part 'application_info.g.dart';
 
 @JsonSerializable(explicitToJson: true)

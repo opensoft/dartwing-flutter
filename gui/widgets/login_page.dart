@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_wing/core/custom_exceptions.dart';
-import 'package:dart_wing/core/globals.dart';
-import 'package:dart_wing/gui/notification.dart';
-import 'package:dart_wing/gui/widgets/base_scaffold.dart';
-import 'package:dart_wing/network/paper_trail.dart';
+import '../../core/custom_exceptions.dart';
+import '../../core/globals.dart';
+import '../../gui/notification.dart';
+import '../../gui/widgets/base_scaffold.dart';
+import '../../network/paper_trail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -243,7 +243,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
             Expanded(child: Container()),
             Center(
               child: Image.asset(
-                'lib/flutter_opensoft/images/ledgerlinc_logo.png',
+                'lib/dart_wing/images/dartwing_logo.png',
                 fit: BoxFit.cover,
               ),
             ),

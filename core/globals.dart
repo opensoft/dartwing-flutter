@@ -1,5 +1,6 @@
-import 'package:dart_wing/core/data/application_info.dart';
 import 'package:keycloak_wrapper/keycloak_wrapper.dart';
+
+import 'data/application_info.dart';
 
 import '../network/dart_wing/data/user.dart';
 
@@ -10,7 +11,7 @@ class Globals {
 
   static final keycloakWrapper = KeycloakWrapper(
       config: KeycloakConfig(
-    bundleIdentifier: 'com.opensoft.ledgerlinc',
+    bundleIdentifier: 'com.opensoft.ledgerlinc', // TODO: change it to dartwing
     clientId: 'ledgermobile',
     frontendUrl: 'https://keycloak-qa.tech-corps.com/',
     realm: 'master',

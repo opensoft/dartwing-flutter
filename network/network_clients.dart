@@ -1,7 +1,7 @@
-import 'package:dart_wing/core/data/application_info.dart';
-import 'package:dart_wing/network/dart_wing/dart_wing_api.dart';
-import 'package:dart_wing/network/paper_trail.dart';
-import 'package:dart_wing/network/rest_client.dart';
+import '../core/data/application_info.dart';
+import 'dart_wing/dart_wing_api.dart';
+import 'paper_trail.dart';
+import 'rest_client.dart';
 
 import '../core/globals.dart';
 import '../core/persistent_storage.dart';
