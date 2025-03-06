@@ -11,9 +11,9 @@ class Globals {
 
   static final keycloakWrapper = KeycloakWrapper(
       config: KeycloakConfig(
-    bundleIdentifier: 'com.opensoft.ledgerlinc', // TODO: change it to dartwing
-    clientId: 'ledgermobile',
+    bundleIdentifier: 'com.opensoft.dartwing',
+    clientId: 'dartwingmobile',
     frontendUrl: 'https://keycloak-qa.tech-corps.com/',
-    realm: 'master',
+    realm: 'DartWing',
   ));
 }

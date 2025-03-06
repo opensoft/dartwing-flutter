@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'scanner_page.dart';
-import 'widgets/login_page.dart';
 
 class BaseAppsRouters {
   static const String scannerPage = "scannerPage";
-  static const String loginPage = "loginPage";
 
   @override
   static Future<dynamic> showScannerPage(BuildContext context, String pageTitle,
@@ -29,8 +27,6 @@ class BaseAppsRouters {
                   pageTitle: jsonObject['pageTitle'],
                   manualInputAllowed: jsonObject['manualInputAllowed'],
                 ));
-      case loginPage:
-        return MaterialPageRoute(builder: (_) => const LoginPage());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
