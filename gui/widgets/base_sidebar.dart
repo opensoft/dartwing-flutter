@@ -53,14 +53,15 @@ class BaseSideBar extends StatelessWidget {
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(20),
                 bottomRight: Radius.circular(20))),
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        textStyle: TextStyle(color: Colors.white),
-        selectedTextStyle: TextStyle(color: Colors.green),
+        //iconTheme: IconThemeData(
+        //  color: Colors.white,
+        //),
+        //textStyle: TextStyle(color: Colors.white),
+        selectedTextStyle: null,
+        selectedItemDecoration: null,
       ),
       extendedTheme: const SidebarXTheme(width: 250),
-      footerDivider: Divider(color: Colors.white.withOpacity(0.8), height: 1),
+      footerDivider: Divider(color: Colors.black.withOpacity(0.8), height: 1),
       headerBuilder: (context, extended) {
         return Padding(
           padding: const EdgeInsets.only(
@@ -70,20 +71,19 @@ class BaseSideBar extends StatelessWidget {
             const Icon(
               Icons.person,
               size: 70,
-              color: Colors.white,
+              //color: Colors.white,
               semanticLabel: "user",
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 5),
                 child: Text(
                   Globals.applicationInfo.username,
-                  style: const TextStyle(color: Colors.white),
                 )),
             Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 10),
                 child: Text(
                   Globals.applicationInfo.userEmail,
-                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                  style: const TextStyle(fontSize: 10),
                 )),
           ]),
         );
