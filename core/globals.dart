@@ -13,7 +13,7 @@ class Globals {
       config: KeycloakConfig(
     bundleIdentifier: 'com.opensoft.dartwing',
     clientId: 'dartwingmobile',
-    frontendUrl: 'https://keycloak-qa.tech-corps.com/',
+    frontendUrl: 'https://qa.keycloak.tech-corps.com/',
     realm: 'DartWing',
   ));
 }
