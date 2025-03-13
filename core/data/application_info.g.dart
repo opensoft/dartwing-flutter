@@ -18,7 +18,9 @@ ApplicationInfo _$ApplicationInfoFromJson(Map<String, dynamic> json) =>
       ..username = json['username'] as String? ?? ''
       ..userEmail = json['userEmail'] as String? ?? ''
       ..barcodeScanner = BarcodeScannerSettings.fromJson(
-          json['barcodeScanner'] as Map<String, dynamic>);
+          json['barcodeScanner'] as Map<String, dynamic>)
+      ..papertrailSettings = PapertrailSettings.fromJson(
+          json['papertrailSettings'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$ApplicationInfoToJson(ApplicationInfo instance) =>
     <String, dynamic>{
@@ -32,4 +34,5 @@ Map<String, dynamic> _$ApplicationInfoToJson(ApplicationInfo instance) =>
       'username': instance.username,
       'userEmail': instance.userEmail,
       'barcodeScanner': instance.barcodeScanner.toJson(),
+      'papertrailSettings': instance.papertrailSettings.toJson(),
     };

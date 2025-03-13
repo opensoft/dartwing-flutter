@@ -7,10 +7,17 @@ part 'user.g.dart';
 @JsonSerializable(explicitToJson: true)
 class User {
   @JsonKey(includeIfNull: false)
-  String id = '';
-  String name = '';
+  String firstName = '';
+  String lastName = '';
   String email = '';
-  List<Company> companies = [];
+  String phoneNumber = '';
+  String dateOfBirth = '';
+  String address = '';
+  String city = '';
+  String state = '';
+  String postalCode = '';
+  String country = '';
+  String gender = '';
 
   User();
 

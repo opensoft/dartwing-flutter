@@ -8,23 +8,23 @@ class DartWingApi extends BaseNetworkApi {
   DartWingApi(RestClient restClient, String host, String location)
       : super(restClient, host, location);
 
-  Future<User> fetchMyUserInfo() async {
-    return await RestClient.get(Uri.parse('$host/api/me'),
+  Future<User> fetchUser() async {
+    return await RestClient.get(Uri.parse('$host/api/user'),
             headers: createUmsAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot fetch my user info');
+        errorHandler(response, 'Cannot fetch user');
       }
       return User.fromJson(json.decode(response.body));
     });
   }
 
-  Future<void> deleteMyUserInfo() async {
-    return await RestClient.delete(Uri.parse('$host/api/me'),
+  Future<void> updateUserInfo() async {
+    return await RestClient.post(Uri.parse('$host/api/user'),
             headers: createUmsAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot delete my user info');
+        errorHandler(response, 'Cannot update user');
       }
     });
   }

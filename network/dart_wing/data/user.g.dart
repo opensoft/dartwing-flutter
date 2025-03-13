@@ -7,16 +7,28 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User()
-  ..id = json['id'] as String
-  ..name = json['name'] as String
+  ..firstName = json['firstName'] as String
+  ..lastName = json['lastName'] as String
   ..email = json['email'] as String
-  ..companies = (json['companies'] as List<dynamic>)
-      .map((e) => Company.fromJson(e as Map<String, dynamic>))
-      .toList();
+  ..phoneNumber = json['phoneNumber'] as String
+  ..dateOfBirth = json['dateOfBirth'] as String
+  ..address = json['address'] as String
+  ..city = json['city'] as String
+  ..state = json['state'] as String
+  ..postalCode = json['postalCode'] as String
+  ..country = json['country'] as String
+  ..gender = json['gender'] as String;
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
       'email': instance.email,
-      'companies': instance.companies.map((e) => e.toJson()).toList(),
+      'phoneNumber': instance.phoneNumber,
+      'dateOfBirth': instance.dateOfBirth,
+      'address': instance.address,
+      'city': instance.city,
+      'state': instance.state,
+      'postalCode': instance.postalCode,
+      'country': instance.country,
+      'gender': instance.gender,
     };
