@@ -36,5 +36,5 @@ class NetworkClients {
   static RestClient dartWingRestClient = RestClient();
 
   static DartWingApi dartWingApi =
-      DartWingApi(dartWingRestClient, 'https://api-dev.ledgerlinc.com', "");
+      DartWingApi(dartWingRestClient, 'https://dartwing.tech-corps.com', "");
 }
