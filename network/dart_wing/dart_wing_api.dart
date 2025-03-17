@@ -21,7 +21,8 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<User> createUser(User user) async {
     return await RestClient.post(Uri.parse('$host/api/user'),
-            headers: createUmsAuthNetworkHeaders(), body: user.toString())
+            headers: createUmsAuthNetworkHeaders(),
+            body: jsonEncode(user.toJson()))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot create or update user');

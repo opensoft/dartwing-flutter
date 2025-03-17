@@ -1,23 +1,32 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'company.dart';
+import 'organization.dart';
 
 part 'user.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class User {
   @JsonKey(includeIfNull: false)
-  String firstName = '';
-  String lastName = '';
+  String? firstName;
+  String? lastName;
   String email = '';
-  String phoneNumber = '';
-  String dateOfBirth = '';
-  String address = '';
-  String city = '';
-  String state = '';
-  String postalCode = '';
-  String country = '';
-  String gender = '';
+
+  @JsonKey(includeIfNull: false)
+  String? phoneNumber;
+  @JsonKey(includeIfNull: false)
+  String? dateOfBirth;
+  @JsonKey(includeIfNull: false)
+  String? address;
+  @JsonKey(includeIfNull: false)
+  String? city;
+  @JsonKey(includeIfNull: false)
+  String? state;
+  @JsonKey(includeIfNull: false)
+  String? postalCode;
+  @JsonKey(includeIfNull: false)
+  String? country;
+  @JsonKey(includeIfNull: false)
+  String? gender;
 
   User();
 
