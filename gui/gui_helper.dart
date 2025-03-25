@@ -9,6 +9,6 @@ Map<OrganizationType, OrganizationInfo> organizationInfoByType = {
       OrganizationInfo(label: "Family", icon: "images/family_icon.svg"),
   OrganizationType.club:
       OrganizationInfo(label: "Club", icon: "images/club_icon.svg"),
-  OrganizationType.nonprofit:
-      OrganizationInfo(label: "Nonprofit", icon: "images/nonprofit_icon.svg")
+  OrganizationType.nonProfit:
+      OrganizationInfo(label: "Non profit", icon: "images/nonprofit_icon.svg")
 };

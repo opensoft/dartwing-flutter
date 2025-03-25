@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../base_api.dart';
 import '../rest_client.dart';
+import 'data/organization.dart';
 import 'data/user.dart';
 
 class DartWingApi extends BaseNetworkApi {
@@ -28,6 +29,46 @@ class DartWingApi extends BaseNetworkApi {
         errorHandler(response, 'Cannot create or update user');
       }
       return User.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<List<String>> fetchOrganizations() async {
+    return await RestClient.get(Uri.parse('$host/api/user/companies'),
+            headers: createUmsAuthNetworkHeaders())
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch organizations/companies');
+      }
+      var jsonArray = json.decode(response.body);
+      List<String> companies = [];
+      for (var object in jsonArray) {
+        companies.add(object['companyName']);
+      }
+
+      return companies;
+    });
+  }
+
+  Future<Organization> fetchOrganization(String name) async {
+    return await RestClient.get(Uri.parse('$host/api/company/$name'),
+            headers: createUmsAuthNetworkHeaders())
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch organization');
+      }
+      return Organization.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<Organization> createOrganization(Organization organization) async {
+    return await RestClient.post(Uri.parse('$host/api/company'),
+            headers: createUmsAuthNetworkHeaders(),
+            body: jsonEncode(organization.toJson()))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot create or update organization');
+      }
+      return Organization.fromJson(json.decode(response.body));
     });
   }
 }

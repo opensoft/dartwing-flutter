@@ -6,9 +6,19 @@ part 'organization.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Organization {
   @JsonKey(includeIfNull: false)
-  String id = '';
   String name = '';
-  OrganizationType type = OrganizationType.company;
+  @JsonKey(includeIfNull: false)
+  String? abbreviation;
+  @JsonKey(includeIfNull: false)
+  String? currency;
+  @JsonKey(includeIfNull: false)
+  String? country;
+  @JsonKey(includeIfNull: false)
+  String? domain;
+  @JsonKey(includeIfNull: false)
+  bool? isEnabled;
+  @JsonKey(includeIfNull: false)
+  OrganizationType? companyType;
 
   Organization();
 
