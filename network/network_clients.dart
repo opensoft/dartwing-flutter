@@ -27,6 +27,14 @@ class NetworkClients {
           Globals.applicationInfo.userEmail);
     }
     dartWingApi.location = Globals.applicationInfo.defaultLocation;
+
+    if (qaModeEnabled) {
+      dartWingApi.init("https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
+          Globals.applicationInfo.defaultLocation);
+    } else {
+      dartWingApi.init('https://dartwing.tech-corps.com',
+          Globals.applicationInfo.defaultLocation);
+    }
   }
 
   static updateOrganization(String organization) {
@@ -35,6 +43,5 @@ class NetworkClients {
 
   static RestClient dartWingRestClient = RestClient();
 
-  static DartWingApi dartWingApi =
-      DartWingApi(dartWingRestClient, 'https://dartwing.tech-corps.com', "");
+  static DartWingApi dartWingApi = DartWingApi(dartWingRestClient, '', '');
 }

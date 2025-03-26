@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import '../base_api.dart';
 import '../rest_client.dart';
+import 'data/folder_response.dart';
 import 'data/organization.dart';
+import 'data/provider.dart';
 import 'data/user.dart';
 
 class DartWingApi extends BaseNetworkApi {
@@ -69,6 +71,42 @@ class DartWingApi extends BaseNetworkApi {
         errorHandler(response, 'Cannot create or update organization');
       }
       return Organization.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<List<Provider>> fetchOrganizationProviders(String name) async {
+    return await RestClient.get(Uri.parse('$host/api/company/$name/providers'),
+            headers: createUmsAuthNetworkHeaders())
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch organization providers');
+      }
+
+      var jsonArray = json.decode(response.body)['providers'];
+      List<Provider> providers = [];
+      for (var object in jsonArray) {
+        providers.add(Provider.fromJson(object));
+      }
+
+      return providers;
+    });
+  }
+
+  Future<FolderResponse> fetchFolders(
+      String provider, String folderPath, String company) async {
+    Map<String, dynamic> body = {
+      'provider': provider,
+      'folderPath': folderPath,
+      'company': company
+    };
+    return await RestClient.post(Uri.parse("$host/api/folder"),
+            headers: createUmsAuthNetworkHeaders(), body: jsonEncode(body))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response,
+            'Cannot get folders for provider $provider, folderPath $folderPath, company $company');
+      }
+      return FolderResponse.fromJson(json.decode(response.body));
     });
   }
 }
