@@ -44,7 +44,7 @@ class Dialogs {
               )),
           content: Text(message,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
               )),
         );
       },
@@ -95,7 +95,7 @@ class Dialogs {
                     ])
                   : Text(message,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                       )),
               actions: <Widget>[
                 Visibility(

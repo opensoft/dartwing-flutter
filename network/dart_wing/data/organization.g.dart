@@ -14,7 +14,9 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..domain = json['domain'] as String?
   ..isEnabled = json['isEnabled'] as bool?
   ..companyType =
-      $enumDecodeNullable(_$OrganizationTypeEnumMap, json['companyType']);
+      $enumDecodeNullable(_$OrganizationTypeEnumMap, json['companyType'])
+  ..microsoftSharepointFolderPath =
+      json['microsoftSharepointFolderPath'] as String?;
 
 Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
     <String, dynamic>{
@@ -26,6 +28,8 @@ Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
       if (instance.isEnabled case final value?) 'isEnabled': value,
       if (_$OrganizationTypeEnumMap[instance.companyType] case final value?)
         'companyType': value,
+      if (instance.microsoftSharepointFolderPath case final value?)
+        'microsoftSharepointFolderPath': value,
     };
 
 const _$OrganizationTypeEnumMap = {

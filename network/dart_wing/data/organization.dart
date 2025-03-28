@@ -19,6 +19,8 @@ class Organization {
   bool? isEnabled;
   @JsonKey(includeIfNull: false)
   OrganizationType? companyType;
+  @JsonKey(includeIfNull: false)
+  String? microsoftSharepointFolderPath;
 
   Organization();
 

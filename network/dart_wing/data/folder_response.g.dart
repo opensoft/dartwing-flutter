@@ -9,12 +9,13 @@ part of 'folder_response.dart';
 FolderResponse _$FolderResponseFromJson(Map<String, dynamic> json) =>
     FolderResponse()
       ..folders = (json['folders'] as List<dynamic>?)
-          ?.map((e) => Map<String, String>.from(e as Map))
+          ?.map((e) => Folder.fromJson(e as Map<String, dynamic>))
           .toList()
       ..redirectUrl = json['redirectUrl'] as String?;
 
 Map<String, dynamic> _$FolderResponseToJson(FolderResponse instance) =>
     <String, dynamic>{
-      if (instance.folders case final value?) 'folders': value,
+      if (instance.folders?.map((e) => e.toJson()).toList() case final value?)
+        'folders': value,
       if (instance.redirectUrl case final value?) 'redirectUrl': value,
     };

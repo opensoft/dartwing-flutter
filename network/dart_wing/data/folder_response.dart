@@ -1,11 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'folder.dart';
+
 part 'folder_response.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class FolderResponse {
   @JsonKey(includeIfNull: false)
-  List<Map<String, String>>? folders;
+  List<Folder>? folders;
   @JsonKey(includeIfNull: false)
   String? redirectUrl;
 
