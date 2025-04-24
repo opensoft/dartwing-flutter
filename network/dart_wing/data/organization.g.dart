@@ -7,6 +7,7 @@ part of 'organization.dart';
 // **************************************************************************
 
 Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
+  ..id = json['id'] as String?
   ..name = json['name'] as String
   ..abbreviation = json['abbreviation'] as String?
   ..currency = json['currency'] as String?
@@ -18,19 +19,27 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..microsoftSharepointFolderPath =
       json['microsoftSharepointFolderPath'] as String?;
 
-Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      if (instance.abbreviation case final value?) 'abbreviation': value,
-      if (instance.currency case final value?) 'currency': value,
-      if (instance.country case final value?) 'country': value,
-      if (instance.domain case final value?) 'domain': value,
-      if (instance.isEnabled case final value?) 'isEnabled': value,
-      if (_$OrganizationTypeEnumMap[instance.companyType] case final value?)
-        'companyType': value,
-      if (instance.microsoftSharepointFolderPath case final value?)
-        'microsoftSharepointFolderPath': value,
-    };
+Map<String, dynamic> _$OrganizationToJson(Organization instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('id', instance.id);
+  val['name'] = instance.name;
+  writeNotNull('abbreviation', instance.abbreviation);
+  writeNotNull('currency', instance.currency);
+  writeNotNull('country', instance.country);
+  writeNotNull('domain', instance.domain);
+  writeNotNull('isEnabled', instance.isEnabled);
+  writeNotNull('companyType', _$OrganizationTypeEnumMap[instance.companyType]);
+  writeNotNull(
+      'microsoftSharepointFolderPath', instance.microsoftSharepointFolderPath);
+  return val;
+}
 
 const _$OrganizationTypeEnumMap = {
   OrganizationType.company: 'Company',

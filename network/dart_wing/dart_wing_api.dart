@@ -12,7 +12,7 @@ class DartWingApi extends BaseNetworkApi {
       : super(restClient, host, location);
 
   Future<User> fetchUser() async {
-    return await RestClient.get(Uri.parse('$host/api/user'),
+    return await RestClient.get(Uri.parse('$host/api/user/me'),
             headers: createUmsAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {

@@ -13,9 +13,16 @@ FolderResponse _$FolderResponseFromJson(Map<String, dynamic> json) =>
           .toList()
       ..redirectUrl = json['redirectUrl'] as String?;
 
-Map<String, dynamic> _$FolderResponseToJson(FolderResponse instance) =>
-    <String, dynamic>{
-      if (instance.folders?.map((e) => e.toJson()).toList() case final value?)
-        'folders': value,
-      if (instance.redirectUrl case final value?) 'redirectUrl': value,
-    };
+Map<String, dynamic> _$FolderResponseToJson(FolderResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('folders', instance.folders?.map((e) => e.toJson()).toList());
+  writeNotNull('redirectUrl', instance.redirectUrl);
+  return val;
+}

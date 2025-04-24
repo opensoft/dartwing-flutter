@@ -6,6 +6,8 @@ part 'organization.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Organization {
   @JsonKey(includeIfNull: false)
+  String? id;
+  @JsonKey(includeIfNull: false)
   String name = '';
   @JsonKey(includeIfNull: false)
   String? abbreviation;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:sidebarx/sidebarx.dart';
 

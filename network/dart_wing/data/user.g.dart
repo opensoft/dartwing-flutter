@@ -19,16 +19,25 @@ User _$UserFromJson(Map<String, dynamic> json) => User()
   ..country = json['country'] as String?
   ..gender = json['gender'] as String?;
 
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      if (instance.firstName case final value?) 'firstName': value,
-      'lastName': instance.lastName,
-      'email': instance.email,
-      if (instance.phoneNumber case final value?) 'phoneNumber': value,
-      if (instance.dateOfBirth case final value?) 'dateOfBirth': value,
-      if (instance.address case final value?) 'address': value,
-      if (instance.city case final value?) 'city': value,
-      if (instance.state case final value?) 'state': value,
-      if (instance.postalCode case final value?) 'postalCode': value,
-      if (instance.country case final value?) 'country': value,
-      if (instance.gender case final value?) 'gender': value,
-    };
+Map<String, dynamic> _$UserToJson(User instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('firstName', instance.firstName);
+  val['lastName'] = instance.lastName;
+  val['email'] = instance.email;
+  writeNotNull('phoneNumber', instance.phoneNumber);
+  writeNotNull('dateOfBirth', instance.dateOfBirth);
+  writeNotNull('address', instance.address);
+  writeNotNull('city', instance.city);
+  writeNotNull('state', instance.state);
+  writeNotNull('postalCode', instance.postalCode);
+  writeNotNull('country', instance.country);
+  writeNotNull('gender', instance.gender);
+  return val;
+}

@@ -1,4 +1,4 @@
-import 'package:dart_wing_mobile/dart_wing/network/dart_wing/dart_wing_api_helper.dart';
+import '../network/dart_wing/dart_wing_api_helper.dart';
 
 import 'data/organization_info.dart';
 
