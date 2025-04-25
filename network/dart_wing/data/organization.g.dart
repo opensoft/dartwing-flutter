@@ -17,7 +17,11 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..companyType =
       $enumDecodeNullable(_$OrganizationTypeEnumMap, json['companyType'])
   ..microsoftSharepointFolderPath =
-      json['microsoftSharepointFolderPath'] as String?;
+      json['microsoftSharepointFolderPath'] as String?
+  ..invoicesWhitelist = (json['invoicesWhitelist'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      [];
 
 Map<String, dynamic> _$OrganizationToJson(Organization instance) {
   final val = <String, dynamic>{};
@@ -38,6 +42,7 @@ Map<String, dynamic> _$OrganizationToJson(Organization instance) {
   writeNotNull('companyType', _$OrganizationTypeEnumMap[instance.companyType]);
   writeNotNull(
       'microsoftSharepointFolderPath', instance.microsoftSharepointFolderPath);
+  val['invoicesWhitelist'] = instance.invoicesWhitelist;
   return val;
 }
 

@@ -23,6 +23,8 @@ class Organization {
   OrganizationType? companyType;
   @JsonKey(includeIfNull: false)
   String? microsoftSharepointFolderPath;
+  @JsonKey(defaultValue: [])
+  List<String> invoicesWhitelist = [];
 
   Organization();
 
