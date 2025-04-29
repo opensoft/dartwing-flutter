@@ -8,7 +8,7 @@ class Organization {
   @JsonKey(includeIfNull: false)
   String? id;
   @JsonKey(includeIfNull: false)
-  String name = '';
+  String? name;
   @JsonKey(includeIfNull: false)
   String? abbreviation;
   @JsonKey(includeIfNull: false)
@@ -25,6 +25,8 @@ class Organization {
   String? microsoftSharepointFolderPath;
   @JsonKey(defaultValue: [])
   List<String> invoicesWhitelist = [];
+  @JsonKey(includeIfNull: false)
+  List<String>? permissions;
 
   Organization();
 

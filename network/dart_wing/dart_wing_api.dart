@@ -34,19 +34,18 @@ class DartWingApi extends BaseNetworkApi {
     });
   }
 
-  Future<List<String>> fetchOrganizations() async {
-    return await RestClient.get(Uri.parse('$host/api/user/companies'),
+  Future<List<Organization>> fetchOrganizations() async {
+    return await RestClient.get(Uri.parse('$host/api/user/me/company'),
             headers: createUmsAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch organizations/companies');
       }
-      var jsonArray = json.decode(response.body);
-      List<String> companies = [];
+      var jsonArray = json.decode(response.body)['companies'];
+      List<Organization> companies = [];
       for (var object in jsonArray) {
-        companies.add(object['companyName']);
+        companies.add(Organization.fromJson(object['companyName']));
       }
-
       return companies;
     });
   }

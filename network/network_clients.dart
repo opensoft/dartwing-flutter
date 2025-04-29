@@ -10,6 +10,10 @@ class NetworkClients {
   static bool qaModeEnabled = false;
 
   static Future<void> init({String? token, String? organization}) async {
+    if (organization != null) {
+      Globals.applicationInfo.defaultLocation = organization;
+    }
+
     String appId = [
       Globals.applicationInfo.defaultLocation,
       Globals.applicationInfo.deviceId,

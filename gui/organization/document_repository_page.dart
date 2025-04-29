@@ -60,7 +60,7 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
       appBar: AppBar(
         backgroundColor: BaseColors.lightBackgroundColor,
         title: Row(children: [
-          Expanded(
+          const Expanded(
               child: Text("Document Repository", textAlign: TextAlign.center)),
           InkWell(
             borderRadius: BorderRadius.circular(15),
@@ -77,8 +77,8 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
                   color: Colors.amber,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Padding(
-                    padding: const EdgeInsets.all(10),
+                child: const Padding(
+                    padding: EdgeInsets.all(10),
                     child: Text(
                       "Select",
                       style: TextStyle(fontSize: 16),

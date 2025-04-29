@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 
+import '../../network/dart_wing/data/organization.dart';
 import '../base_apps_routers.dart';
 import '../notification.dart';
 import '../widgets/base_colors.dart';
@@ -19,7 +20,7 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
   bool _loadingOverlayEnabled = false;
   final _focusNode = FocusNode();
 
-  List<String> _organizations = [];
+  List<Organization> _organizations = [];
 
   void _fetchOrganizations() {
     setState(() {
@@ -99,7 +100,7 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
                             onTap: () {
                               Navigator.of(context)
                                   .pushNamed(BaseAppsRouters.companyInfoPage,
-                                      arguments: _organizations[i])
+                                      arguments: _organizations[i].name)
                                   .then((_) {
                                 _fetchOrganizations();
                               });
@@ -111,11 +112,11 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
                                       child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      _organizations[i],
+                                      _organizations[i].name ?? '',
                                       style: const TextStyle(fontSize: 19),
                                     ),
                                   )),
-                                  Icon(Icons.navigate_next)
+                                  const Icon(Icons.navigate_next)
                                 ]))));
                   }),
             ),

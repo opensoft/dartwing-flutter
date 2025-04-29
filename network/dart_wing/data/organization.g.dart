@@ -8,7 +8,7 @@ part of 'organization.dart';
 
 Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..id = json['id'] as String?
-  ..name = json['name'] as String
+  ..name = json['name'] as String?
   ..abbreviation = json['abbreviation'] as String?
   ..currency = json['currency'] as String?
   ..country = json['country'] as String?
@@ -21,7 +21,9 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..invoicesWhitelist = (json['invoicesWhitelist'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList() ??
-      [];
+      []
+  ..permissions =
+      (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList();
 
 Map<String, dynamic> _$OrganizationToJson(Organization instance) {
   final val = <String, dynamic>{};
@@ -33,7 +35,7 @@ Map<String, dynamic> _$OrganizationToJson(Organization instance) {
   }
 
   writeNotNull('id', instance.id);
-  val['name'] = instance.name;
+  writeNotNull('name', instance.name);
   writeNotNull('abbreviation', instance.abbreviation);
   writeNotNull('currency', instance.currency);
   writeNotNull('country', instance.country);
@@ -43,6 +45,7 @@ Map<String, dynamic> _$OrganizationToJson(Organization instance) {
   writeNotNull(
       'microsoftSharepointFolderPath', instance.microsoftSharepointFolderPath);
   val['invoicesWhitelist'] = instance.invoicesWhitelist;
+  writeNotNull('permissions', instance.permissions);
   return val;
 }
 
