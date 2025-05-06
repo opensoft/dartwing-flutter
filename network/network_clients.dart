@@ -36,7 +36,7 @@ class NetworkClients {
       dartWingApi.init("https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
           Globals.applicationInfo.defaultLocation);
     } else {
-      dartWingApi.init('https://dartwing.tech-corps.com',
+      dartWingApi.init('https://dartwing-gatekeeper.opensoft.one',
           Globals.applicationInfo.defaultLocation);
     }
   }

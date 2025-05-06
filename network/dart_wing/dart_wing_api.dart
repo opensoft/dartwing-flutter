@@ -44,7 +44,7 @@ class DartWingApi extends BaseNetworkApi {
       var jsonArray = json.decode(response.body)['companies'];
       List<Organization> companies = [];
       for (var object in jsonArray) {
-        companies.add(Organization.fromJson(object['companyName']));
+        companies.add(Organization.fromJson(object));
       }
       return companies;
     });
