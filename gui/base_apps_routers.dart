@@ -6,6 +6,7 @@ import 'organization/choose_document_repository_page.dart';
 import 'organization/company_info_page.dart';
 import 'organization/create_company_organization_page.dart';
 import 'organization/document_repository_page.dart';
+import 'organization/onedrive_explorer_page.dart';
 import 'organization/organizations_list_page.dart';
 import 'organization/select_organization_type_page.dart';
 import 'scanner_page.dart';
@@ -21,6 +22,7 @@ class BaseAppsRouters {
   static const String documentRepositoryPage = "documentRepositoryPage";
   static const String chooseDocumentRepositoryPage =
       "chooseDocumentRepositoryPage";
+  static const String oneDriveExplorerPage = "oneDriveExplorerPage";
 
   @override
   static Future<dynamic> showScannerPage(BuildContext context, String pageTitle,
@@ -65,6 +67,13 @@ class BaseAppsRouters {
         return MaterialPageRoute(
             builder: (_) => ChooseDocumentRepositoryPage(
                 companyName: settings.arguments.toString()));
+      case oneDriveExplorerPage:
+        var jsonObject = jsonDecode(settings.arguments.toString());
+        return MaterialPageRoute(
+            builder: (_) => OneDriveExplorerPage(
+                  clientId: jsonObject['clientId'],
+                  redirectUrl: jsonObject['redirectUrl'],
+                ));
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

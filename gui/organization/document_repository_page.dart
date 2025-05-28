@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../network/dart_wing/data/organization.dart';
 import '../base_apps_routers.dart';
@@ -65,6 +67,21 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
           InkWell(
             borderRadius: BorderRadius.circular(15),
             onTap: () {
+              PackageInfo.fromPlatform().then((packageInfo) {
+                Navigator.of(context)
+                    .pushNamed(BaseAppsRouters.oneDriveExplorerPage,
+                        arguments: jsonEncode({
+                          'clientId': '92a04c04-cc01-455d-87af-d083930583dd',
+                          'redirectUrl': "${packageInfo.packageName}://auth"
+                        }))
+                    .then((result) {
+                  if (result != null && result is String) {
+                    _folderPathController.text = result.toString();
+                  }
+                });
+              });
+
+              return;
               Navigator.of(context)
                   .pushNamed(BaseAppsRouters.chooseDocumentRepositoryPage,
                       arguments: widget.companyName)
