@@ -205,9 +205,22 @@ class _OneDriveExplorerPageState extends State<OneDriveExplorerPage> {
   }
 
   void _saveDirectory() {
+    setState(() {
+      _loadingOverlayEnabled = true;
+    });
     NetworkClients.dartWingApi
-        .saveOrganizationPath(Globals.applicationInfo.company, _currentPath);
-    Navigator.of(context).pop();
+        .saveOrganizationPath(Globals.applicationInfo.company, _currentPath)
+        .then((_) {
+      setState(() {
+        _loadingOverlayEnabled = false;
+      });
+      showInfoNotification(context, "Path saved");
+      Navigator.of(context).pop();
+    }).catchError((e) {
+      setState(() {
+        _loadingOverlayEnabled = false;
+      });
+    });
   }
 
   Widget _pathWidget() {
