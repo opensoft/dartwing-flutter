@@ -23,22 +23,17 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
   bool _loadingOverlayEnabled = false;
   final _focusNode = FocusNode();
 
-  Organization _company = Organization();
   final TextEditingController _folderPathController = TextEditingController();
 
-  void _fetchOrganization() {
+  void _fetchOrganizationPath() {
     setState(() {
       _loadingOverlayEnabled = true;
     });
     NetworkClients.dartWingApi
-        .fetchOrganization(widget.companyName)
-        .then((company) {
+        .fetchOrganizationPath(widget.companyName)
+        .then((path) {
       setState(() {
-        _company = company;
-        _folderPathController.text =
-            company.microsoftSharepointFolderPath == null
-                ? ""
-                : company.microsoftSharepointFolderPath.toString();
+        _folderPathController.text = path;
         _loadingOverlayEnabled = false;
       });
     }).catchError((e) {
@@ -51,7 +46,7 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
 
   @override
   void initState() {
-    _fetchOrganization();
+    _fetchOrganizationPath();
     super.initState();
   }
 
@@ -74,10 +69,8 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
                           'clientId': '92a04c04-cc01-455d-87af-d083930583dd',
                           'redirectUrl': "${packageInfo.packageName}://auth"
                         }))
-                    .then((result) {
-                  if (result != null && result is String) {
-                    _folderPathController.text = result.toString();
-                  }
+                    .then((_) {
+                  _fetchOrganizationPath();
                 });
               });
 
@@ -86,7 +79,7 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
                   .pushNamed(BaseAppsRouters.chooseDocumentRepositoryPage,
                       arguments: widget.companyName)
                   .then((_) {
-                _fetchOrganization();
+                _fetchOrganizationPath();
               });
             },
             child: Container(

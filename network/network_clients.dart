@@ -9,9 +9,13 @@ import '../core/persistent_storage.dart';
 class NetworkClients {
   static bool qaModeEnabled = false;
 
-  static Future<void> init({String? token, String? organization}) async {
-    if (organization != null) {
-      Globals.applicationInfo.defaultLocation = organization;
+  static Future<void> init(
+      {String? token, String? siteName, String? organizationName}) async {
+    if (siteName != null) {
+      Globals.applicationInfo.defaultLocation = siteName;
+    }
+    if (organizationName != null) {
+      Globals.applicationInfo.company = organizationName;
     }
 
     String appId = [

@@ -9,6 +9,8 @@ import 'dart:io';
 
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../core/globals.dart';
+import '../../network/network_clients.dart';
 import '../notification.dart';
 import '../widgets/base_colors.dart';
 import '../widgets/base_scaffold.dart';
@@ -203,7 +205,9 @@ class _OneDriveExplorerPageState extends State<OneDriveExplorerPage> {
   }
 
   void _saveDirectory() {
-    Navigator.of(context).pop(_currentPath);
+    NetworkClients.dartWingApi
+        .saveOrganizationPath(Globals.applicationInfo.company, _currentPath);
+    Navigator.of(context).pop();
   }
 
   Widget _pathWidget() {
@@ -259,25 +263,20 @@ class _OneDriveExplorerPageState extends State<OneDriveExplorerPage> {
                         itemBuilder: (context, index) {
                           final file = files[index];
                           return ListTile(
-                            leading: Icon(file.isFolder
-                                ? Icons.folder
-                                : Icons.insert_drive_file),
-                            title: Text(file.name),
-                            subtitle: Text(file.isFolder
-                                ? 'Directory'
-                                : '${file.size} bytes'),
-                            onTap: () {
-                              if (file.isFolder) {
-                                _enterDirectory(file);
-                              } else {
-                                _downloadFile(file);
-                              }
-                            },
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteFile(file),
-                            ),
-                          );
+                              leading: Icon(file.isFolder
+                                  ? Icons.folder
+                                  : Icons.insert_drive_file),
+                              title: Text(file.name),
+                              subtitle: Text(file.isFolder
+                                  ? 'Directory'
+                                  : '${file.size} bytes'),
+                              onTap: () {
+                                if (file.isFolder) {
+                                  _enterDirectory(file);
+                                } else {
+                                  _downloadFile(file);
+                                }
+                              });
                         },
                       )),
                     ])),

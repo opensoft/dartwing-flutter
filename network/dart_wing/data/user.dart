@@ -27,6 +27,8 @@ class User {
   String? country;
   @JsonKey(includeIfNull: false)
   String? gender;
+  @JsonKey(defaultValue: [])
+  List<Organization> companies = [];
 
   User();
 

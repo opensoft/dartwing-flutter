@@ -50,19 +50,22 @@ class DartWingApi extends BaseNetworkApi {
     });
   }
 
-  Future<Organization> fetchOrganization(String name) async {
-    return await RestClient.get(Uri.parse('$host/api/company/$name'),
+  Future<Organization> fetchOrganization(String companyName) async {
+    return await RestClient.get(
+            Uri.parse('$host/api/company/$location/$companyName'),
             headers: createUmsAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot fetch organization');
+        errorHandler(
+            response, 'Cannot fetch organization $companyName in $location');
       }
       return Organization.fromJson(json.decode(response.body));
     });
   }
 
   Future<Organization> createOrganization(Organization organization) async {
-    return await RestClient.post(Uri.parse('$host/api/company'),
+    return await RestClient.post(
+            Uri.parse('$host/api/company/${organization.frappeSiteUrl}'),
             headers: createUmsAuthNetworkHeaders(),
             body: jsonEncode(organization.toJson()))
         .then((response) {
@@ -70,6 +73,32 @@ class DartWingApi extends BaseNetworkApi {
         errorHandler(response, 'Cannot create or update organization');
       }
       return Organization.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<String> fetchOrganizationPath(String companyName) async {
+    return await RestClient.get(
+            Uri.parse('$host/api/company/$location/$companyName/path'),
+            headers: createUmsAuthNetworkHeaders())
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response,
+            'Cannot fetch organization path $companyName in $location');
+      }
+      return json.decode(response.body)['path'];
+    });
+  }
+
+  Future saveOrganizationPath(String companyName, String path) async {
+    Map<String, dynamic> body = {'path': path};
+    return await RestClient.post(
+            Uri.parse('$host/api/company/$location/$companyName/path'),
+            headers: createUmsAuthNetworkHeaders(),
+            body: jsonEncode(body))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot create or update organization');
+      }
     });
   }
 
@@ -88,6 +117,23 @@ class DartWingApi extends BaseNetworkApi {
       }
 
       return providers;
+    });
+  }
+
+  Future<String> createSite(
+      String siteName, String companyName, String companyFullName) async {
+    Map<String, dynamic> body = {
+      'siteName': siteName,
+      'companyName': companyName,
+      'companyFullName': companyFullName
+    };
+    return await RestClient.post(Uri.parse('$host/api/site'),
+            headers: createUmsAuthNetworkHeaders(), body: jsonEncode(body))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot create site $siteName');
+      }
+      return json.decode(response.body)['site'].toString();
     });
   }
 

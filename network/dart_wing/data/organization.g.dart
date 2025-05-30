@@ -23,31 +23,26 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
           .toList() ??
       []
   ..permissions =
-      (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList();
+      (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList()
+  ..frappeSiteUrl = json['frappeSiteUrl'] as String;
 
-Map<String, dynamic> _$OrganizationToJson(Organization instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  writeNotNull('name', instance.name);
-  writeNotNull('abbreviation', instance.abbreviation);
-  writeNotNull('currency', instance.currency);
-  writeNotNull('country', instance.country);
-  writeNotNull('domain', instance.domain);
-  writeNotNull('isEnabled', instance.isEnabled);
-  writeNotNull('companyType', _$OrganizationTypeEnumMap[instance.companyType]);
-  writeNotNull(
-      'microsoftSharepointFolderPath', instance.microsoftSharepointFolderPath);
-  val['invoicesWhitelist'] = instance.invoicesWhitelist;
-  writeNotNull('permissions', instance.permissions);
-  return val;
-}
+Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      if (instance.name case final value?) 'name': value,
+      if (instance.abbreviation case final value?) 'abbreviation': value,
+      if (instance.currency case final value?) 'currency': value,
+      if (instance.country case final value?) 'country': value,
+      if (instance.domain case final value?) 'domain': value,
+      if (instance.isEnabled case final value?) 'isEnabled': value,
+      if (_$OrganizationTypeEnumMap[instance.companyType] case final value?)
+        'companyType': value,
+      if (instance.microsoftSharepointFolderPath case final value?)
+        'microsoftSharepointFolderPath': value,
+      'invoicesWhitelist': instance.invoicesWhitelist,
+      if (instance.permissions case final value?) 'permissions': value,
+      'frappeSiteUrl': instance.frappeSiteUrl,
+    };
 
 const _$OrganizationTypeEnumMap = {
   OrganizationType.company: 'Company',

@@ -13,20 +13,10 @@ Folder _$FolderFromJson(Map<String, dynamic> json) => Folder()
   ..description = json['description'] as String
   ..canBeSelected = json['canBeSelected'] as bool;
 
-Map<String, dynamic> _$FolderToJson(Folder instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('parentId', instance.parentId);
-  val['name'] = instance.name;
-  val['description'] = instance.description;
-  val['canBeSelected'] = instance.canBeSelected;
-  return val;
-}
+Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
+      'id': instance.id,
+      if (instance.parentId case final value?) 'parentId': value,
+      'name': instance.name,
+      'description': instance.description,
+      'canBeSelected': instance.canBeSelected,
+    };

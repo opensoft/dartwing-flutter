@@ -27,6 +27,7 @@ class Organization {
   List<String> invoicesWhitelist = [];
   @JsonKey(includeIfNull: false)
   List<String>? permissions;
+  String frappeSiteUrl = '';
 
   Organization();
 
