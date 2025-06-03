@@ -10,3 +10,14 @@ enum OrganizationType {
   @JsonValue("Non profit")
   nonProfit
 }
+
+enum SiteStatus {
+  @JsonValue("None")
+  none,
+  @JsonValue("InProgress")
+  inProgress,
+  @JsonValue("Finished")
+  finished,
+  @JsonValue("Failed")
+  failed
+}

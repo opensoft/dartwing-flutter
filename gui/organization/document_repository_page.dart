@@ -62,6 +62,7 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
           InkWell(
             borderRadius: BorderRadius.circular(15),
             onTap: () {
+              /*
               PackageInfo.fromPlatform().then((packageInfo) {
                 Navigator.of(context)
                     .pushNamed(BaseAppsRouters.oneDriveExplorerPage,
@@ -73,8 +74,8 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
                   _fetchOrganizationPath();
                 });
               });
-
               return;
+               */
               Navigator.of(context)
                   .pushNamed(BaseAppsRouters.chooseDocumentRepositoryPage,
                       arguments: widget.companyName)

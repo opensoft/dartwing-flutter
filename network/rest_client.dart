@@ -26,13 +26,13 @@ class RestClient {
     return _client.get(url, headers: headers).then((response) {
       if (!silentMode) {
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Finished: ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+            "Finished: GET ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       }
       stopwatch.stop();
       return response;
     }).catchError((e) {
       PaperTrailClient.sendWarningMessageToPaperTrail(
-          "Error occurred: ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+          "Error occurred: GET ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       stopwatch.stop();
       throw e;
     });
@@ -49,13 +49,13 @@ class RestClient {
     return _client.post(url, headers: headers, body: body).then((response) {
       if (!silentMode) {
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Finished: ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+            "Finished: POST ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       }
       stopwatch.stop();
       return response;
     }).catchError((e) {
       PaperTrailClient.sendWarningMessageToPaperTrail(
-          "Error occurred: ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+          "Error occurred: POST ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       stopwatch.stop();
       throw e;
     });
@@ -83,13 +83,13 @@ class RestClient {
     return _client.send(request).then((response) {
       if (!silentMode) {
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Finished: ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+            "Finished: POST ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       }
       stopwatch.stop();
       return http.Response.fromStream(response);
     }).catchError((e) {
       PaperTrailClient.sendWarningMessageToPaperTrail(
-          "Error occurred: ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+          "Error occurred: POST ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       stopwatch.stop();
       throw e;
     });
@@ -106,13 +106,13 @@ class RestClient {
     return _client.patch(url, headers: headers, body: body).then((response) {
       if (!silentMode) {
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Finished: ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+            "Finished: PATCH ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       }
       stopwatch.stop();
       return response;
     }).catchError((e) {
       PaperTrailClient.sendWarningMessageToPaperTrail(
-          "Error occurred: ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+          "Error occurred: PATCH ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       stopwatch.stop();
       throw e;
     });
@@ -129,13 +129,13 @@ class RestClient {
     return _client.delete(url, headers: headers, body: body).then((response) {
       if (!silentMode) {
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Finished: ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+            "Finished: DELETE ${response.statusCode} ${response.reasonPhrase} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       }
       stopwatch.stop();
       return response;
     }).catchError((e) {
       PaperTrailClient.sendWarningMessageToPaperTrail(
-          "Error occurred: ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
+          "Error occurred: DELETE ${e.toString()} ${url.toString()} (${stopwatch.elapsedMilliseconds}ms)");
       stopwatch.stop();
       throw e;
     });

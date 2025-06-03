@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../network/paper_trail.dart';
@@ -30,31 +29,18 @@ class _ChooseDocumentRepositoryPageState
 
   List<Folder> _folders = [];
 
-  Folder _selectedFolder = Folder();
+  List<String> _selectedFolders = [];
 
-  final TreeController _treeController =
-      TreeController(allNodesExpanded: false);
+  String _currentPath() {
+    return _selectedFolders.join('/');
+  }
 
   Future _saveFolderForDocumentRepository() {
-    String _selectedFolderPath = _selectedFolder.name;
-    Folder currentFolder = _selectedFolder;
-    while (true) {
-      List<Folder> parentFolders = _folders.where((folder) {
-        return folder.id == currentFolder.parentId;
-      }).toList();
-      if (parentFolders.isEmpty) {
-        break;
-      }
-      currentFolder = parentFolders.first;
-      _selectedFolderPath = "${currentFolder.name}/$_selectedFolderPath";
-    }
-
     setState(() {
       _loadingOverlayEnabled = true;
     });
     return NetworkClients.dartWingApi
-        .saveFolderPath(_currentProvider.alias.toString(), _selectedFolderPath,
-            widget.companyName)
+        .saveOrganizationPath(widget.companyName, _currentPath())
         .then((_) {
       setState(() {
         _loadingOverlayEnabled = false;
@@ -92,17 +78,20 @@ class _ChooseDocumentRepositoryPageState
     });
   }
 
-  Future _fetchFolders({String folderName = ''}) {
+  Future _fetchFolders() {
     setState(() {
       _loadingOverlayEnabled = true;
     });
     return NetworkClients.dartWingApi
-        .fetchFolders(_currentProvider.alias.toString(), widget.companyName)
+        .fetchFolders(_currentProvider.alias.toString(), widget.companyName,
+            _currentPath())
         .then((folderResponse) {
-      _folders = folderResponse.folders!;
       setState(() {
         _loadingOverlayEnabled = false;
       });
+      if (folderResponse.folders != null) {
+        _folders = folderResponse.folders!;
+      }
 
       if (folderResponse.redirectUrl != null &&
           folderResponse.redirectUrl!.isNotEmpty) {
@@ -121,7 +110,10 @@ class _ChooseDocumentRepositoryPageState
         //    "сom.opensoft.dartwing://login-callback";
         //uri.queryParameters['client_id'] = "dartwingmobile";
         PaperTrailClient.sendInfoMessageToPaperTrail(updatedUri.toString());
-        launchUrl(updatedUri);
+        launchUrl(updatedUri, mode: LaunchMode.externalApplication)
+            .then((success) {
+          Navigator.of(context).pop();
+        });
       }
     }).catchError((e) {
       setState(() {
@@ -129,44 +121,6 @@ class _ChooseDocumentRepositoryPageState
       });
       showWarningNotification(context, e.toString());
     });
-  }
-
-  List<TreeNode> toTreeNodes({String? parentId}) {
-    List<Folder> rootFolders = _folders.where((folder) {
-      return folder.parentId == parentId;
-    }).toList();
-
-    List<TreeNode> nodes = [];
-    for (var folder in rootFolders) {
-      nodes.add(TreeNode(
-          content: treeNodeWidget(folder),
-          children: toTreeNodes(parentId: folder.id)));
-    }
-
-    return nodes;
-  }
-
-  Widget treeNodeWidget(Folder folder) {
-    bool isSelected = _selectedFolder.id == folder.id;
-    return Container(
-        decoration: isSelected
-            ? BoxDecoration(
-                color: isSelected ? Colors.grey : null,
-                border: Border.all(color: Colors.grey, width: 1),
-                borderRadius:
-                    BorderRadius.circular(8), // Optional rounded corners
-              )
-            : null,
-        child: InkWell(
-            onTap: () {
-              if (folder.canBeSelected) {
-                setState(() {
-                  _selectedFolder = folder;
-                });
-              }
-            },
-            child: Padding(
-                padding: const EdgeInsets.all(5), child: Text(folder.name))));
   }
 
   void _setProvider(Provider provider) {
@@ -205,6 +159,28 @@ class _ChooseDocumentRepositoryPageState
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
+            Row(children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  if (_selectedFolders.isNotEmpty) {
+                    _selectedFolders.removeLast();
+                  }
+                  _fetchFolders();
+                },
+                tooltip: 'Back',
+              ),
+              Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Text(_currentPath(),
+                          style: TextStyle(fontSize: 14)))),
+              IconButton(
+                icon: Icon(Icons.save),
+                onPressed: _saveFolderForDocumentRepository,
+                tooltip: 'Save Directory',
+              ),
+            ]),
             Padding(
               padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField<Provider>(
@@ -237,13 +213,20 @@ class _ChooseDocumentRepositoryPageState
               ),
             ),
             Expanded(
-                child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: TreeView(
-                          nodes: toTreeNodes(),
-                          treeController: _treeController,
-                        )))),
+                child: ListView.builder(
+              itemCount: _folders.length,
+              itemBuilder: (context, index) {
+                final folder = _folders[index];
+                return ListTile(
+                    leading: Icon(Icons.folder),
+                    title: Text(folder.name),
+                    subtitle: Text('Directory'),
+                    onTap: () {
+                      _selectedFolders.add(folder.name);
+                      _fetchFolders();
+                    });
+              },
+            )),
             Padding(
                 padding: const EdgeInsets.all(10),
                 child: ElevatedButton(
@@ -251,7 +234,7 @@ class _ChooseDocumentRepositoryPageState
                       backgroundColor: Colors.orange[200],
                       minimumSize: const Size.fromHeight(60),
                     ),
-                    onPressed: _selectedFolder.name.isNotEmpty
+                    onPressed: _selectedFolders.isNotEmpty
                         ? () {
                             _saveFolderForDocumentRepository();
                           }

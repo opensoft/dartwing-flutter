@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../base_api.dart';
 import '../rest_client.dart';
+import 'dart_wing_api_helper.dart';
 import 'data/folder_response.dart';
 import 'data/organization.dart';
 import 'data/provider.dart';
@@ -103,7 +104,8 @@ class DartWingApi extends BaseNetworkApi {
   }
 
   Future<List<Provider>> fetchOrganizationProviders(String name) async {
-    return await RestClient.get(Uri.parse('$host/api/company/$name/providers'),
+    return await RestClient.get(
+            Uri.parse('$host/api/company/$location/$name/providers'),
             headers: createUmsAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -137,14 +139,33 @@ class DartWingApi extends BaseNetworkApi {
     });
   }
 
-  Future<FolderResponse> fetchFolders(String provider, String company) async {
-    Map<String, dynamic> body = {'provider': provider};
-    return await RestClient.post(Uri.parse("$host/api/files/$company/folders"),
-            headers: createUmsAuthNetworkHeaders(), body: jsonEncode(body))
+  Future<SiteStatus> fetchSiteStatus() async {
+    return await RestClient.get(Uri.parse('$host/api/site/$location'),
+            headers: createUmsAuthNetworkHeaders())
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch site status for $location');
+      }
+      String status = json.decode(response.body)['status'].toLowerCase();
+      return SiteStatus.values
+          .firstWhere((e) => e.name.toLowerCase() == status);
+    });
+  }
+
+  Future<FolderResponse> fetchFolders(
+      String provider, String company, String folderPath) async {
+    Map<String, dynamic> body = {
+      'provider': provider,
+      'folderPath': folderPath
+    };
+    return await RestClient.post(
+            Uri.parse("$host/api/file/$location/$company/userfolders"),
+            headers: createUmsAuthNetworkHeaders(),
+            body: jsonEncode(body))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response,
-            'Cannot get folders for provider $provider and company $company');
+            'Cannot get folders for provider $provider and company $company, path $folderPath');
       }
       return FolderResponse.fromJson(json.decode(response.body));
     });
