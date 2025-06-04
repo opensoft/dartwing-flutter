@@ -8,7 +8,9 @@ class Folder {
   @JsonKey(includeIfNull: false)
   String? parentId = '';
   String name = '';
-  String description = '';
+  String? description = '';
+  String displayName = '';
+  String folderType = '';
   bool canBeSelected = false;
 
   Folder();

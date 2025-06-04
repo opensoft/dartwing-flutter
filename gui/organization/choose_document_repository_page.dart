@@ -29,10 +29,20 @@ class _ChooseDocumentRepositoryPageState
 
   List<Folder> _folders = [];
 
-  List<String> _selectedFolders = [];
+  List<Folder> _selectedFolders = [];
+
+  bool _canBeSelected() {
+    return _selectedFolders.isNotEmpty
+        ? _selectedFolders.last.canBeSelected
+        : false;
+  }
 
   String _currentPath() {
-    return _selectedFolders.join('/');
+    List<String> folderNameList = [];
+    for (var folder in _selectedFolders) {
+      folderNameList.add(folder.name);
+    }
+    return folderNameList.join('/');
   }
 
   Future _saveFolderForDocumentRepository() {
@@ -176,8 +186,10 @@ class _ChooseDocumentRepositoryPageState
                       child: Text(_currentPath(),
                           style: TextStyle(fontSize: 14)))),
               IconButton(
+                iconSize: 25,
                 icon: Icon(Icons.save),
-                onPressed: _saveFolderForDocumentRepository,
+                onPressed:
+                    _canBeSelected() ? _saveFolderForDocumentRepository : null,
                 tooltip: 'Save Directory',
               ),
             ]),
@@ -219,10 +231,10 @@ class _ChooseDocumentRepositoryPageState
                 final folder = _folders[index];
                 return ListTile(
                     leading: Icon(Icons.folder),
-                    title: Text(folder.name),
-                    subtitle: Text('Directory'),
+                    title: Text(folder.displayName),
+                    subtitle: Text(folder.folderType),
                     onTap: () {
-                      _selectedFolders.add(folder.name);
+                      _selectedFolders.add(folder);
                       _fetchFolders();
                     });
               },
@@ -234,7 +246,7 @@ class _ChooseDocumentRepositoryPageState
                       backgroundColor: Colors.orange[200],
                       minimumSize: const Size.fromHeight(60),
                     ),
-                    onPressed: _selectedFolders.isNotEmpty
+                    onPressed: _selectedFolders.isNotEmpty && _canBeSelected()
                         ? () {
                             _saveFolderForDocumentRepository();
                           }
