@@ -128,7 +128,11 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           child: Center(
             child: LoadingOverlay(
               isLoading: widget.loadingOverlayEnabled,
-              child: widget.body,
+              child: SafeArea(
+                left: false,
+                right: false,
+                child: widget.body,
+              ),
             ),
           ),
         ),
