@@ -9,12 +9,11 @@ import 'data/provider.dart';
 import 'data/user.dart';
 
 class DartWingApi extends BaseNetworkApi {
-  DartWingApi(RestClient restClient, String host, String location)
-      : super(restClient, host, location);
+  DartWingApi(super.restClient, super.host, super.site, super.company);
 
   Future<User> fetchUser() async {
     return await RestClient.get(Uri.parse('$host/api/user/me'),
-            headers: createUmsAuthNetworkHeaders())
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch user');
@@ -25,7 +24,7 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<User> createUser(User user) async {
     return await RestClient.post(Uri.parse('$host/api/user'),
-            headers: createUmsAuthNetworkHeaders(),
+            headers: createBearerAuthNetworkHeaders(),
             body: jsonEncode(user.toJson()))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -37,7 +36,7 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<List<Organization>> fetchOrganizations() async {
     return await RestClient.get(Uri.parse('$host/api/user/me/company'),
-            headers: createUmsAuthNetworkHeaders())
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch organizations/companies');
@@ -53,12 +52,12 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<Organization> fetchOrganization(String companyName) async {
     return await RestClient.get(
-            Uri.parse('$host/api/company/$location/$companyName'),
-            headers: createUmsAuthNetworkHeaders())
+            Uri.parse('$host/api/company/$site/$companyName'),
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(
-            response, 'Cannot fetch organization $companyName in $location');
+            response, 'Cannot fetch organization $companyName in $site');
       }
       return Organization.fromJson(json.decode(response.body));
     });
@@ -67,7 +66,7 @@ class DartWingApi extends BaseNetworkApi {
   Future<Organization> createOrganization(Organization organization) async {
     return await RestClient.post(
             Uri.parse('$host/api/company/${organization.frappeSiteUrl}'),
-            headers: createUmsAuthNetworkHeaders(),
+            headers: createBearerAuthNetworkHeaders(),
             body: jsonEncode(organization.toJson()))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -79,12 +78,12 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<String> fetchOrganizationPath(String companyName) async {
     return await RestClient.get(
-            Uri.parse('$host/api/company/$location/$companyName/path'),
-            headers: createUmsAuthNetworkHeaders())
+            Uri.parse('$host/api/company/$site/$companyName/path'),
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response,
-            'Cannot fetch organization path $companyName in $location');
+        errorHandler(
+            response, 'Cannot fetch organization path $companyName in $site');
       }
       return json.decode(response.body)['path'];
     });
@@ -93,8 +92,8 @@ class DartWingApi extends BaseNetworkApi {
   Future saveOrganizationPath(String companyName, String path) async {
     Map<String, dynamic> body = {'path': path};
     return await RestClient.post(
-            Uri.parse('$host/api/company/$location/$companyName/path'),
-            headers: createUmsAuthNetworkHeaders(),
+            Uri.parse('$host/api/company/$site/$companyName/path'),
+            headers: createBearerAuthNetworkHeaders(),
             body: jsonEncode(body))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -105,8 +104,8 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<List<Provider>> fetchOrganizationProviders(String name) async {
     return await RestClient.get(
-            Uri.parse('$host/api/company/$location/$name/providers'),
-            headers: createUmsAuthNetworkHeaders())
+            Uri.parse('$host/api/company/$site/$name/providers'),
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch organization providers');
@@ -130,7 +129,7 @@ class DartWingApi extends BaseNetworkApi {
       'companyFullName': companyFullName
     };
     return await RestClient.post(Uri.parse('$host/api/site'),
-            headers: createUmsAuthNetworkHeaders(), body: jsonEncode(body))
+            headers: createBearerAuthNetworkHeaders(), body: jsonEncode(body))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot create site $siteName');
@@ -140,11 +139,11 @@ class DartWingApi extends BaseNetworkApi {
   }
 
   Future<SiteStatus> fetchSiteStatus() async {
-    return await RestClient.get(Uri.parse('$host/api/site/$location'),
-            headers: createUmsAuthNetworkHeaders())
+    return await RestClient.get(Uri.parse('$host/api/site/$site'),
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot fetch site status for $location');
+        errorHandler(response, 'Cannot fetch site status for $site');
       }
       String status = json.decode(response.body)['status'].toLowerCase();
       return SiteStatus.values
@@ -159,8 +158,8 @@ class DartWingApi extends BaseNetworkApi {
       'folderPath': folderPath
     };
     return await RestClient.post(
-            Uri.parse("$host/api/file/$location/$company/userfolders"),
-            headers: createUmsAuthNetworkHeaders(),
+            Uri.parse("$host/api/file/$site/$company/userfolders"),
+            headers: createBearerAuthNetworkHeaders(),
             body: jsonEncode(body))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -179,7 +178,7 @@ class DartWingApi extends BaseNetworkApi {
     };
     return await RestClient.post(
             Uri.parse("$host/api/files/$company/folders/save"),
-            headers: createUmsAuthNetworkHeaders(),
+            headers: createBearerAuthNetworkHeaders(),
             body: jsonEncode(body))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -198,7 +197,7 @@ class DartWingApi extends BaseNetworkApi {
             fieldParam,
             files,
             filename,
-            headers: createUmsAuthNetworkHeaders())
+            headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode != 200) {
         errorHandler(response,

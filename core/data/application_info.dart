@@ -19,7 +19,7 @@ class ApplicationInfo {
   @JsonKey(defaultValue: '')
   String version = '';
   @JsonKey(defaultValue: '')
-  String defaultLocation = '';
+  String defaultSite = '';
   @JsonKey(defaultValue: '')
   String company = '';
   @JsonKey(defaultValue: '')

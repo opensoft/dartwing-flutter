@@ -9,68 +9,26 @@ import 'rest_client.dart';
 class BaseNetworkApi {
   RestClient restClient;
   String host = "";
-  String location = "";
+  String site = "";
+  String company = "";
 
-  String policyName = "";
-  String policyKey = "";
-
-  BaseNetworkApi(this.restClient, this.host, this.location,
-      {this.policyKey = '', this.policyName = ''});
+  BaseNetworkApi(this.restClient, this.host, this.site, this.company);
 
   void init(String newHost, String newLocation,
       {String newPolicyName = '', String newPolicyKey = ''}) {
     host = newHost;
-    location = newLocation;
-    policyName = newPolicyName;
-    policyKey = newPolicyKey;
-    policyName = newPolicyName;
+    site = newLocation;
   }
 
   void deInit() {
     host = "";
-    location = "";
+    site = "";
   }
 
-  Map<String, String> createUmsAuthNetworkHeaders() {
+  Map<String, String> createBearerAuthNetworkHeaders() {
     return {
       "Accept": "*/*",
-      "X-Client-Name": restClient.clientName,
       "Authorization": "Bearer ${restClient.token}",
-      'Content-Type': 'application/json'
-    };
-  }
-
-  Map<String, String> createHelpDeskAuthNetworkHeaders() {
-    return {
-      "Authorization": "Bearer ${restClient.token}",
-      'accept': 'text/plain',
-      "Content-Type": "application/json-patch+json"
-    };
-  }
-
-  String createSharedAccessToken(uri, policyName, policyKey) {
-    String encoded = Uri.encodeComponent(uri);
-    int now = DateTime.now().millisecondsSinceEpoch;
-    int week = 60 * 60 * 24 * 7;
-    int ttl = now ~/ 1000.0 + week;
-    List<int> stringToSign = utf8.encode("$encoded\n$ttl");
-    Hmac hMac = Hmac(sha256, utf8.encode(policyKey));
-    var hash = base64Encode(hMac.convert(stringToSign).bytes);
-    return 'SharedAccessSignature sr=$encoded&sig=${Uri.encodeComponent(hash)}&se=$ttl&skn=$policyName';
-  }
-
-  Map<String, String> createSASAuthNetworkHeaders() {
-    String hostname = host.replaceAll('https://', '');
-    return {
-      "Authorization": createSharedAccessToken(hostname, policyName, policyKey),
-      "Host": hostname,
-    };
-  }
-
-  Map<String, String> createIncRouterAuthNetworkHeaders() {
-    return {
-      "X-InkRouter-Client": restClient.clientName,
-      "X-InkRouter-ApiKey": restClient.token,
       'Content-Type': 'application/json'
     };
   }
@@ -118,6 +76,6 @@ class BaseNetworkApi {
   }
 
   String makeAuthErrorMessage() {
-    return "${restClient.email} don't have the access to $host $location\nPlease ask IT to add the access rights";
+    return "${restClient.email} don't have the access to $host $site\nPlease ask IT to add the access rights";
   }
 }

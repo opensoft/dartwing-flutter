@@ -1,10 +1,9 @@
-import '../core/data/application_info.dart';
 import 'dart_wing/dart_wing_api.dart';
+import 'healthcare/healthcare_api.dart';
 import 'paper_trail.dart';
 import 'rest_client.dart';
 
 import '../core/globals.dart';
-import '../core/persistent_storage.dart';
 
 class NetworkClients {
   static bool qaModeEnabled = false;
@@ -12,14 +11,14 @@ class NetworkClients {
   static Future<void> init(
       {String? token, String? siteName, String? organizationName}) async {
     if (siteName != null) {
-      Globals.applicationInfo.defaultLocation = siteName;
+      Globals.applicationInfo.defaultSite = siteName;
     }
     if (organizationName != null) {
       Globals.applicationInfo.company = organizationName;
     }
 
     String appId = [
-      Globals.applicationInfo.defaultLocation,
+      Globals.applicationInfo.defaultSite,
       Globals.applicationInfo.deviceId,
       Globals.applicationInfo.userEmail
     ].where((e) => e.isNotEmpty).join('-').toLowerCase();
@@ -34,22 +33,27 @@ class NetworkClients {
       dartWingRestClient.init(Globals.applicationInfo.appName, token,
           Globals.applicationInfo.userEmail);
     }
-    dartWingApi.location = Globals.applicationInfo.defaultLocation;
+    dartWingApi.site = Globals.applicationInfo.defaultSite;
+    dartWingApi.company = Globals.applicationInfo.company;
+    healthcareApi.site = Globals.applicationInfo.defaultSite;
+    healthcareApi.company = Globals.applicationInfo.company;
 
     if (qaModeEnabled) {
       dartWingApi.init("https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
-          Globals.applicationInfo.defaultLocation);
+          Globals.applicationInfo.defaultSite);
+      healthcareApi.init("https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
+          Globals.applicationInfo.defaultSite);
     } else {
       dartWingApi.init('https://dartwing-gatekeeper.opensoft.one',
-          Globals.applicationInfo.defaultLocation);
+          Globals.applicationInfo.defaultSite);
+      healthcareApi.init('https://dartwing-gatekeeper.opensoft.one',
+          Globals.applicationInfo.defaultSite);
     }
-  }
-
-  static updateOrganization(String organization) {
-    dartWingApi.location = Globals.applicationInfo.defaultLocation;
   }
 
   static RestClient dartWingRestClient = RestClient();
 
-  static DartWingApi dartWingApi = DartWingApi(dartWingRestClient, '', '');
+  static DartWingApi dartWingApi = DartWingApi(dartWingRestClient, '', '', '');
+  static HealthcareApi healthcareApi =
+      HealthcareApi(dartWingRestClient, '', '', '');
 }

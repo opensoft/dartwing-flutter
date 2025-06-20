@@ -13,7 +13,7 @@ ApplicationInfo _$ApplicationInfoFromJson(Map<String, dynamic> json) =>
       ..appName = json['appName'] as String? ?? ''
       ..deviceId = json['deviceId'] as String? ?? ''
       ..version = json['version'] as String? ?? ''
-      ..defaultLocation = json['defaultLocation'] as String? ?? ''
+      ..defaultSite = json['defaultSite'] as String? ?? ''
       ..company = json['company'] as String? ?? ''
       ..username = json['username'] as String? ?? ''
       ..userEmail = json['userEmail'] as String? ?? ''
@@ -29,7 +29,7 @@ Map<String, dynamic> _$ApplicationInfoToJson(ApplicationInfo instance) =>
       'appName': instance.appName,
       'deviceId': instance.deviceId,
       'version': instance.version,
-      'defaultLocation': instance.defaultLocation,
+      'defaultSite': instance.defaultSite,
       'company': instance.company,
       'username': instance.username,
       'userEmail': instance.userEmail,
