@@ -1,26 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentStorage {
-  static saveUvFilesPath(String filePath, double width, double height) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('substrate_${width}x$height', filePath);
-  }
-
-  static Future<String> getUvFilesPath(double width, double height) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('substrate_${width}x$height') ?? "";
-  }
-
-  static saveCuttingMachineName(String cuttingMachineName) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('cutting_machine_name', cuttingMachineName);
-  }
-
-  static Future<String> getCuttingMachineName() async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('cutting_machine_name') ?? "";
-  }
-
   static saveAppId(String appId) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setString('app_id', appId);
@@ -29,26 +9,6 @@ class PersistentStorage {
   static Future<String> getAppId() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getString('app_id') ?? '';
-  }
-
-  static savePrinterName(String printerName) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('printer_name', printerName);
-  }
-
-  static Future<String> getPrinterName() async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('printer_name') ?? '';
-  }
-
-  static savePressName(String pressName) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('press_name', pressName);
-  }
-
-  static Future<String> getPressName() async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('press_name') ?? '';
   }
 
   static init() async {
@@ -66,14 +26,24 @@ class PersistentStorage {
     return myPrefs.getBool('init') ?? false;
   }
 
-  static saveLocation(String location) async {
+  static saveCompany(String company) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('Location', location);
+    myPrefs.setString('Company', company);
   }
 
-  static Future<String> getLocation() async {
+  static Future<String> getCompany() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('Location') ?? '';
+    return myPrefs.getString('Company') ?? '';
+  }
+
+  static saveSite(String site) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setString('Site', site);
+  }
+
+  static Future<String> getSite() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getString('Site') ?? '';
   }
 
   static saveAccessUmsToken(String token) async {

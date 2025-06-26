@@ -10,6 +10,8 @@ class Organization {
   @JsonKey(includeIfNull: false)
   String? name;
   @JsonKey(includeIfNull: false)
+  String? site;
+  @JsonKey(includeIfNull: false)
   String? abbreviation;
   @JsonKey(includeIfNull: false)
   String? currency;
@@ -23,11 +25,10 @@ class Organization {
   OrganizationType? companyType;
   @JsonKey(includeIfNull: false)
   String? microsoftSharepointFolderPath;
-  @JsonKey(defaultValue: [])
+  @JsonKey(includeIfNull: false, defaultValue: [])
   List<String> invoicesWhitelist = [];
   @JsonKey(includeIfNull: false)
   List<String>? permissions;
-  String frappeSiteUrl = '';
 
   Organization();
 

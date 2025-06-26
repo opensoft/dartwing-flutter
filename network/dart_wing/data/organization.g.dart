@@ -9,6 +9,7 @@ part of 'organization.dart';
 Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..id = json['id'] as String?
   ..name = json['name'] as String?
+  ..site = json['site'] as String?
   ..abbreviation = json['abbreviation'] as String?
   ..currency = json['currency'] as String?
   ..country = json['country'] as String?
@@ -23,13 +24,13 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
           .toList() ??
       []
   ..permissions =
-      (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList()
-  ..frappeSiteUrl = json['frappeSiteUrl'] as String;
+      (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList();
 
 Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
     <String, dynamic>{
       if (instance.id case final value?) 'id': value,
       if (instance.name case final value?) 'name': value,
+      if (instance.site case final value?) 'site': value,
       if (instance.abbreviation case final value?) 'abbreviation': value,
       if (instance.currency case final value?) 'currency': value,
       if (instance.country case final value?) 'country': value,
@@ -41,7 +42,6 @@ Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
         'microsoftSharepointFolderPath': value,
       'invoicesWhitelist': instance.invoicesWhitelist,
       if (instance.permissions case final value?) 'permissions': value,
-      'frappeSiteUrl': instance.frappeSiteUrl,
     };
 
 const _$OrganizationTypeEnumMap = {

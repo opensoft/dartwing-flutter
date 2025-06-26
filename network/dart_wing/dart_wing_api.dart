@@ -65,7 +65,7 @@ class DartWingApi extends BaseNetworkApi {
 
   Future<Organization> createOrganization(Organization organization) async {
     return await RestClient.post(
-            Uri.parse('$host/api/company/${organization.frappeSiteUrl}'),
+            Uri.parse('$host/api/company/${organization.site}'),
             headers: createBearerAuthNetworkHeaders(),
             body: jsonEncode(organization.toJson()))
         .then((response) {
@@ -203,6 +203,37 @@ class DartWingApi extends BaseNetworkApi {
         errorHandler(response,
             'Cannot upload document (size ${file.length}) to company $company');
       }
+    });
+  }
+
+  Future<void> sendInvitationByEmail(
+      String email, String userName, String site, String company) async {
+    Map<String, dynamic> body = {'email': email, 'userName': userName};
+    return await RestClient.post(
+            Uri.parse('$host/api/invitations/$site/$company'),
+            headers: createBearerAuthNetworkHeaders(),
+            body: jsonEncode(body))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot send invitation');
+      }
+      return;
+    });
+  }
+
+  Future<Organization> verifyInvitation(
+      String verificationCode, bool accepted) async {
+    Map<String, dynamic> body = {
+      'verificationCode': verificationCode,
+      'accepted': accepted
+    };
+    return await RestClient.post(Uri.parse('$host/api/invitations/verify'),
+            headers: createBearerAuthNetworkHeaders(), body: jsonEncode(body))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot verify invitation');
+      }
+      return Organization.fromJson(json.decode(response.body));
     });
   }
 }
