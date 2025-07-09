@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../base_api.dart';
 import '../rest_client.dart';
 import 'dart_wing_api_helper.dart';
+import 'data/address.dart';
 import 'data/folder_response.dart';
 import 'data/organization.dart';
 import 'data/provider.dart';
@@ -98,6 +99,32 @@ class DartWingApi extends BaseNetworkApi {
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot create or update organization');
+      }
+    });
+  }
+
+  Future<Address> fetchOrganizationAddress(String companyName) async {
+    return await RestClient.get(
+            Uri.parse('$host/api/company/$site/$companyName/address'),
+            headers: createBearerAuthNetworkHeaders())
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response,
+            'Cannot fetch organization address $companyName in $site');
+      }
+      return Address.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<void> saveOrganizationAddress(
+      String companyName, Address address) async {
+    return await RestClient.post(
+            Uri.parse('$host/api/company/$site/$companyName/address'),
+            headers: createBearerAuthNetworkHeaders(),
+            body: jsonEncode(address.toJson()))
+        .then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot save organization address');
       }
     });
   }
