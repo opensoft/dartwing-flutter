@@ -5,6 +5,8 @@ part 'address.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Address {
   @JsonKey(defaultValue: '')
+  String name = '';
+  @JsonKey(defaultValue: '')
   String street = '';
   @JsonKey(defaultValue: '')
   String city = '';
