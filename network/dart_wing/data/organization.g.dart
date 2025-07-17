@@ -10,6 +10,7 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..id = json['id'] as String?
   ..name = json['name'] as String?
   ..site = json['site'] as String?
+  ..alias = json['alias'] as String
   ..abbreviation = json['abbreviation'] as String?
   ..currency = json['currency'] as String?
   ..country = json['country'] as String?
@@ -31,6 +32,7 @@ Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
       if (instance.id case final value?) 'id': value,
       if (instance.name case final value?) 'name': value,
       if (instance.site case final value?) 'site': value,
+      'alias': instance.alias,
       if (instance.abbreviation case final value?) 'abbreviation': value,
       if (instance.currency case final value?) 'currency': value,
       if (instance.country case final value?) 'country': value,

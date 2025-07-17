@@ -12,6 +12,8 @@ class Organization {
   @JsonKey(includeIfNull: false)
   String? site;
   @JsonKey(includeIfNull: false)
+  String alias = '';
+  @JsonKey(includeIfNull: false)
   String? abbreviation;
   @JsonKey(includeIfNull: false)
   String? currency;
