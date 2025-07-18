@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 import '../base_api.dart';
 import '../rest_client.dart';
 import 'dart_wing_api_helper.dart';
@@ -147,10 +148,14 @@ class DartWingApi extends BaseNetworkApi {
   }
 
   Future<String> createSite(String siteName, String companyName,
-      String abbreviation, String alias, Address address) async {
+      String abbreviation, Address address) async {
     Map<String, dynamic> body = {
       'siteName': siteName,
-      'company': {'name': companyName, 'address': address.toJson()},
+      'company': {
+        'name': companyName,
+        'abbreviation': abbreviation,
+        'address': address.toJson()
+      },
       'abbreviation': abbreviation
     };
     return await RestClient.post(Uri.parse('$host/api/site'),
@@ -164,16 +169,14 @@ class DartWingApi extends BaseNetworkApi {
     });
   }
 
-  Future<SiteStatus> fetchSiteStatus() async {
+  Future<SiteStatusReply> fetchSiteStatus() async {
     return await RestClient.get(Uri.parse('$host/api/site/$site'),
             headers: createBearerAuthNetworkHeaders())
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch site status for $site');
       }
-      String status = json.decode(response.body)['status'].toLowerCase();
-      return SiteStatus.values
-          .firstWhere((e) => e.name.toLowerCase() == status);
+      return SiteStatusReply.fromJson(json.decode(response.body));
     });
   }
 
