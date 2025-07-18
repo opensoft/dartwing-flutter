@@ -7,7 +7,7 @@ part 'site_status_reply.g.dart';
 @JsonSerializable(explicitToJson: true)
 class SiteStatusReply {
   SiteStatus status = SiteStatus.none;
-  @JsonKey(defaultValue: '')
+  @JsonKey(defaultValue: '', name: 'companyAlias')
   String alias = '';
 
   SiteStatusReply();
