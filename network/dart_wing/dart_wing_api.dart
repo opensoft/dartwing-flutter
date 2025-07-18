@@ -9,6 +9,7 @@ import 'data/folder_response.dart';
 import 'data/organization.dart';
 import 'data/provider.dart';
 import 'data/user.dart';
+import "data/site_status_reply.dart";
 
 class DartWingApi extends BaseNetworkApi {
   DartWingApi(super.restClient, super.host, super.site, super.company);
