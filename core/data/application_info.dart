@@ -21,7 +21,7 @@ class ApplicationInfo {
   @JsonKey(defaultValue: '')
   String defaultSite = '';
   @JsonKey(defaultValue: '')
-  String company = '';
+  String companyAlias = '';
   @JsonKey(defaultValue: '')
   String username = '';
   @JsonKey(defaultValue: '')

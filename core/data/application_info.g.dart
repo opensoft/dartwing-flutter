@@ -14,7 +14,7 @@ ApplicationInfo _$ApplicationInfoFromJson(Map<String, dynamic> json) =>
       ..deviceId = json['deviceId'] as String? ?? ''
       ..version = json['version'] as String? ?? ''
       ..defaultSite = json['defaultSite'] as String? ?? ''
-      ..company = json['company'] as String? ?? ''
+      ..companyAlias = json['companyAlias'] as String? ?? ''
       ..username = json['username'] as String? ?? ''
       ..userEmail = json['userEmail'] as String? ?? ''
       ..barcodeScanner = BarcodeScannerSettings.fromJson(
@@ -30,7 +30,7 @@ Map<String, dynamic> _$ApplicationInfoToJson(ApplicationInfo instance) =>
       'deviceId': instance.deviceId,
       'version': instance.version,
       'defaultSite': instance.defaultSite,
-      'company': instance.company,
+      'companyAlias': instance.companyAlias,
       'username': instance.username,
       'userEmail': instance.userEmail,
       'barcodeScanner': instance.barcodeScanner.toJson(),

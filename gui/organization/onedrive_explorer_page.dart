@@ -209,7 +209,8 @@ class _OneDriveExplorerPageState extends State<OneDriveExplorerPage> {
       _loadingOverlayEnabled = true;
     });
     NetworkClients.dartWingApi
-        .saveOrganizationPath(Globals.applicationInfo.company, _currentPath)
+        .saveOrganizationPath(
+            Globals.applicationInfo.companyAlias, _currentPath)
         .then((_) {
       setState(() {
         _loadingOverlayEnabled = false;

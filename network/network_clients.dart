@@ -10,17 +10,18 @@ class NetworkClients {
   static bool qaModeEnabled = false;
 
   static Future<void> init(
-      {String? token, String? siteName, String? organizationName}) async {
-    Future<String?> futureCompany = Future.value(organizationName);
-    if (organizationName == null && Globals.applicationInfo.company.isEmpty) {
+      {String? token, String? siteName, String? organizationAlias}) async {
+    Future<String?> futureCompany = Future.value(organizationAlias);
+    if (organizationAlias == null &&
+        Globals.applicationInfo.companyAlias.isEmpty) {
       futureCompany = PersistentStorage.getCompany();
     }
-    return futureCompany.then((company) {
-      if (company != null) {
-        Globals.applicationInfo.company = company;
+    return futureCompany.then((companyAlias) {
+      if (companyAlias != null) {
+        Globals.applicationInfo.companyAlias = companyAlias;
       }
-      if (Globals.applicationInfo.company.isNotEmpty) {
-        PersistentStorage.saveCompany(Globals.applicationInfo.company);
+      if (Globals.applicationInfo.companyAlias.isNotEmpty) {
+        PersistentStorage.saveCompany(Globals.applicationInfo.companyAlias);
       }
 
       Future<String?> futureSite = Future.value(siteName);
@@ -53,9 +54,9 @@ class NetworkClients {
             Globals.applicationInfo.userEmail);
       }
       dartWingApi.site = Globals.applicationInfo.defaultSite;
-      dartWingApi.company = Globals.applicationInfo.company;
+      dartWingApi.company = Globals.applicationInfo.companyAlias;
       healthcareApi.site = Globals.applicationInfo.defaultSite;
-      healthcareApi.company = Globals.applicationInfo.company;
+      healthcareApi.company = Globals.applicationInfo.companyAlias;
 
       if (qaModeEnabled) {
         dartWingApi.init("https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
