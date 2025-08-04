@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -110,8 +111,14 @@ class _ChooseDocumentRepositoryPageState
         final updatedQueryParams =
             Map<String, String>.from(uri.queryParameters);
         //updatedQueryParams['client_id'] = 'dartwingmobile';
-        updatedQueryParams['redirect_uri'] =
-            'com.opensoft.ledgerlinc://login-callback';
+        if (kIsWeb) {
+          updatedQueryParams['redirect_uri'] = NetworkClients.qaModeEnabled
+              ? 'https://app-dev.ledgerlinc.com'
+              : 'https://app.ledgerlinc.com';
+        } else {
+          updatedQueryParams['redirect_uri'] =
+              'com.opensoft.ledgerlinc://login-callback';
+        }
         Uri updatedUri = uri.replace(
           queryParameters: updatedQueryParams,
         );
