@@ -109,9 +109,9 @@ class _ChooseDocumentRepositoryPageState
 
         final updatedQueryParams =
             Map<String, String>.from(uri.queryParameters);
-        updatedQueryParams['client_id'] = 'dartwingmobile';
+        //updatedQueryParams['client_id'] = 'dartwingmobile';
         updatedQueryParams['redirect_uri'] =
-            'com.opensoft.dartwing://login-callback';
+            'com.opensoft.ledgerlinc://login-callback';
         Uri updatedUri = uri.replace(
           queryParameters: updatedQueryParams,
         );
