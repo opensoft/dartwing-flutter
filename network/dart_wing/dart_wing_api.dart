@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import '../base_api.dart';
 import '../rest_client.dart';
 import 'dart_wing_api_helper.dart';
@@ -148,10 +147,9 @@ class DartWingApi extends BaseNetworkApi {
     });
   }
 
-  Future<String> createSite(String siteName, String companyName,
-      String abbreviation, Address address) async {
+  Future<String> createSite(
+      String companyName, String abbreviation, Address address) async {
     Map<String, dynamic> body = {
-      'siteName': siteName,
       'company': {
         'name': companyName,
         'abbreviation': abbreviation,
@@ -163,7 +161,7 @@ class DartWingApi extends BaseNetworkApi {
             headers: createBearerAuthNetworkHeaders(), body: jsonEncode(body))
         .then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot create site $siteName');
+        errorHandler(response, 'Cannot create site for company $companyName');
       }
       var jsonObject = json.decode(response.body);
       return jsonObject['site'].toString();
