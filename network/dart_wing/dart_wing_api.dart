@@ -152,10 +152,10 @@ class DartWingApi extends BaseNetworkApi {
       'company': {
         'name': companyName,
         'abbreviation': abbreviation,
-        'address': address.toJson(),
-        'documentUploadMethod': documentUploadMethod
+        'address': address.toJson()
       },
-      'abbreviation': abbreviation
+      'abbreviation': abbreviation,
+      'documentUploadMethod': documentUploadMethod
     };
     return await RestClient.post(Uri.parse('$host/api/site'),
             headers: createBearerAuthNetworkHeaders(), body: jsonEncode(body))
