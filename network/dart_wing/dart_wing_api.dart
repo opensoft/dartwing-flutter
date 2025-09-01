@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import '../base_api.dart';
 import '../rest_client.dart';
-import 'dart_wing_api_helper.dart';
 import 'data/address.dart';
 import 'data/folder_response.dart';
 import 'data/organization.dart';
@@ -147,13 +146,14 @@ class DartWingApi extends BaseNetworkApi {
     });
   }
 
-  Future<String> createSite(
-      String companyName, String abbreviation, Address address) async {
+  Future<String> createSite(String companyName, String abbreviation,
+      Address address, String documentUploadMethod) async {
     Map<String, dynamic> body = {
       'company': {
         'name': companyName,
         'abbreviation': abbreviation,
-        'address': address.toJson()
+        'address': address.toJson(),
+        'documentUploadMethod': documentUploadMethod
       },
       'abbreviation': abbreviation
     };
