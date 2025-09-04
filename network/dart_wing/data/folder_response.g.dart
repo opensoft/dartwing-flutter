@@ -15,7 +15,6 @@ FolderResponse _$FolderResponseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$FolderResponseToJson(FolderResponse instance) =>
     <String, dynamic>{
-      if (instance.folders?.map((e) => e.toJson()).toList() case final value?)
-        'folders': value,
-      if (instance.redirectUrl case final value?) 'redirectUrl': value,
+      'folders': ?instance.folders?.map((e) => e.toJson()).toList(),
+      'redirectUrl': ?instance.redirectUrl,
     };

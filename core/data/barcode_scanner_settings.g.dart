@@ -7,14 +7,11 @@ part of 'barcode_scanner_settings.dart';
 // **************************************************************************
 
 BarcodeScannerSettings _$BarcodeScannerSettingsFromJson(
-        Map<String, dynamic> json) =>
-    BarcodeScannerSettings()
-      ..prefix = json['prefix'] as String
-      ..postfix = json['postfix'] as String;
+  Map<String, dynamic> json,
+) => BarcodeScannerSettings()
+  ..prefix = json['prefix'] as String
+  ..postfix = json['postfix'] as String;
 
 Map<String, dynamic> _$BarcodeScannerSettingsToJson(
-        BarcodeScannerSettings instance) =>
-    <String, dynamic>{
-      'prefix': instance.prefix,
-      'postfix': instance.postfix,
-    };
+  BarcodeScannerSettings instance,
+) => <String, dynamic>{'prefix': instance.prefix, 'postfix': instance.postfix};

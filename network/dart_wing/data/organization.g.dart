@@ -16,34 +16,36 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization()
   ..country = json['country'] as String?
   ..domain = json['domain'] as String?
   ..isEnabled = json['isEnabled'] as bool?
-  ..companyType =
-      $enumDecodeNullable(_$OrganizationTypeEnumMap, json['companyType'])
+  ..companyType = $enumDecodeNullable(
+    _$OrganizationTypeEnumMap,
+    json['companyType'],
+  )
   ..microsoftSharepointFolderPath =
       json['microsoftSharepointFolderPath'] as String?
-  ..invoicesWhitelist = (json['invoicesWhitelist'] as List<dynamic>?)
+  ..invoicesWhitelist =
+      (json['invoicesWhitelist'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList() ??
       []
-  ..permissions =
-      (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList();
+  ..permissions = (json['permissions'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList();
 
 Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
     <String, dynamic>{
-      if (instance.id case final value?) 'id': value,
-      if (instance.name case final value?) 'name': value,
-      if (instance.site case final value?) 'site': value,
+      'id': ?instance.id,
+      'name': ?instance.name,
+      'site': ?instance.site,
       'alias': instance.alias,
-      if (instance.abbreviation case final value?) 'abbreviation': value,
-      if (instance.currency case final value?) 'currency': value,
-      if (instance.country case final value?) 'country': value,
-      if (instance.domain case final value?) 'domain': value,
-      if (instance.isEnabled case final value?) 'isEnabled': value,
-      if (_$OrganizationTypeEnumMap[instance.companyType] case final value?)
-        'companyType': value,
-      if (instance.microsoftSharepointFolderPath case final value?)
-        'microsoftSharepointFolderPath': value,
+      'abbreviation': ?instance.abbreviation,
+      'currency': ?instance.currency,
+      'country': ?instance.country,
+      'domain': ?instance.domain,
+      'isEnabled': ?instance.isEnabled,
+      'companyType': ?_$OrganizationTypeEnumMap[instance.companyType],
+      'microsoftSharepointFolderPath': ?instance.microsoftSharepointFolderPath,
       'invoicesWhitelist': instance.invoicesWhitelist,
-      if (instance.permissions case final value?) 'permissions': value,
+      'permissions': ?instance.permissions,
     };
 
 const _$OrganizationTypeEnumMap = {

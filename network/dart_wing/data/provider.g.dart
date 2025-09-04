@@ -11,6 +11,6 @@ Provider _$ProviderFromJson(Map<String, dynamic> json) => Provider()
   ..alias = json['alias'] as String?;
 
 Map<String, dynamic> _$ProviderToJson(Provider instance) => <String, dynamic>{
-      'name': instance.name,
-      if (instance.alias case final value?) 'alias': value,
-    };
+  'name': instance.name,
+  'alias': ?instance.alias,
+};

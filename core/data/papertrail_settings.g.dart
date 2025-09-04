@@ -12,7 +12,4 @@ PapertrailSettings _$PapertrailSettingsFromJson(Map<String, dynamic> json) =>
       ..port = (json['port'] as num).toInt();
 
 Map<String, dynamic> _$PapertrailSettingsToJson(PapertrailSettings instance) =>
-    <String, dynamic>{
-      'host': instance.host,
-      'port': instance.port,
-    };
+    <String, dynamic>{'host': instance.host, 'port': instance.port};

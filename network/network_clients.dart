@@ -9,73 +9,103 @@ import '../core/globals.dart';
 class NetworkClients {
   static bool qaModeEnabled = false;
 
-  static Future<void> init(
-      {String? token, String? siteName, String? organizationAlias}) async {
+  static Future<void> init({
+    String? token,
+    String? frappeToken,
+    String? siteName,
+    String? organizationAlias,
+  }) async {
     Future<String?> futureCompany = Future.value(organizationAlias);
     if (organizationAlias == null &&
         Globals.applicationInfo.companyAlias.isEmpty) {
       futureCompany = PersistentStorage.getCompany();
     }
-    return futureCompany.then((companyAlias) {
-      if (companyAlias != null) {
-        Globals.applicationInfo.companyAlias = companyAlias;
-      }
-      if (Globals.applicationInfo.companyAlias.isNotEmpty) {
-        PersistentStorage.saveCompany(Globals.applicationInfo.companyAlias);
-      }
+    return futureCompany
+        .then((companyAlias) {
+          if (companyAlias != null) {
+            Globals.applicationInfo.companyAlias = companyAlias;
+          }
+          if (Globals.applicationInfo.companyAlias.isNotEmpty) {
+            PersistentStorage.saveCompany(Globals.applicationInfo.companyAlias);
+          }
 
-      Future<String?> futureSite = Future.value(siteName);
-      if (siteName == null && Globals.applicationInfo.defaultSite.isEmpty) {
-        futureSite = PersistentStorage.getSite();
-      }
-      return futureSite;
-    }).then((siteName) {
-      if (siteName != null) {
-        Globals.applicationInfo.defaultSite = siteName;
-      }
-      if (Globals.applicationInfo.defaultSite.isNotEmpty) {
-        PersistentStorage.saveSite(Globals.applicationInfo.defaultSite);
-      }
+          Future<String?> futureSite = Future.value(siteName);
+          if (siteName == null && Globals.applicationInfo.defaultSite.isEmpty) {
+            futureSite = PersistentStorage.getSite();
+          }
+          return futureSite;
+        })
+        .then((siteName) {
+          if (siteName != null) {
+            Globals.applicationInfo.defaultSite = siteName;
+          }
+          if (Globals.applicationInfo.defaultSite.isNotEmpty) {
+            PersistentStorage.saveSite(Globals.applicationInfo.defaultSite);
+          }
 
-      String appId = [
-        Globals.applicationInfo.defaultSite,
-        Globals.applicationInfo.deviceId,
-        Globals.applicationInfo.userEmail
-      ].where((e) => e.isNotEmpty).join('-').toLowerCase();
-      PaperTrailClient.init(
-          "${Globals.applicationInfo.appName}${qaModeEnabled ? '-qa' : ''}"
-              .toLowerCase(),
-          appId,
-          Globals.applicationInfo.papertrailSettings.host,
-          Globals.applicationInfo.papertrailSettings.port);
+          String appId = [
+            Globals.applicationInfo.defaultSite,
+            Globals.applicationInfo.deviceId,
+            Globals.applicationInfo.userEmail,
+          ].where((e) => e.isNotEmpty).join('-').toLowerCase();
+          PaperTrailClient.init(
+            "${Globals.applicationInfo.appName}${qaModeEnabled ? '-qa' : ''}"
+                .toLowerCase(),
+            appId,
+            Globals.applicationInfo.papertrailSettings.host,
+            Globals.applicationInfo.papertrailSettings.port,
+          );
 
-      if (token != null) {
-        dartWingRestClient.init(Globals.applicationInfo.appName, token,
-            Globals.applicationInfo.userEmail);
-      }
-      dartWingApi.site = Globals.applicationInfo.defaultSite;
-      dartWingApi.company = Globals.applicationInfo.companyAlias;
-      healthcareApi.site = Globals.applicationInfo.defaultSite;
-      healthcareApi.company = Globals.applicationInfo.companyAlias;
+          if (token != null) {
+            dartWingRestClient.init(
+              Globals.applicationInfo.appName,
+              token,
+              Globals.applicationInfo.userEmail,
+            );
+          }
 
-      if (qaModeEnabled) {
-        dartWingApi.init("https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
-            Globals.applicationInfo.defaultSite);
-        healthcareApi.init(
-            "https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
-            Globals.applicationInfo.defaultSite);
-      } else {
-        dartWingApi.init('https://dartwing-gatekeeper.opensoft.one',
-            Globals.applicationInfo.defaultSite);
-        healthcareApi.init('https://dartwing-gatekeeper.opensoft.one',
-            Globals.applicationInfo.defaultSite);
-      }
-    });
+          if (frappeToken != null) {
+            frappeRestClient.init(
+              Globals.applicationInfo.appName,
+              frappeToken,
+              Globals.applicationInfo.userEmail,
+            );
+          }
+          dartWingApi.site = Globals.applicationInfo.defaultSite;
+          dartWingApi.company = Globals.applicationInfo.companyAlias;
+          healthcareApi.site = Globals.applicationInfo.defaultSite;
+          healthcareApi.company = Globals.applicationInfo.companyAlias;
+
+          if (qaModeEnabled) {
+            dartWingApi.init(
+              "https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
+              Globals.applicationInfo.defaultSite,
+            );
+            healthcareApi.init(
+              "https://qa.frappe.opensoft.one",
+              Globals.applicationInfo.defaultSite,
+            );
+          } else {
+            dartWingApi.init(
+              'https://dartwing-gatekeeper.opensoft.one',
+              Globals.applicationInfo.defaultSite,
+            );
+            healthcareApi.init(
+              "https://frappe.opensoft.one",
+              Globals.applicationInfo.defaultSite,
+            );
+          }
+        });
   }
 
   static RestClient dartWingRestClient = RestClient();
+  static RestClient frappeRestClient = RestClient();
 
   static DartWingApi dartWingApi = DartWingApi(dartWingRestClient, '', '', '');
-  static HealthcareApi healthcareApi =
-      HealthcareApi(dartWingRestClient, '', '', '');
+  static HealthcareApi healthcareApi = HealthcareApi(
+    frappeRestClient,
+    '',
+    '',
+    '',
+  );
 }

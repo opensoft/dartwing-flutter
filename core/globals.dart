@@ -8,12 +8,15 @@ class Globals {
   static User user = User();
   static ApplicationInfo applicationInfo = ApplicationInfo();
   static bool qaModeEnabled = false;
+  /*
+  static var keycloakWrapper = KeycloakWrapper(
+    config: KeycloakConfig(
+      bundleIdentifier: 'com.opensoft.dartwing',
+      clientId: 'dartwingmobile',
+      frontendUrl: 'https://qa.keycloak.tech-corps.com/',
+      realm: 'DartWing',
+    ),
+  );
 
-  static final keycloakWrapper = KeycloakWrapper(
-      config: KeycloakConfig(
-    bundleIdentifier: 'com.opensoft.dartwing',
-    clientId: 'dartwingmobile',
-    frontendUrl: 'https://qa.keycloak.tech-corps.com/',
-    realm: 'DartWing',
-  ));
+ */
 }

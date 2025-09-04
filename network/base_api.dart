@@ -14,8 +14,12 @@ class BaseNetworkApi {
 
   BaseNetworkApi(this.restClient, this.host, this.site, this.company);
 
-  void init(String newHost, String newLocation,
-      {String newPolicyName = '', String newPolicyKey = ''}) {
+  void init(
+    String newHost,
+    String newLocation, {
+    String newPolicyName = '',
+    String newPolicyKey = '',
+  }) {
     host = newHost;
     site = newLocation;
   }
@@ -29,7 +33,15 @@ class BaseNetworkApi {
     return {
       "Accept": "*/*",
       "Authorization": "Bearer ${restClient.token}",
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+    };
+  }
+
+  Map<String, String> createTokenAuthNetworkHeaders() {
+    return {
+      "Accept": "*/*",
+      "Authorization": "token ${restClient.token}",
+      'Content-Type': 'application/json',
     };
   }
 

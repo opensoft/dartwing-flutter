@@ -18,22 +18,23 @@ User _$UserFromJson(Map<String, dynamic> json) => User()
   ..postalCode = json['postalCode'] as String?
   ..country = json['country'] as String?
   ..gender = json['gender'] as String?
-  ..companies = (json['companies'] as List<dynamic>?)
+  ..companies =
+      (json['companies'] as List<dynamic>?)
           ?.map((e) => Organization.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [];
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      if (instance.firstName case final value?) 'firstName': value,
-      'lastName': instance.lastName,
-      'email': instance.email,
-      if (instance.phoneNumber case final value?) 'phoneNumber': value,
-      if (instance.dateOfBirth case final value?) 'dateOfBirth': value,
-      if (instance.address case final value?) 'address': value,
-      if (instance.city case final value?) 'city': value,
-      if (instance.state case final value?) 'state': value,
-      if (instance.postalCode case final value?) 'postalCode': value,
-      if (instance.country case final value?) 'country': value,
-      if (instance.gender case final value?) 'gender': value,
-      'companies': instance.companies.map((e) => e.toJson()).toList(),
-    };
+  'firstName': ?instance.firstName,
+  'lastName': instance.lastName,
+  'email': instance.email,
+  'phoneNumber': ?instance.phoneNumber,
+  'dateOfBirth': ?instance.dateOfBirth,
+  'address': ?instance.address,
+  'city': ?instance.city,
+  'state': ?instance.state,
+  'postalCode': ?instance.postalCode,
+  'country': ?instance.country,
+  'gender': ?instance.gender,
+  'companies': instance.companies.map((e) => e.toJson()).toList(),
+};

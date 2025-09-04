@@ -6,48 +6,76 @@ part 'patient.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Patient {
-  @JsonKey(includeIfNull: false)
-  String? firstName;
-  @JsonKey(includeIfNull: false)
-  String? middleName;
-  @JsonKey(includeIfNull: false)
-  String? lastName;
-  @JsonKey(includeIfNull: false)
-  String? sex;
-  @JsonKey(includeIfNull: false)
-  String? dateOfBirth;
-  @JsonKey(includeIfNull: false)
-  String? image;
-  @JsonKey(includeIfNull: false)
+  @JsonKey(name: 'name', defaultValue: '')
+  String id = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String owner = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String creation = '';
+  @JsonKey(includeIfNull: false, name: 'first_name', defaultValue: '')
+  String firstName = '';
+  @JsonKey(includeIfNull: false, name: 'middle_name', defaultValue: '')
+  String middleName = '';
+  @JsonKey(includeIfNull: false, name: 'last_name', defaultValue: '')
+  String lastName = '';
+  @JsonKey(includeIfNull: false, name: 'patient_name', defaultValue: '')
+  String patientName = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String sex = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String image = '';
+  @JsonKey(includeIfNull: false, defaultValue: PatientStatus.disabled)
   PatientStatus status = PatientStatus.disabled;
-  @JsonKey(includeIfNull: false)
-  String? identificationNumber;
-  @JsonKey(includeIfNull: false)
-  String? inpatientRecord;
+  @JsonKey(
+    includeIfNull: false,
+    name: 'identification_number',
+    defaultValue: '',
+  )
+  String identificationNumber = '';
+  @JsonKey(includeIfNull: false, name: 'inpatient_record', defaultValue: '')
+  String inpatientRecord = '';
+  /*
+  @JsonKey(
+    includeIfNull: false,
+    name: 'inpatient_status',
+    defaultValue: InpatientStatus.none,
+  )
   InpatientStatus inpatientStatus = InpatientStatus.none;
+  @JsonKey(
+    includeIfNull: false,
+    name: 'report_preference',
+    defaultValue: PatientReportPreference.none,
+  )
   PatientReportPreference reportPreference = PatientReportPreference.none;
-  @JsonKey(includeIfNull: false)
-  String? mobile;
-  @JsonKey(includeIfNull: false)
-  String? phone;
-  @JsonKey(includeIfNull: false)
-  String? email;
-  @JsonKey(includeIfNull: false)
-  String? userId;
-  @JsonKey(includeIfNull: false)
-  String? customer;
-  @JsonKey(includeIfNull: false)
-  String? customerGroup;
-  @JsonKey(includeIfNull: false)
-  String? territory;
-  @JsonKey(includeIfNull: false)
-  String? defaultCurrency;
-  @JsonKey(includeIfNull: false)
-  String? defaultPriceList;
-  @JsonKey(includeIfNull: false)
-  String? language;
-  @JsonKey(includeIfNull: false)
-  String? patientDetails;
+
+   */
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String mobile = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String phone = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String email = '';
+  @JsonKey(includeIfNull: false, name: 'user_id', defaultValue: '')
+  String userId = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String customer = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String customerGroup = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String territory = '';
+  @JsonKey(includeIfNull: false, name: 'default_currency', defaultValue: '')
+  String defaultCurrency = '';
+  @JsonKey(includeIfNull: false, name: 'default_price_list', defaultValue: '')
+  String defaultPriceList = '';
+  @JsonKey(includeIfNull: false, defaultValue: '')
+  String language = '';
+  @JsonKey(includeIfNull: false, name: 'patient_details', defaultValue: '')
+  String patientDetails = '';
+  @JsonKey(
+    includeIfNull: false,
+    name: 'blood_group',
+    defaultValue: BloodGroup.none,
+  )
   BloodGroup bloodGroup = BloodGroup.none;
 
   Patient();

@@ -16,11 +16,11 @@ Folder _$FolderFromJson(Map<String, dynamic> json) => Folder()
   ..canBeSelected = json['canBeSelected'] as bool;
 
 Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
-      'id': instance.id,
-      if (instance.parentId case final value?) 'parentId': value,
-      'name': instance.name,
-      'description': instance.description,
-      'displayName': instance.displayName,
-      'folderType': instance.folderType,
-      'canBeSelected': instance.canBeSelected,
-    };
+  'id': instance.id,
+  'parentId': ?instance.parentId,
+  'name': instance.name,
+  'description': instance.description,
+  'displayName': instance.displayName,
+  'folderType': instance.folderType,
+  'canBeSelected': instance.canBeSelected,
+};

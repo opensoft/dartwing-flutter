@@ -4,7 +4,7 @@ enum PatientStatus {
   @JsonValue("Active")
   active,
   @JsonValue("Disabled")
-  disabled
+  disabled,
 }
 
 enum InpatientStatus {
@@ -15,7 +15,7 @@ enum InpatientStatus {
   @JsonValue("Admitted")
   admitted,
   @JsonValue("DischargeScheduled")
-  dischargeScheduled
+  dischargeScheduled,
 }
 
 enum PatientReportPreference {
@@ -24,26 +24,26 @@ enum PatientReportPreference {
   @JsonValue("Email")
   email,
   @JsonValue("Print")
-  print
+  print,
 }
 
 enum BloodGroup {
-  @JsonValue("None")
+  @JsonValue("")
   none,
-  @JsonValue("APositive")
+  @JsonValue("A Positive")
   aPositive,
-  @JsonValue("ANegative")
+  @JsonValue("A Negative")
   aNegative,
-  @JsonValue("ABPositive")
+  @JsonValue("AB Positive")
   abPositive,
-  @JsonValue("ABNegative")
+  @JsonValue("AB Negative")
   abNegative,
-  @JsonValue("BPositive")
+  @JsonValue("B Positive")
   bPositive,
-  @JsonValue("BNegative")
+  @JsonValue("B Negative")
   bNegative,
-  @JsonValue("OPositive")
+  @JsonValue("O Positive")
   oPositive,
-  @JsonValue("ONegative")
-  oNegative
+  @JsonValue("O Negative")
+  oNegative,
 }
