@@ -9,12 +9,25 @@ class HealthcareApi extends BaseNetworkApi {
 
   Future<Patient> createPatient(Patient patient) async {
     return await RestClient.post(
-      Uri.parse('$host/api/healthcare/$site/$company'),
-      headers: createBearerAuthNetworkHeaders(),
+      Uri.parse('$host/api/resource/Patient'),
+      headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(patient.toJson()),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot create patient');
+      }
+      return Patient.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<Patient> updatePatient(Patient patient) async {
+    return await RestClient.put(
+      Uri.parse('$host/api/resource/Patient/${patient.id}'),
+      headers: createTokenAuthNetworkHeaders(),
+      body: jsonEncode(patient.toJson()),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot update patient');
       }
       return Patient.fromJson(json.decode(response.body));
     });
@@ -25,7 +38,7 @@ class HealthcareApi extends BaseNetworkApi {
       Uri.parse(
         '$host/api/resource/Patient/$patientId?limit_start=0&limit_page_length=100',
       ),
-      headers: createBearerAuthNetworkHeaders(),
+      headers: createTokenAuthNetworkHeaders(),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch patient');
