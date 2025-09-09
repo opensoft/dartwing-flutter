@@ -8,58 +8,58 @@ part of 'patient.dart';
 
 Patient _$PatientFromJson(Map<String, dynamic> json) => Patient()
   ..id = json['name'] as String? ?? ''
-  ..owner = json['owner'] as String? ?? ''
-  ..creation = json['creation'] as String? ?? ''
-  ..firstName = json['first_name'] as String? ?? ''
-  ..middleName = json['middle_name'] as String? ?? ''
-  ..lastName = json['last_name'] as String? ?? ''
-  ..patientName = json['patient_name'] as String? ?? ''
-  ..sex = json['sex'] as String? ?? ''
-  ..image = json['image'] as String? ?? ''
+  ..owner = json['owner'] as String?
+  ..creation = json['creation'] as String?
+  ..firstName = json['first_name'] as String?
+  ..middleName = json['middle_name'] as String?
+  ..lastName = json['last_name'] as String?
+  ..patientName = json['patient_name'] as String?
+  ..sex = json['sex'] as String?
+  ..image = json['image'] as String?
   ..status =
       $enumDecodeNullable(_$PatientStatusEnumMap, json['status']) ??
       PatientStatus.disabled
-  ..identificationNumber = json['identification_number'] as String? ?? ''
-  ..inpatientRecord = json['inpatient_record'] as String? ?? ''
-  ..mobile = json['mobile'] as String? ?? ''
-  ..phone = json['phone'] as String? ?? ''
-  ..email = json['email'] as String? ?? ''
-  ..userId = json['user_id'] as String? ?? ''
-  ..customer = json['customer'] as String? ?? ''
-  ..customerGroup = json['customerGroup'] as String? ?? ''
-  ..territory = json['territory'] as String? ?? ''
-  ..defaultCurrency = json['default_currency'] as String? ?? ''
-  ..defaultPriceList = json['default_price_list'] as String? ?? ''
-  ..language = json['language'] as String? ?? ''
-  ..patientDetails = json['patient_details'] as String? ?? ''
+  ..identificationNumber = json['identification_number'] as String?
+  ..inpatientRecord = json['inpatient_record'] as String?
+  ..mobile = json['mobile'] as String?
+  ..phone = json['phone'] as String?
+  ..email = json['email'] as String?
+  ..userId = json['user_id'] as String?
+  ..customer = json['customer'] as String?
+  ..customerGroup = json['customerGroup'] as String?
+  ..territory = json['territory'] as String?
+  ..defaultCurrency = json['default_currency'] as String?
+  ..defaultPriceList = json['default_price_lisat'] as String?
+  ..language = json['language'] as String?
+  ..patientDetails = json['patient_details'] as String?
   ..bloodGroup =
       $enumDecodeNullable(_$BloodGroupEnumMap, json['blood_group']) ??
       BloodGroup.none;
 
 Map<String, dynamic> _$PatientToJson(Patient instance) => <String, dynamic>{
   'name': instance.id,
-  'owner': instance.owner,
-  'creation': instance.creation,
-  'first_name': instance.firstName,
-  'middle_name': instance.middleName,
-  'last_name': instance.lastName,
-  'patient_name': instance.patientName,
-  'sex': instance.sex,
-  'image': instance.image,
+  'owner': ?instance.owner,
+  'creation': ?instance.creation,
+  'first_name': ?instance.firstName,
+  'middle_name': ?instance.middleName,
+  'last_name': ?instance.lastName,
+  'patient_name': ?instance.patientName,
+  'sex': ?instance.sex,
+  'image': ?instance.image,
   'status': _$PatientStatusEnumMap[instance.status]!,
-  'identification_number': instance.identificationNumber,
-  'inpatient_record': instance.inpatientRecord,
-  'mobile': instance.mobile,
-  'phone': instance.phone,
-  'email': instance.email,
-  'user_id': instance.userId,
-  'customer': instance.customer,
-  'customerGroup': instance.customerGroup,
-  'territory': instance.territory,
-  'default_currency': instance.defaultCurrency,
-  'default_price_list': instance.defaultPriceList,
-  'language': instance.language,
-  'patient_details': instance.patientDetails,
+  'identification_number': ?instance.identificationNumber,
+  'inpatient_record': ?instance.inpatientRecord,
+  'mobile': ?instance.mobile,
+  'phone': ?instance.phone,
+  'email': ?instance.email,
+  'user_id': ?instance.userId,
+  'customer': ?instance.customer,
+  'customerGroup': ?instance.customerGroup,
+  'territory': ?instance.territory,
+  'default_currency': ?instance.defaultCurrency,
+  'default_price_lisat': ?instance.defaultPriceList,
+  'language': ?instance.language,
+  'patient_details': ?instance.patientDetails,
   'blood_group': _$BloodGroupEnumMap[instance.bloodGroup]!,
 };
 
