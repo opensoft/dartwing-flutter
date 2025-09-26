@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+enum Roles { patient, doctor, nurse }
+
 enum PatientStatus {
   @JsonValue("Active")
   active,

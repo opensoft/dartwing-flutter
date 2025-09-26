@@ -1,6 +1,7 @@
 import '../core/persistent_storage.dart';
 import 'dart_wing/dart_wing_api.dart';
-import 'healthcare/healthcare_api.dart';
+import 'frappe/healthcare_api.dart';
+import 'frappe/users_api.dart';
 import 'paper_trail.dart';
 import 'rest_client.dart';
 
@@ -75,6 +76,8 @@ class NetworkClients {
           dartWingApi.company = Globals.applicationInfo.companyAlias;
           healthcareApi.site = Globals.applicationInfo.defaultSite;
           healthcareApi.company = Globals.applicationInfo.companyAlias;
+          usersApi.site = Globals.applicationInfo.defaultSite;
+          usersApi.company = Globals.applicationInfo.companyAlias;
 
           if (qaModeEnabled) {
             dartWingApi.init(
@@ -85,12 +88,20 @@ class NetworkClients {
               "https://qa.frappe.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
+            usersApi.init(
+              "https://qa.frappe.opensoft.one",
+              Globals.applicationInfo.defaultSite,
+            );
           } else {
             dartWingApi.init(
               'https://dartwing-gatekeeper.opensoft.one',
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
+              "https://frappe.opensoft.one",
+              Globals.applicationInfo.defaultSite,
+            );
+            usersApi.init(
               "https://frappe.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
@@ -108,4 +119,5 @@ class NetworkClients {
     '',
     '',
   );
+  static UsersApi usersApi = UsersApi(frappeRestClient, '', '', '');
 }

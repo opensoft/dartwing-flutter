@@ -41,7 +41,21 @@ class HealthcareApi extends BaseNetworkApi {
       headers: createTokenAuthNetworkHeaders(),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot fetch patient');
+        errorHandler(response, 'Cannot fetch patient by id $patientId');
+      }
+      return Patient.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<Patient> fetchPatientByUserId(String userId) async {
+    return await RestClient.get(
+      Uri.parse(
+        '$host/api/resource/Patient?fields=["name","first_name","last_name","user_id"]&filters=[["Patient","user_id","=","$userId"]]',
+      ),
+      headers: createTokenAuthNetworkHeaders(),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch patient by user_id $userId');
       }
       return Patient.fromJson(json.decode(response.body));
     });
