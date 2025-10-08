@@ -87,7 +87,7 @@ class HealthcareApi extends BaseNetworkApi {
 
   Future<Doctor> createDoctor(Doctor doctor) async {
     return await RestClient.post(
-      Uri.parse('$host/api/resource/Doctor'),
+      Uri.parse('$host/api/resource/Healthcare Practitioner'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(doctor.toJson()),
     ).then((response) {
@@ -100,7 +100,7 @@ class HealthcareApi extends BaseNetworkApi {
 
   Future<Doctor> updateDoctor(Doctor doctor) async {
     return await RestClient.put(
-      Uri.parse('$host/api/resource/Doctor/${doctor.id}'),
+      Uri.parse('$host/api/resource/Healthcare Practitioner/${doctor.id}'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(doctor.toJson()),
     ).then((response) {
@@ -114,7 +114,7 @@ class HealthcareApi extends BaseNetworkApi {
   Future<Doctor> fetchDoctor(String doctorId) async {
     return await RestClient.get(
       Uri.parse(
-        '$host/api/resource/Doctor/$doctorId?limit_start=0&limit_page_length=100',
+        '$host/api/resource/Healthcare Practitioner/$doctorId?limit_start=0&limit_page_length=100',
       ),
       headers: createTokenAuthNetworkHeaders(),
     ).then((response) {
@@ -128,7 +128,7 @@ class HealthcareApi extends BaseNetworkApi {
   Future<List<Doctor>> fetchDoctors() async {
     return await RestClient.get(
       Uri.parse(
-        '$host/api/resource/Doctor?limit_start=0&limit_page_length=100&fields=["*"]',
+        '$host/api/resource/Healthcare Practitioner?limit_start=0&limit_page_length=100&fields=["*"]',
       ),
       headers: createTokenAuthNetworkHeaders(),
     ).then((response) {
