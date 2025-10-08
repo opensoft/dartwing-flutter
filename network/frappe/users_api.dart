@@ -29,7 +29,7 @@ class UsersApi extends BaseNetworkApi {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot update user');
       }
-      return User.fromJson(json.decode(response.body));
+      return User.fromJson(json.decode(response.body)['data']);
     });
   }
 
@@ -43,7 +43,7 @@ class UsersApi extends BaseNetworkApi {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch user');
       }
-      return User.fromJson(json.decode(response.body));
+      return User.fromJson(json.decode(response.body)['data']);
     });
   }
 

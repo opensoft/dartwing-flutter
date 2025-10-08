@@ -66,6 +66,8 @@ class BaseNetworkApi {
           message += ': ${bodyJson['error']['message']}';
         } else if (bodyJson['detail'] != null) {
           message += ': ${bodyJson['detail']}';
+        } else if (bodyJson['exception'] != null) {
+          message += ': ${bodyJson['exception']}';
         }
       } catch (e) {
         if (!response.body.contains("html")) {

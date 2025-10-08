@@ -24,8 +24,8 @@ class Patient {
   String? sex;
   @JsonKey(includeIfNull: false)
   String? image;
-  @JsonKey(includeIfNull: false, defaultValue: PatientStatus.disabled)
-  PatientStatus status = PatientStatus.disabled;
+  @JsonKey(includeIfNull: false, defaultValue: PatientStatus.active)
+  PatientStatus status = PatientStatus.active;
   @JsonKey(includeIfNull: false, name: 'identification_number')
   String? identificationNumber;
   @JsonKey(includeIfNull: false, name: 'inpatient_record')

@@ -18,7 +18,7 @@ Patient _$PatientFromJson(Map<String, dynamic> json) => Patient()
   ..image = json['image'] as String?
   ..status =
       $enumDecodeNullable(_$PatientStatusEnumMap, json['status']) ??
-      PatientStatus.disabled
+      PatientStatus.active
   ..identificationNumber = json['identification_number'] as String?
   ..inpatientRecord = json['inpatient_record'] as String?
   ..mobile = json['mobile'] as String?

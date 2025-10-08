@@ -14,10 +14,13 @@ class User {
   String? middleName;
   @JsonKey(includeIfNull: false, name: 'last_name')
   String? lastName;
+  @JsonKey(includeIfNull: false, name: 'full_name')
+  String? fullName;
+  String? language;
   @JsonKey(includeIfNull: false, name: 'send_welcome_email')
-  String? sendWelcomeEmail;
+  int? sendWelcomeEmail;
 
-  @JsonKey(includeIfNull: false, includeFromJson: false)
+  @JsonKey(includeIfNull: false)
   List<Role> roles = [];
 
   Role? getRole(Roles checkRole) {

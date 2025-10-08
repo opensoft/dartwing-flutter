@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../base_api.dart';
 import '../rest_client.dart';
+import 'data/doctor.dart';
 import 'data/patient.dart';
 
 class HealthcareApi extends BaseNetworkApi {
@@ -16,7 +17,7 @@ class HealthcareApi extends BaseNetworkApi {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot create patient');
       }
-      return Patient.fromJson(json.decode(response.body));
+      return Patient.fromJson(json.decode(response.body)['data']);
     });
   }
 
@@ -50,14 +51,18 @@ class HealthcareApi extends BaseNetworkApi {
   Future<Patient> fetchPatientByUserId(String userId) async {
     return await RestClient.get(
       Uri.parse(
-        '$host/api/resource/Patient?fields=["name","first_name","last_name","user_id"]&filters=[["Patient","user_id","=","$userId"]]',
+        '$host/api/resource/Patient?fields=["*"]&filters=[["Patient","user_id","=","$userId"]]',
       ),
       headers: createTokenAuthNetworkHeaders(),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot fetch patient by user_id $userId');
       }
-      return Patient.fromJson(json.decode(response.body));
+      List jsonArray = json.decode(response.body)['data'];
+      if (jsonArray.isEmpty) {
+        errorHandler(response, 'Patient with user_id $userId does not exist');
+      }
+      return Patient.fromJson(jsonArray.first);
     });
   }
 
@@ -75,6 +80,65 @@ class HealthcareApi extends BaseNetworkApi {
       List<Patient> values = [];
       for (var object in jsonArray) {
         values.add(Patient.fromJson(object));
+      }
+      return values;
+    });
+  }
+
+  Future<Doctor> createDoctor(Doctor doctor) async {
+    return await RestClient.post(
+      Uri.parse('$host/api/resource/Doctor'),
+      headers: createTokenAuthNetworkHeaders(),
+      body: jsonEncode(doctor.toJson()),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot create doctor');
+      }
+      return Doctor.fromJson(json.decode(response.body)['data']);
+    });
+  }
+
+  Future<Doctor> updateDoctor(Doctor doctor) async {
+    return await RestClient.put(
+      Uri.parse('$host/api/resource/Doctor/${doctor.id}'),
+      headers: createTokenAuthNetworkHeaders(),
+      body: jsonEncode(doctor.toJson()),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot update doctor');
+      }
+      return Doctor.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<Doctor> fetchDoctor(String doctorId) async {
+    return await RestClient.get(
+      Uri.parse(
+        '$host/api/resource/Doctor/$doctorId?limit_start=0&limit_page_length=100',
+      ),
+      headers: createTokenAuthNetworkHeaders(),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch doctor by id $doctorId');
+      }
+      return Doctor.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<List<Doctor>> fetchDoctors() async {
+    return await RestClient.get(
+      Uri.parse(
+        '$host/api/resource/Doctor?limit_start=0&limit_page_length=100&fields=["*"]',
+      ),
+      headers: createTokenAuthNetworkHeaders(),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch doctors list');
+      }
+      var jsonArray = json.decode(response.body)['data'];
+      List<Doctor> values = [];
+      for (var object in jsonArray) {
+        values.add(Doctor.fromJson(object));
       }
       return values;
     });
