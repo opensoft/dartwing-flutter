@@ -1,0 +1,49 @@
+{
+  "name": "DartWing Flutter Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    "args": {
+      "USER_UID": "1000",
+      "USER_GID": "1000",
+      "USERNAME": "brett"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dart-code.dart-code",
+        "dart-code.flutter",
+        "ms-vscode.vscode-json",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense",
+        "ms-vscode.theme-tomorrowkit",
+        "PKief.material-icon-theme",
+        "usernamehw.errorlens",
+        "streetsidesoftware.code-spell-checker",
+        "ms-azure-devops.azure-pipelines",
+        "ms-vscode-remote.remote-containers",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "localizely.flutter-intl",
+        "Nash.awesome-flutter-snippets",
+        "humao.rest-client",
+        "ryanluker.vscode-coverage-gutters"
+      ],
+      "settings": {
+        "dart.flutterSdkPath": "/opt/flutter",
+        "dart.sdkPath": "/opt/flutter/bin/cache/dart-sdk"
+      }
+    }
+  },
+  "forwardPorts": [
+    3000,
+    8080
+  ],
+  "postCreateCommand": "flutter doctor -v || true",
+  "remoteUser": "brett",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceFolder": "/workspace"
+}
