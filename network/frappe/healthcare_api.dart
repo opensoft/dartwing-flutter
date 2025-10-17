@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../base_api.dart';
 import '../rest_client.dart';
+import 'data/dish.dart';
 import 'data/doctor.dart';
 import 'data/patient.dart';
 
@@ -139,6 +140,51 @@ class HealthcareApi extends BaseNetworkApi {
       List<Doctor> values = [];
       for (var object in jsonArray) {
         values.add(Doctor.fromJson(object));
+      }
+      return values;
+    });
+  }
+
+  Future<Dish> createDish(Dish dish) async {
+    return await RestClient.post(
+      Uri.parse('$host/api/resource/Dish'),
+      headers: createTokenAuthNetworkHeaders(),
+      body: jsonEncode(dish.toJson()),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot create dish');
+      }
+      return Dish.fromJson(json.decode(response.body)['data']);
+    });
+  }
+
+  Future<Dish> updateDish(Dish dish) async {
+    return await RestClient.put(
+      Uri.parse('$host/api/resource/Dish/${dish.name}'),
+      headers: createTokenAuthNetworkHeaders(),
+      body: jsonEncode(dish.toJson()),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot update dish');
+      }
+      return Dish.fromJson(json.decode(response.body));
+    });
+  }
+
+  Future<List<Dish>> fetchDishes() async {
+    return await RestClient.get(
+      Uri.parse(
+        '$host/api/resource/Dish?limit_start=0&limit_page_length=100&fields=["*"]',
+      ),
+      headers: createTokenAuthNetworkHeaders(),
+    ).then((response) {
+      if (response.statusCode ~/ 100 != 2) {
+        errorHandler(response, 'Cannot fetch dishes list');
+      }
+      var jsonArray = json.decode(response.body)['data'];
+      List<Dish> values = [];
+      for (var object in jsonArray) {
+        values.add(Dish.fromJson(object));
       }
       return values;
     });
