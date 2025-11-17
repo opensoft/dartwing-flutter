@@ -81,28 +81,28 @@ class NetworkClients {
 
           if (qaModeEnabled) {
             dartWingApi.init(
-              "https://dartwing-dotnet-gatekeeper-qa.tech-corps.com",
+              "https://qa.gateway.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
-              "https://qa.frappe.opensoft.one",
+              "qa.frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
             usersApi.init(
-              "https://qa.frappe.opensoft.one",
+              "qa.frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
           } else {
             dartWingApi.init(
-              'https://dartwing-gatekeeper.opensoft.one',
+              'https://gateway.dartwing.opensoft.one',
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
-              "https://frappe.opensoft.one",
+              "https://frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
             usersApi.init(
-              "https://frappe.opensoft.one",
+              "https://frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
           }
