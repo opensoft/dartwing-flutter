@@ -1,4 +1,3 @@
-import 'package:keycloak_wrapper/keycloak_wrapper.dart';
 
 import 'data/application_info.dart';
 

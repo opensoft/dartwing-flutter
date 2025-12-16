@@ -30,7 +30,7 @@ class _ChooseDocumentRepositoryPageState
 
   List<Folder> _folders = [];
 
-  List<Folder> _selectedFolders = [];
+  final List<Folder> _selectedFolders = [];
 
   bool _canBeSelected() {
     return _selectedFolders.isNotEmpty
@@ -205,7 +205,7 @@ class _ChooseDocumentRepositoryPageState
               child: DropdownButtonFormField<Provider>(
                 isExpanded: true,
                 alignment: AlignmentDirectional.center,
-                value: _currentProvider,
+                initialValue: _currentProvider,
                 icon: const Icon(Icons.arrow_downward),
                 iconEnabledColor: Colors.white,
                 elevation: 16,

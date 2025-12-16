@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentStorage {
-  static saveAppId(String appId) async {
+  static Future<void> saveAppId(String appId) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setString('app_id', appId);
   }
@@ -11,12 +11,12 @@ class PersistentStorage {
     return myPrefs.getString('app_id') ?? '';
   }
 
-  static init() async {
+  static Future<void> init() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setBool('init', true);
   }
 
-  static deInit() async {
+  static Future<void> deInit() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setBool('init', false);
   }
@@ -26,7 +26,7 @@ class PersistentStorage {
     return myPrefs.getBool('init') ?? false;
   }
 
-  static saveCompany(String company) async {
+  static Future<void> saveCompany(String company) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setString('Company', company);
   }
@@ -36,7 +36,7 @@ class PersistentStorage {
     return myPrefs.getString('Company') ?? '';
   }
 
-  static saveSite(String site) async {
+  static Future<void> saveSite(String site) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setString('Site', site);
   }
@@ -46,7 +46,7 @@ class PersistentStorage {
     return myPrefs.getString('Site') ?? '';
   }
 
-  static saveAccessUmsToken(String token) async {
+  static Future<void> saveAccessUmsToken(String token) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setString('access_ums_token', token);
   }
@@ -61,7 +61,7 @@ class PersistentStorage {
     return myPrefs.getBool('complaint_notification') ?? false;
   }
 
-  static setComplaintNotificationEnabled(bool enabled) async {
+  static Future<void> setComplaintNotificationEnabled(bool enabled) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setBool('complaint_notification', enabled);
   }

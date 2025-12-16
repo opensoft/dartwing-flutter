@@ -22,8 +22,6 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
   bool _loadingOverlayEnabled = false;
   final _focusNode = FocusNode();
 
-  Organization _company = Organization();
-
   void _fetchOrganization() {
     setState(() {
       _loadingOverlayEnabled = true;
@@ -32,7 +30,6 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
         .fetchOrganization(widget.companyName)
         .then((company) {
       setState(() {
-        _company = company;
         _loadingOverlayEnabled = false;
       });
     }).catchError((e) {

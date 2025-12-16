@@ -19,7 +19,7 @@ class SelectOrganizationTypePage extends StatefulWidget {
 
 class _SelectOrganizationTypePageState
     extends State<SelectOrganizationTypePage> {
-  bool _loadingOverlayEnabled = false;
+  final bool _loadingOverlayEnabled = false;
   final TextEditingController _organizationDescriptionController =
       TextEditingController();
   final _focusNode = FocusNode();

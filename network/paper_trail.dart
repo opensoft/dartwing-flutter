@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 class PaperTrailClient {
-  static init(String appName, String appId, String host, int port) {
+  static void init(String appName, String appId, String host, int port) {
     _appName = appName;
     _appId = appId;
     _host = host;

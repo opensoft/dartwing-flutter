@@ -5,7 +5,7 @@ import '../network/paper_trail.dart';
 import 'widgets/base_colors.dart';
 
 class Dialogs {
-  static TextEditingController _textController = TextEditingController();
+  static final TextEditingController _textController = TextEditingController();
 
   static Future<dynamic> showWarningDialog(
       BuildContext context, String message) {

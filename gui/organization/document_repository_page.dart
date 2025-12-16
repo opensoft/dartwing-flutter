@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../network/dart_wing/data/organization.dart';
 import '../base_apps_routers.dart';
 import '../notification.dart';
 import '../widgets/base_colors.dart';
@@ -21,7 +18,6 @@ class DocumentRepositoryPage extends StatefulWidget {
 
 class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
   bool _loadingOverlayEnabled = false;
-  final _focusNode = FocusNode();
 
   final TextEditingController _folderPathController = TextEditingController();
 

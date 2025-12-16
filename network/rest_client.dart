@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
-import 'package:http_parser/http_parser.dart';
 
 import 'paper_trail.dart';
 

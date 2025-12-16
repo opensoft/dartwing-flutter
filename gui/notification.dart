@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../network/paper_trail.dart';
 
-showInfoNotification(BuildContext context, String message) {
+void showInfoNotification(BuildContext context, String message) {
   PaperTrailClient.sendInfoMessageToPaperTrail(message);
   showNotification(context, message);
 }
 
-showWarningNotification(BuildContext context, String message) {
+void showWarningNotification(BuildContext context, String message) {
   PaperTrailClient.sendWarningMessageToPaperTrail(message);
   if (context.mounted) {
     showNotification(context, message, warning: true);
   }
 }
 
-showNotification(BuildContext context, String message, {bool warning = false}) {
+void showNotification(BuildContext context, String message, {bool warning = false}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),

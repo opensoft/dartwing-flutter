@@ -28,7 +28,7 @@ class _CreateCompanyOrganizationPageState
   final TextEditingController _organizationAbbrController =
       TextEditingController();
   final _focusNode = FocusNode();
-  Organization _organization = Organization();
+  final Organization _organization = Organization();
 
   void _createCompany() {
     _organization.name = _organizationNameController.text;
