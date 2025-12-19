@@ -47,6 +47,12 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
   }
 
   @override
+  void dispose() {
+    _folderPathController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,

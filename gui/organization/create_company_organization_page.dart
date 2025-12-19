@@ -64,6 +64,14 @@ class _CreateCompanyOrganizationPageState
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    _organizationNameController.dispose();
+    _organizationAbbrController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,

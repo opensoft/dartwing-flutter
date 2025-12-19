@@ -33,6 +33,13 @@ class _SelectOrganizationTypePageState
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    _organizationDescriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,

@@ -49,6 +49,12 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,

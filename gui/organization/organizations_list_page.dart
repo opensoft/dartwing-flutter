@@ -48,6 +48,12 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,

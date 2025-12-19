@@ -81,10 +81,8 @@ class BaseAppsRouters {
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Container(
-              alignment: Alignment.center,
-              child: const Text('No Page Found'),
-            ),
+            appBar: AppBar(title: const Text('No Page Found')),
+            body: const Center(child: Text('No Page Found')),
           ),
         );
     }

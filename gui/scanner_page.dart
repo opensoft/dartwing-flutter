@@ -34,9 +34,10 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
+    _textController.dispose();
+    controller.dispose();
     super.dispose();
-    await controller.dispose();
   }
 
   void _handleBarcode(BarcodeCapture barcodes) {
