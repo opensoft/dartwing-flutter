@@ -85,11 +85,11 @@ class NetworkClients {
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
-              "qa.frappe.dartwing.opensoft.one",
+              "https://qa.frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
             usersApi.init(
-              "qa.frappe.dartwing.opensoft.one",
+              "https://qa.frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
             );
           } else {

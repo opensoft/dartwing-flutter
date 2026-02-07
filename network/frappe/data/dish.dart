@@ -11,8 +11,8 @@ class Dish {
   @JsonKey(includeIfNull: false, name: 'patient_id')
   String? patientId;
   String? location;
-  @JsonKey(includeIfNull: false, name: 'number_of_wells', defaultValue: 24)
-  int numberOfWells = 24;
+  @JsonKey(includeIfNull: false, name: 'number_of_wells', defaultValue: 16)
+  int numberOfWells = 16;
   @JsonKey(includeIfNull: false, includeFromJson: false)
   Map<String, String> wells = {};
 

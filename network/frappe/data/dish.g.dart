@@ -10,7 +10,7 @@ Dish _$DishFromJson(Map<String, dynamic> json) => Dish()
   ..name = json['name'] as String?
   ..patientId = json['patient_id'] as String?
   ..location = json['location'] as String?
-  ..numberOfWells = (json['number_of_wells'] as num?)?.toInt() ?? 24;
+  ..numberOfWells = (json['number_of_wells'] as num?)?.toInt() ?? 16;
 
 Map<String, dynamic> _$DishToJson(Dish instance) => <String, dynamic>{
   'name': ?instance.name,
