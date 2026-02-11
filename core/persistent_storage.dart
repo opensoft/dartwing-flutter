@@ -56,6 +56,36 @@ class PersistentStorage {
     return myPrefs.getString('access_ums_token') ?? '';
   }
 
+  static Future<void> saveAccessUmsTokenExpiryEpochMs(int epochMs) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setInt('access_ums_token_expiry_epoch_ms', epochMs);
+  }
+
+  static Future<int> getAccessUmsTokenExpiryEpochMs() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getInt('access_ums_token_expiry_epoch_ms') ?? 0;
+  }
+
+  static Future<void> saveKeycloakClientId(String clientId) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setString('keycloak_client_id', clientId);
+  }
+
+  static Future<String> getKeycloakClientId() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getString('keycloak_client_id') ?? '';
+  }
+
+  static Future<void> saveKeycloakClientSecret(String clientSecret) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setString('keycloak_client_secret', clientSecret);
+  }
+
+  static Future<String> getKeycloakClientSecret() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getString('keycloak_client_secret') ?? '';
+  }
+
   static Future<bool> isComplaintNotificationEnabled() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getBool('complaint_notification') ?? false;
