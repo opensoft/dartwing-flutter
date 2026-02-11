@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+
 import '../base_api.dart';
 import '../rest_client.dart';
 import 'data/auth_code_response.dart';
@@ -13,78 +15,72 @@ import 'data/slot_event_request.dart';
 class LabLincApi extends BaseNetworkApi {
   LabLincApi(super.restClient, super.host, super.site, super.company);
 
-  Future<void> sendHeartbeat(String deviceUid) async {
-    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
+  Future<void> sendHeartbeat() async {
     return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/$encodedDeviceUid/heartbeat'),
+      Uri.parse('$host/api/v1/devices/heartbeat'),
       headers: createBearerAuthNetworkHeaders(),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot send heartbeat for device $deviceUid');
+        errorHandler(response, 'Cannot send heartbeat');
       }
     });
   }
 
   Future<CommandStatusResponse> sendCommandAck(
-    String deviceUid,
     CommandAckRequest commandAckRequest,
   ) async {
-    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
     return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/$encodedDeviceUid/command-acks'),
+      Uri.parse('$host/api/v1/devices/command-acks'),
       headers: createBearerAuthNetworkHeaders(),
       body: jsonEncode(commandAckRequest.toJson()),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot send command ack for device $deviceUid');
+        errorHandler(response, 'Cannot send command ack');
       }
       return CommandStatusResponse.fromJson(json.decode(response.body));
     });
   }
 
-  Future<void> sendSlotEvent(
-    String deviceUid,
-    SlotEventRequest slotEventRequest,
-  ) async {
-    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
+  Future<void> sendSlotEvent(SlotEventRequest slotEventRequest) async {
     return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/$encodedDeviceUid/slot-events'),
+      Uri.parse('$host/api/v1/devices/slot-events'),
       headers: createBearerAuthNetworkHeaders(),
       body: jsonEncode(slotEventRequest.toJson()),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot send slot event for device $deviceUid');
+        errorHandler(response, 'Cannot send slot event');
       }
     });
   }
 
-  Future<AuthCodeResponse> fetchAuthCode(String deviceUid) async {
-    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
-    return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/$encodedDeviceUid/auth-code'),
-      headers: createBearerAuthNetworkHeaders(),
-    ).then((response) {
-      if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot fetch auth code for device $deviceUid');
-      }
-      return AuthCodeResponse.fromJson(json.decode(response.body));
-    });
+  Future<AuthCodeResponse> fetchAuthCode() async {
+    final headers = <String, String>{
+      ...createBearerAuthNetworkHeaders(),
+      'Content-Type': 'text/plain;charset=UTF-8',
+    };
+
+    final response = await _firstSuccessfulPost(
+      _deviceInfoPaths(suffix: 'auth-code'),
+      headers: headers,
+      body: '',
+    );
+
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(response, 'Cannot fetch auth code');
+    }
+    return AuthCodeResponse.fromJson(json.decode(response.body));
   }
 
-  Future<MqttConfigResponse> fetchMqttConfig(String deviceUid) async {
-    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
-    return await RestClient.get(
-      Uri.parse('$host/api/v1/devices/$encodedDeviceUid/mqtt-config'),
+  Future<MqttConfigResponse> fetchMqttConfig() async {
+    final response = await _firstSuccessfulGet(
+      _deviceInfoPaths(suffix: 'mqtt-config'),
       headers: createBearerAuthNetworkHeaders(),
-    ).then((response) {
-      if (response.statusCode ~/ 100 != 2) {
-        errorHandler(
-          response,
-          'Cannot fetch mqtt config for device $deviceUid',
-        );
-      }
-      return MqttConfigResponse.fromJson(json.decode(response.body));
-    });
+    );
+
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(response, 'Cannot fetch mqtt config');
+    }
+    return MqttConfigResponse.fromJson(json.decode(response.body));
   }
 
   Future<List<DeviceInfo>> fetchDevices({int? page, int? pageSize}) async {
@@ -118,31 +114,27 @@ class LabLincApi extends BaseNetworkApi {
       return decoded
           .whereType<Map>()
           .map(
-            (item) => _deviceInfoFromApiJson(
-              Map<String, dynamic>.from(item as Map),
-            ),
+            (item) =>
+                _deviceInfoFromApiJson(Map<String, dynamic>.from(item as Map)),
           )
           .toList();
     });
   }
 
-  Future<List<StationSlotInfo>> fetchStationSlots(String deviceUid) async {
-    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
-    final uri = Uri.parse('$host/api/v1/stations/$encodedDeviceUid/slots');
-
-    return await RestClient.get(
-      uri,
+  Future<List<StationSlotInfo>> fetchStationSlots([String? deviceUid]) async {
+    final response = await _firstSuccessfulGet(
+      _stationInfoPaths(suffix: 'slots', deviceUid: deviceUid),
       headers: createBearerAuthNetworkHeaders(),
-    ).then((response) {
-      if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot fetch slots for device $deviceUid');
-      }
+    );
 
-      final decoded = json.decode(response.body);
-      final slotItems = _extractStationSlotItems(decoded);
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(response, 'Cannot fetch slots');
+    }
 
-      return slotItems.map(StationSlotInfo.fromApiJson).toList();
-    });
+    final decoded = json.decode(response.body);
+    final slotItems = _extractStationSlotItems(decoded);
+
+    return slotItems.map(StationSlotInfo.fromApiJson).toList();
   }
 
   Future<CommandStatusResponse> rotateStationToSlot(
@@ -150,7 +142,9 @@ class LabLincApi extends BaseNetworkApi {
     int slotNumber,
   ) async {
     final encodedDeviceUid = Uri.encodeComponent(deviceUid);
-    final uri = Uri.parse('$host/api/v1/stations/$encodedDeviceUid/commands/rotate');
+    final uri = Uri.parse(
+      '$host/api/v1/stations/$encodedDeviceUid/commands/rotate',
+    );
     final payload = {
       'commandId': null,
       'toAngle': null,
@@ -266,8 +260,7 @@ class LabLincApi extends BaseNetworkApi {
 
   String _stringValue(dynamic value) => value is String ? value : '';
 
-  String? _nullableStringValue(dynamic value) =>
-      value is String ? value : null;
+  String? _nullableStringValue(dynamic value) => value is String ? value : null;
 
   int _intValue(dynamic value) {
     if (value is int) {
@@ -310,5 +303,58 @@ class LabLincApi extends BaseNetworkApi {
     }
 
     return CommandStatusResponse();
+  }
+
+  List<Uri> _deviceInfoPaths({required String suffix}) {
+    final paths = <Uri>[Uri.parse('$host/api/v1/device/$suffix')];
+    return paths;
+  }
+
+  List<Uri> _stationInfoPaths({required String suffix, String? deviceUid}) {
+    final paths = <Uri>[Uri.parse('$host/api/v1/stations/$suffix')];
+
+    final trimmedDeviceUid = deviceUid?.trim() ?? '';
+    if (trimmedDeviceUid.isNotEmpty) {
+      final encodedDeviceUid = Uri.encodeComponent(trimmedDeviceUid);
+      paths.add(Uri.parse('$host/api/v1/stations/$encodedDeviceUid/$suffix'));
+    }
+    return paths;
+  }
+
+  Future<http.Response> _firstSuccessfulGet(
+    List<Uri> candidateUris, {
+    Map<String, String>? headers,
+  }) async {
+    late http.Response lastResponse;
+    for (final uri in candidateUris) {
+      final response = await RestClient.get(uri, headers: headers);
+      if (response.statusCode ~/ 100 == 2) {
+        return response;
+      }
+      if (response.statusCode != 404) {
+        return response;
+      }
+      lastResponse = response;
+    }
+    return lastResponse;
+  }
+
+  Future<http.Response> _firstSuccessfulPost(
+    List<Uri> candidateUris, {
+    Map<String, String>? headers,
+    Object? body,
+  }) async {
+    late http.Response lastResponse;
+    for (final uri in candidateUris) {
+      final response = await RestClient.post(uri, headers: headers, body: body);
+      if (response.statusCode ~/ 100 == 2) {
+        return response;
+      }
+      if (response.statusCode != 404) {
+        return response;
+      }
+      lastResponse = response;
+    }
+    return lastResponse;
   }
 }
