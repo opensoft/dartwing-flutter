@@ -234,6 +234,47 @@ class LabLincApi extends BaseNetworkApi {
     );
   }
 
+  Future<StationSlotInfo> removeDishFromSlot(String deviceUid, int slotNumber) async {
+    final encodedDeviceUid = Uri.encodeComponent(deviceUid);
+    final encodedSlotNumber = Uri.encodeComponent(slotNumber.toString());
+    final uri = Uri.parse(
+      '$host/api/v1/stations/$encodedDeviceUid/slots/$encodedSlotNumber/dish',
+    );
+
+    final response = await RestClient.delete(
+      uri,
+      headers: {
+        ...createBearerAuthNetworkHeaders(),
+        'Content-Type': 'text/plain;charset=UTF-8',
+      },
+      body: '',
+    );
+
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(
+        response,
+        'Cannot remove dish from slot $slotNumber for device $deviceUid',
+      );
+    }
+
+    if (response.body.trim().isEmpty) {
+      return StationSlotInfo.empty(slotNumber);
+    }
+
+    final decoded = json.decode(response.body);
+    if (decoded is Map) {
+      return StationSlotInfo.fromApiJson(Map<String, dynamic>.from(decoded));
+    }
+
+    if (decoded is List && decoded.isNotEmpty && decoded.first is Map) {
+      return StationSlotInfo.fromApiJson(
+        Map<String, dynamic>.from(decoded.first as Map),
+      );
+    }
+
+    return StationSlotInfo.empty(slotNumber);
+  }
+
   List<Map<String, dynamic>> _extractStationSlotItems(dynamic decoded) {
     if (decoded is List) {
       return decoded
