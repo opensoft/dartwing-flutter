@@ -2,6 +2,7 @@ import '../core/persistent_storage.dart';
 import 'dart_wing/dart_wing_api.dart';
 import 'frappe/healthcare_api.dart';
 import 'frappe/users_api.dart';
+import 'lab_linc/lab_linc_api.dart';
 import 'paper_trail.dart';
 import 'rest_client.dart';
 
@@ -63,6 +64,11 @@ class NetworkClients {
               token,
               Globals.applicationInfo.userEmail,
             );
+            labLincRestClient.init(
+              Globals.applicationInfo.appName,
+              token,
+              Globals.applicationInfo.userEmail,
+            );
           }
 
           if (frappeToken != null) {
@@ -74,6 +80,8 @@ class NetworkClients {
           }
           dartWingApi.site = Globals.applicationInfo.defaultSite;
           dartWingApi.company = Globals.applicationInfo.companyAlias;
+          labLincApi.site = Globals.applicationInfo.defaultSite;
+          labLincApi.company = Globals.applicationInfo.companyAlias;
           healthcareApi.site = Globals.applicationInfo.defaultSite;
           healthcareApi.company = Globals.applicationInfo.companyAlias;
           usersApi.site = Globals.applicationInfo.defaultSite;
@@ -82,6 +90,10 @@ class NetworkClients {
           if (qaModeEnabled) {
             dartWingApi.init(
               "https://qa.gateway.dartwing.opensoft.one",
+              Globals.applicationInfo.defaultSite,
+            );
+            labLincApi.init(
+              "https://lablincdotnet-qa.tech-corps.com",
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
@@ -97,6 +109,10 @@ class NetworkClients {
               'https://gateway.dartwing.opensoft.one',
               Globals.applicationInfo.defaultSite,
             );
+            labLincApi.init(
+              'https://lablincdotnet.tech-corps.com',
+              Globals.applicationInfo.defaultSite,
+            );
             healthcareApi.init(
               "https://frappe.dartwing.opensoft.one",
               Globals.applicationInfo.defaultSite,
@@ -110,9 +126,11 @@ class NetworkClients {
   }
 
   static RestClient dartWingRestClient = RestClient();
+  static RestClient labLincRestClient = RestClient();
   static RestClient frappeRestClient = RestClient();
 
   static DartWingApi dartWingApi = DartWingApi(dartWingRestClient, '', '', '');
+  static LabLincApi labLincApi = LabLincApi(labLincRestClient, '', '', '');
   static HealthcareApi healthcareApi = HealthcareApi(
     frappeRestClient,
     '',
