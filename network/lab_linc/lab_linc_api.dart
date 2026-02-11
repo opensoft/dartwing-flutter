@@ -121,6 +121,30 @@ class LabLincApi extends BaseNetworkApi {
     });
   }
 
+  Future<DeviceInfo?> authorizeStationByQrCode(String qrCode) async {
+    final trimmedQrCode = qrCode.trim();
+    if (trimmedQrCode.isEmpty) {
+      return null;
+    }
+
+    final response = await RestClient.post(
+      Uri.parse('$host/api/v1/stations/authorize'),
+      headers: createBearerAuthNetworkHeaders(),
+      body: jsonEncode({'qrCode': trimmedQrCode}),
+    );
+
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(response, 'Cannot authorize station by qr code');
+    }
+
+    if (response.body.trim().isEmpty) {
+      return null;
+    }
+
+    final decoded = json.decode(response.body);
+    return _extractAuthorizedDevice(decoded);
+  }
+
   Future<List<StationSlotInfo>> fetchStationSlots([String? deviceUid]) async {
     final response = await _firstSuccessfulGet(
       _stationInfoPaths(suffix: 'slots', deviceUid: deviceUid),
@@ -247,20 +271,137 @@ class LabLincApi extends BaseNetworkApi {
 
   DeviceInfo _deviceInfoFromApiJson(Map<String, dynamic> json) {
     final device = DeviceInfo();
-    device.deviceUid = _stringValue(json['deviceUid']);
-    device.name = _stringValue(json['name']);
+    device.deviceUid = _firstNonEmptyString([
+      json['deviceUid'],
+      json['stationUid'],
+      json['uid'],
+      json['stationId'],
+      json['id'],
+    ]);
+    device.name = _firstNonEmptyString([
+      json['name'],
+      json['deviceName'],
+      json['stationName'],
+      json['displayName'],
+      json['label'],
+    ]);
     device.onlineStatus = _stringValue(json['onlineStatus']);
-    device.lastSeenAtUtc = _nullableStringValue(json['lastSeenAtUtc']);
-    device.labShortCode = _nullableStringValue(json['labShortCode']);
-    device.laboratoryName = _nullableStringValue(json['labName']);
+    device.lastSeenAtUtc = _nullableFirstNonEmptyString([
+      json['lastSeenAtUtc'],
+      json['lastSeenAt'],
+    ]);
+    device.labShortCode = _nullableFirstNonEmptyString([
+      json['labShortCode'],
+      json['shortCode'],
+    ]);
+    device.laboratoryName = _nullableFirstNonEmptyString([
+      json['labName'],
+      json['laboratoryName'],
+    ]);
     device.slotCount = _intValue(json['slotCount']);
     device.occupiedSlotCount = _intValue(json['occupiedSlotCount']);
     return device;
   }
 
+  DeviceInfo? _extractAuthorizedDevice(dynamic decodedJson) {
+    final deviceJson = _findDeviceMapInJson(decodedJson);
+    if (deviceJson == null) {
+      return null;
+    }
+
+    final device = _deviceInfoFromApiJson(deviceJson);
+    if (device.deviceUid.trim().isEmpty && device.name.trim().isEmpty) {
+      return null;
+    }
+    return device;
+  }
+
+  Map<String, dynamic>? _findDeviceMapInJson(dynamic value) {
+    if (value is Map) {
+      final map = Map<String, dynamic>.from(value);
+      if (_looksLikeDeviceMap(map)) {
+        return map;
+      }
+
+      const preferredKeys = <String>[
+        'station',
+        'device',
+        'data',
+        'result',
+        'payload',
+        'item',
+      ];
+      for (final key in preferredKeys) {
+        if (!map.containsKey(key)) {
+          continue;
+        }
+        final nested = _findDeviceMapInJson(map[key]);
+        if (nested != null) {
+          return nested;
+        }
+      }
+
+      for (final nestedValue in map.values) {
+        final nested = _findDeviceMapInJson(nestedValue);
+        if (nested != null) {
+          return nested;
+        }
+      }
+      return null;
+    }
+
+    if (value is List) {
+      for (final item in value) {
+        final nested = _findDeviceMapInJson(item);
+        if (nested != null) {
+          return nested;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  bool _looksLikeDeviceMap(Map<String, dynamic> map) {
+    const identityKeys = <String>{
+      'deviceUid',
+      'stationUid',
+      'uid',
+      'stationId',
+      'id',
+      'name',
+      'deviceName',
+      'stationName',
+      'displayName',
+      'label',
+    };
+    for (final key in identityKeys) {
+      final value = map[key];
+      if (value != null && value.toString().trim().isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   String _stringValue(dynamic value) => value is String ? value : '';
 
   String? _nullableStringValue(dynamic value) => value is String ? value : null;
+
+  String _firstNonEmptyString(List<dynamic> values) {
+    for (final value in values) {
+      final text = value?.toString().trim() ?? '';
+      if (text.isNotEmpty) {
+        return text;
+      }
+    }
+    return '';
+  }
+
+  String? _nullableFirstNonEmptyString(List<dynamic> values) {
+    final value = _firstNonEmptyString(values);
+    return value.isEmpty ? null : value;
+  }
 
   int _intValue(dynamic value) {
     if (value is int) {
