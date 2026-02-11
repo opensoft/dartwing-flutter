@@ -17,7 +17,7 @@ class LabLincApi extends BaseNetworkApi {
 
   Future<void> sendHeartbeat() async {
     return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/heartbeat'),
+      Uri.parse('$host/api/v1/device/heartbeat'),
       headers: createBearerAuthNetworkHeaders(),
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
@@ -30,7 +30,7 @@ class LabLincApi extends BaseNetworkApi {
     CommandAckRequest commandAckRequest,
   ) async {
     return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/command-acks'),
+      Uri.parse('$host/api/v1/device/command-acks'),
       headers: createBearerAuthNetworkHeaders(),
       body: jsonEncode(commandAckRequest.toJson()),
     ).then((response) {
@@ -43,7 +43,7 @@ class LabLincApi extends BaseNetworkApi {
 
   Future<void> sendSlotEvent(SlotEventRequest slotEventRequest) async {
     return await RestClient.post(
-      Uri.parse('$host/api/v1/devices/slot-events'),
+      Uri.parse('$host/api/v1/device/slot-events'),
       headers: createBearerAuthNetworkHeaders(),
       body: jsonEncode(slotEventRequest.toJson()),
     ).then((response) {
