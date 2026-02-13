@@ -33,6 +33,10 @@ class ConflictException extends CustomException {
   ConflictException(message) : super(message, "Conflict: ");
 }
 
+class PayloadTooLargeException extends CustomException {
+  PayloadTooLargeException(message) : super(message, "Payload Too Large: ");
+}
+
 class InvalidInputException extends CustomException {
   InvalidInputException(String message) : super(message, "Invalid Input: ");
 }

@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
+import 'package:http_parser/http_parser.dart';
 
 import 'paper_trail.dart';
 
@@ -117,6 +118,7 @@ class RestClient {
     Map<String, List<int>> files,
     String filename, {
     Map<String, String>? headers,
+    MediaType? fileContentType,
     bool silentMode = false,
   }) {
     if (!silentMode) {
@@ -134,7 +136,12 @@ class RestClient {
     }
     files.forEach((String key, List<int> value) {
       request.files.add(
-        http.MultipartFile.fromBytes(key, value, filename: filename),
+        http.MultipartFile.fromBytes(
+          key,
+          value,
+          filename: filename,
+          contentType: fileContentType,
+        ),
       );
     });
     return _client

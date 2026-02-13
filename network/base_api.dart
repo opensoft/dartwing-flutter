@@ -82,6 +82,8 @@ class BaseNetworkApi {
         throw UnauthorisedException(message);
       case 409:
         throw ConflictException(message);
+      case 413:
+        throw PayloadTooLargeException(message);
       case 500:
       default:
         throw FetchDataException(message);
