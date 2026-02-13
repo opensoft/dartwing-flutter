@@ -59,16 +59,17 @@ class LabLincApi extends BaseNetworkApi {
   Future<String> startCaptureSession({
     required int slotNumber,
     required int wellPosition,
-    required int magnification,
+    required num magnification,
     DateTime? capturedAtUtc,
   }) async {
+    final double normalizedMagnification = magnification.toDouble();
     final response = await RestClient.post(
       Uri.parse('$host/api/v1/device/capture-sessions'),
       headers: createBearerAuthNetworkHeaders(),
       body: jsonEncode(<String, dynamic>{
         'slotNumber': slotNumber,
         'wellPosition': wellPosition,
-        'magnification': magnification,
+        'magnification': normalizedMagnification,
         'capturedAtUtc': capturedAtUtc?.toUtc().toIso8601String(),
       }),
     );
