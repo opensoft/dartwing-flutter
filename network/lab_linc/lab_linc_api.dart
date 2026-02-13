@@ -4,6 +4,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
+import '../../core/custom_exceptions.dart';
 import '../base_api.dart';
 import '../rest_client.dart';
 import 'data/auth_code_response.dart';
@@ -150,6 +151,159 @@ class LabLincApi extends BaseNetworkApi {
         'Cannot send capture image for slot $slotNumber and well $wellPosition',
       );
     }
+  }
+
+  Future<void> uploadCaptureSessionImageViaPresignedUrl({
+    required String captureSessionId,
+    required int focalPlaneIndex,
+    required double zHeightMicrometers,
+    required String contentType,
+    required List<int> imageBytes,
+    int? imageWidthPx,
+    int? imageHeightPx,
+    String? eventId,
+  }) async {
+    final String uploadUrl = await _presignSingleCaptureSessionUploadUrl(
+      captureSessionId: captureSessionId,
+      focalPlaneIndex: focalPlaneIndex,
+      zHeightMicrometers: zHeightMicrometers,
+      contentType: contentType,
+      fileSizeBytes: imageBytes.length,
+      imageWidthPx: imageWidthPx,
+      imageHeightPx: imageHeightPx,
+      eventId: eventId,
+    );
+
+    http.Response uploadResponse = await _uploadCaptureImageBytesToBlobStorage(
+      uploadUrl: uploadUrl,
+      contentType: contentType,
+      imageBytes: imageBytes,
+    );
+
+    if (uploadResponse.statusCode == 403) {
+      // Presigned URLs expire quickly; retry once with a fresh URL.
+      final String freshUploadUrl = await _presignSingleCaptureSessionUploadUrl(
+        captureSessionId: captureSessionId,
+        focalPlaneIndex: focalPlaneIndex,
+        zHeightMicrometers: zHeightMicrometers,
+        contentType: contentType,
+        fileSizeBytes: imageBytes.length,
+        imageWidthPx: imageWidthPx,
+        imageHeightPx: imageHeightPx,
+        eventId: eventId,
+      );
+      uploadResponse = await _uploadCaptureImageBytesToBlobStorage(
+        uploadUrl: freshUploadUrl,
+        contentType: contentType,
+        imageBytes: imageBytes,
+      );
+    }
+
+    if (uploadResponse.statusCode ~/ 100 != 2) {
+      throw FetchDataException(
+        'Cannot upload capture image bytes via presigned URL: '
+        '${uploadResponse.statusCode} ${uploadResponse.reasonPhrase}',
+      );
+    }
+  }
+
+  Future<String> _presignSingleCaptureSessionUploadUrl({
+    required String captureSessionId,
+    required int focalPlaneIndex,
+    required double zHeightMicrometers,
+    required String contentType,
+    required int fileSizeBytes,
+    int? imageWidthPx,
+    int? imageHeightPx,
+    String? eventId,
+  }) async {
+    final String encodedCaptureSessionId = Uri.encodeComponent(captureSessionId);
+    final Uri uri = Uri.parse(
+      '$host/api/v1/device/capture-sessions/'
+      '$encodedCaptureSessionId/presign-upload',
+    );
+
+    final Map<String, dynamic> imagePayload = <String, dynamic>{
+      'focalPlaneIndex': focalPlaneIndex,
+      'zHeightMicrometers': zHeightMicrometers,
+      'contentType': contentType,
+      'fileSizeBytes': fileSizeBytes,
+      if (eventId != null && eventId.trim().isNotEmpty)
+        'eventId': eventId.trim(),
+      if (imageWidthPx != null) 'imageWidthPx': imageWidthPx,
+      if (imageHeightPx != null) 'imageHeightPx': imageHeightPx,
+    };
+
+    final http.Response response = await RestClient.post(
+      uri,
+      headers: createBearerAuthNetworkHeaders(),
+      body: jsonEncode(<String, dynamic>{
+        'images': <Map<String, dynamic>>[imagePayload],
+      }),
+    );
+
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(
+        response,
+        'Cannot presign upload URL for capture session $captureSessionId',
+      );
+    }
+
+    final String body = response.body.trim();
+    if (body.isEmpty) {
+      throw const FormatException(
+        'Cannot presign upload URL: empty response body',
+      );
+    }
+
+    final dynamic decoded = json.decode(body);
+    if (decoded is! Map) {
+      throw const FormatException(
+        'Cannot presign upload URL: expected JSON object response',
+      );
+    }
+
+    final Map<String, dynamic> decodedMap = Map<String, dynamic>.from(decoded);
+    final dynamic imagesField = decodedMap['images'];
+    if (imagesField is! List || imagesField.isEmpty) {
+      throw const FormatException(
+        'Cannot presign upload URL: missing images in response',
+      );
+    }
+
+    final dynamic first = imagesField.first;
+    if (first is! Map) {
+      throw const FormatException(
+        'Cannot presign upload URL: invalid image response item',
+      );
+    }
+    final Map<String, dynamic> firstImage = Map<String, dynamic>.from(first);
+    final String uploadUrl = _firstNonEmptyString(<dynamic>[
+      firstImage['uploadUrl'],
+    ]);
+    if (uploadUrl.isEmpty) {
+      throw const FormatException(
+        'Cannot presign upload URL: missing uploadUrl in response item',
+      );
+    }
+    return uploadUrl;
+  }
+
+  Future<http.Response> _uploadCaptureImageBytesToBlobStorage({
+    required String uploadUrl,
+    required String contentType,
+    required List<int> imageBytes,
+  }) {
+    return RestClient.put(
+      Uri.parse(uploadUrl),
+      headers: <String, String>{
+        'Content-Type': contentType,
+        'Content-Length': imageBytes.length.toString(),
+        'x-ms-blob-type': 'BlockBlob',
+      },
+      body: imageBytes,
+      silentMode: true,
+    );
   }
 
   Future<http.Response> _sendCaptureSessionImageMultipart({
