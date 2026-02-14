@@ -11,6 +11,7 @@ import 'data/auth_code_response.dart';
 import 'data/command_ack_request.dart';
 import 'data/command_status_response.dart';
 import 'data/device_info.dart';
+import 'data/device_slots_response.dart';
 import 'data/mqtt_config_response.dart';
 import 'data/station_slot_info.dart';
 import 'data/slot_event_request.dart';
@@ -478,20 +479,32 @@ class LabLincApi extends BaseNetworkApi {
     return _extractAuthorizedDevice(decoded);
   }
 
-  Future<List<StationSlotInfo>> fetchStationSlots([String? deviceUid]) async {
-    final response = await _firstSuccessfulGet(
-      _stationInfoPaths(suffix: 'slots', deviceUid: deviceUid),
+  Future<DeviceSlotsResponse> fetchDeviceSlots() async {
+    final response = await RestClient.get(
+      Uri.parse('$host/api/v1/device/slots'),
       headers: createBearerAuthNetworkHeaders(),
     );
-
     if (response.statusCode ~/ 100 != 2) {
-      errorHandler(response, 'Cannot fetch slots');
+      errorHandler(response, 'Cannot fetch device slots');
+    }
+    return _parseDeviceSlotsResponse(response.body);
+  }
+
+  Future<DeviceSlotsResponse> fetchStationSlots(String deviceUid) async {
+    final String trimmedDeviceUid = deviceUid.trim();
+    if (trimmedDeviceUid.isEmpty) {
+      throw const FormatException('Cannot fetch station slots: empty deviceUid');
     }
 
-    final decoded = json.decode(response.body);
-    final slotItems = _extractStationSlotItems(decoded);
-
-    return slotItems.map(StationSlotInfo.fromApiJson).toList();
+    final String encodedDeviceUid = Uri.encodeComponent(trimmedDeviceUid);
+    final response = await RestClient.get(
+      Uri.parse('$host/api/v1/stations/$encodedDeviceUid/slots'),
+      headers: createBearerAuthNetworkHeaders(),
+    );
+    if (response.statusCode ~/ 100 != 2) {
+      errorHandler(response, 'Cannot fetch slots for station $trimmedDeviceUid');
+    }
+    return _parseDeviceSlotsResponse(response.body);
   }
 
   Future<CommandStatusResponse> rotateStationToSlot(
@@ -788,6 +801,73 @@ class LabLincApi extends BaseNetworkApi {
       return int.tryParse(value) ?? 0;
     }
     return 0;
+  }
+
+  DeviceSlotsResponse _parseDeviceSlotsResponse(String responseBody) {
+    final dynamic decoded = json.decode(responseBody);
+    final List<Map<String, dynamic>> slotItems = _extractStationSlotItems(
+      decoded,
+    );
+    final List<StationSlotInfo> slots = slotItems
+        .map(StationSlotInfo.fromApiJson)
+        .toList();
+
+    int slotCount = slots.length;
+    int? currentFocusedSlotNumber;
+    double? currentAngleDegrees;
+
+    if (decoded is Map) {
+      final Map<String, dynamic> decodedMap = Map<String, dynamic>.from(decoded);
+      final int parsedSlotCount = _intValue(decodedMap['slotCount']);
+      if (parsedSlotCount > 0) {
+        slotCount = parsedSlotCount;
+      }
+      currentFocusedSlotNumber = _nullableIntValue(
+        decodedMap['currentFocusedSlotNumber'],
+      );
+      currentAngleDegrees = _nullableDoubleValue(
+        decodedMap['currentAngleDegrees'],
+      );
+    }
+
+    return DeviceSlotsResponse(
+      slotCount: slotCount,
+      currentFocusedSlotNumber: currentFocusedSlotNumber,
+      currentAngleDegrees: currentAngleDegrees,
+      slots: slots,
+    );
+  }
+
+  int? _nullableIntValue(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value.trim());
+    }
+    return null;
+  }
+
+  double? _nullableDoubleValue(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is double) {
+      return value;
+    }
+    if (value is num) {
+      return value.toDouble();
+    }
+    if (value is String) {
+      return double.tryParse(value.trim());
+    }
+    return null;
   }
 
   String _extractCaptureSessionIdFromResponse(http.Response response) {
