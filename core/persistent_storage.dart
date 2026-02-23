@@ -95,4 +95,14 @@ class PersistentStorage {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setBool('complaint_notification', enabled);
   }
+
+  static Future<void> saveLastSuccessfulSerialPort(String port) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setString('last_successful_serial_port', port);
+  }
+
+  static Future<String> getLastSuccessfulSerialPort() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getString('last_successful_serial_port') ?? '';
+  }
 }
