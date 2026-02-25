@@ -15,6 +15,7 @@ import 'data/device_slots_response.dart';
 import 'data/mqtt_config_response.dart';
 import 'data/station_slot_info.dart';
 import 'data/slot_event_request.dart';
+import 'delegated_device_session_service.dart';
 
 class LabLincApi extends BaseNetworkApi {
   LabLincApi(super.restClient, super.host, super.site, super.company);
@@ -34,28 +35,36 @@ class LabLincApi extends BaseNetworkApi {
   Future<CommandStatusResponse> sendCommandAck(
     CommandAckRequest commandAckRequest,
   ) async {
-    return await RestClient.post(
-      Uri.parse('$host/api/v1/device/command-acks'),
-      headers: createBearerAuthNetworkHeaders(),
-      body: jsonEncode(commandAckRequest.toJson()),
-    ).then((response) {
-      if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot send command ack');
-      }
-      return CommandStatusResponse.fromJson(json.decode(response.body));
-    });
+    return _withDelegatedHeaders<CommandStatusResponse>(
+      operationName: 'device command ack',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final response = await RestClient.post(
+          Uri.parse('$host/api/v1/device/command-acks'),
+          headers: delegatedHeaders,
+          body: jsonEncode(commandAckRequest.toJson()),
+        );
+        if (response.statusCode ~/ 100 != 2) {
+          errorHandler(response, 'Cannot send command ack');
+        }
+        return CommandStatusResponse.fromJson(json.decode(response.body));
+      },
+    );
   }
 
   Future<void> sendSlotEvent(SlotEventRequest slotEventRequest) async {
-    return await RestClient.post(
-      Uri.parse('$host/api/v1/device/slot-events'),
-      headers: createBearerAuthNetworkHeaders(),
-      body: jsonEncode(slotEventRequest.toJson()),
-    ).then((response) {
-      if (response.statusCode ~/ 100 != 2) {
-        errorHandler(response, 'Cannot send slot event');
-      }
-    });
+    return _withDelegatedHeaders<void>(
+      operationName: 'device slot event',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final response = await RestClient.post(
+          Uri.parse('$host/api/v1/device/slot-events'),
+          headers: delegatedHeaders,
+          body: jsonEncode(slotEventRequest.toJson()),
+        );
+        if (response.statusCode ~/ 100 != 2) {
+          errorHandler(response, 'Cannot send slot event');
+        }
+      },
+    );
   }
 
   Future<String> startCaptureSession({
@@ -64,31 +73,36 @@ class LabLincApi extends BaseNetworkApi {
     required num magnification,
     DateTime? capturedAtUtc,
   }) async {
-    final double normalizedMagnification = magnification.toDouble();
-    final response = await RestClient.post(
-      Uri.parse('$host/api/v1/device/capture-sessions'),
-      headers: createBearerAuthNetworkHeaders(),
-      body: jsonEncode(<String, dynamic>{
-        'slotNumber': slotNumber,
-        'wellPosition': wellPosition,
-        'magnification': normalizedMagnification,
-        'capturedAtUtc': capturedAtUtc?.toUtc().toIso8601String(),
-      }),
-    );
+    return _withDelegatedHeaders<String>(
+      operationName: 'start capture session',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final double normalizedMagnification = magnification.toDouble();
+        final response = await RestClient.post(
+          Uri.parse('$host/api/v1/device/capture-sessions'),
+          headers: delegatedHeaders,
+          body: jsonEncode(<String, dynamic>{
+            'slotNumber': slotNumber,
+            'wellPosition': wellPosition,
+            'magnification': normalizedMagnification,
+            'capturedAtUtc': capturedAtUtc?.toUtc().toIso8601String(),
+          }),
+        );
 
-    if (response.statusCode ~/ 100 != 2) {
-      errorHandler(response, 'Cannot start capture session');
-    }
+        if (response.statusCode ~/ 100 != 2) {
+          errorHandler(response, 'Cannot start capture session');
+        }
 
-    final String captureSessionId = _extractCaptureSessionIdFromResponse(
-      response,
+        final String captureSessionId = _extractCaptureSessionIdFromResponse(
+          response,
+        );
+        if (captureSessionId.isEmpty) {
+          throw const FormatException(
+            'Cannot start capture session: missing captureSessionId in response',
+          );
+        }
+        return captureSessionId;
+      },
     );
-    if (captureSessionId.isEmpty) {
-      throw const FormatException(
-        'Cannot start capture session: missing captureSessionId in response',
-      );
-    }
-    return captureSessionId;
   }
 
   Future<void> uploadCaptureSessionImage({
@@ -104,56 +118,63 @@ class LabLincApi extends BaseNetworkApi {
     required String filename,
     bool preferZipUpload = true,
   }) async {
-    final encodedCaptureSessionId = Uri.encodeComponent(captureSessionId);
-    final uri = Uri.parse(
-      '$host/api/v1/device/capture-sessions/$encodedCaptureSessionId/images',
-    );
+    return _withDelegatedHeaders<void>(
+      operationName: 'upload capture session image',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final encodedCaptureSessionId = Uri.encodeComponent(captureSessionId);
+        final uri = Uri.parse(
+          '$host/api/v1/device/capture-sessions/$encodedCaptureSessionId/images',
+        );
 
-    final Map<String, String> fields = <String, String>{
-      'SlotNumber': slotNumber.toString(),
-      'WellPosition': wellPosition.toString(),
-      'FocalPlaneIndex': focalPlaneIndex.toString(),
-      'ZHeightMicrometers': zHeightMicrometers.toString(),
-      'CapturedAtUtc': capturedAtUtc.toUtc().toIso8601String(),
-      'ImageWidthPx': imageWidthPx.toString(),
-      'ImageHeightPx': imageHeightPx.toString(),
-    };
+        final Map<String, String> fields = <String, String>{
+          'SlotNumber': slotNumber.toString(),
+          'WellPosition': wellPosition.toString(),
+          'FocalPlaneIndex': focalPlaneIndex.toString(),
+          'ZHeightMicrometers': zHeightMicrometers.toString(),
+          'CapturedAtUtc': capturedAtUtc.toUtc().toIso8601String(),
+          'ImageWidthPx': imageWidthPx.toString(),
+          'ImageHeightPx': imageHeightPx.toString(),
+        };
 
-    final _CaptureImageUploadPayload preferredPayload = preferZipUpload
-        ? _buildZipCaptureImageUploadPayload(
-            filename: filename,
-            imageBytes: imageBytes,
-          )
-        : _buildRawCaptureImageUploadPayload(
-            filename: filename,
-            imageBytes: imageBytes,
+        final _CaptureImageUploadPayload preferredPayload = preferZipUpload
+            ? _buildZipCaptureImageUploadPayload(
+                filename: filename,
+                imageBytes: imageBytes,
+              )
+            : _buildRawCaptureImageUploadPayload(
+                filename: filename,
+                imageBytes: imageBytes,
+              );
+
+        http.Response response = await _sendCaptureSessionImageMultipart(
+          uri: uri,
+          fields: fields,
+          payload: preferredPayload,
+          headers: _multipartHeaders(delegatedHeaders),
+        );
+
+        if (response.statusCode ~/ 100 != 2 && preferredPayload.isZipArchive) {
+          final _CaptureImageUploadPayload rawPayload =
+              _buildRawCaptureImageUploadPayload(
+                filename: filename,
+                imageBytes: imageBytes,
+              );
+          response = await _sendCaptureSessionImageMultipart(
+            uri: uri,
+            fields: fields,
+            payload: rawPayload,
+            headers: _multipartHeaders(delegatedHeaders),
           );
+        }
 
-    http.Response response = await _sendCaptureSessionImageMultipart(
-      uri: uri,
-      fields: fields,
-      payload: preferredPayload,
-    );
-
-    if (response.statusCode ~/ 100 != 2 && preferredPayload.isZipArchive) {
-      final _CaptureImageUploadPayload rawPayload =
-          _buildRawCaptureImageUploadPayload(
-            filename: filename,
-            imageBytes: imageBytes,
+        if (response.statusCode ~/ 100 != 2) {
+          errorHandler(
+            response,
+            'Cannot send capture image for slot $slotNumber and well $wellPosition',
           );
-      response = await _sendCaptureSessionImageMultipart(
-        uri: uri,
-        fields: fields,
-        payload: rawPayload,
-      );
-    }
-
-    if (response.statusCode ~/ 100 != 2) {
-      errorHandler(
-        response,
-        'Cannot send capture image for slot $slotNumber and well $wellPosition',
-      );
-    }
+        }
+      },
+    );
   }
 
   Future<void> uploadCaptureSessionImageViaPresignedUrl({
@@ -166,48 +187,57 @@ class LabLincApi extends BaseNetworkApi {
     int? imageHeightPx,
     String? eventId,
   }) async {
-    final String uploadUrl = await _presignSingleCaptureSessionUploadUrl(
-      captureSessionId: captureSessionId,
-      focalPlaneIndex: focalPlaneIndex,
-      zHeightMicrometers: zHeightMicrometers,
-      contentType: contentType,
-      fileSizeBytes: imageBytes.length,
-      imageWidthPx: imageWidthPx,
-      imageHeightPx: imageHeightPx,
-      eventId: eventId,
+    return _withDelegatedHeaders<void>(
+      operationName: 'presigned capture image upload',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final String uploadUrl = await _presignSingleCaptureSessionUploadUrl(
+          captureSessionId: captureSessionId,
+          focalPlaneIndex: focalPlaneIndex,
+          zHeightMicrometers: zHeightMicrometers,
+          contentType: contentType,
+          fileSizeBytes: imageBytes.length,
+          imageWidthPx: imageWidthPx,
+          imageHeightPx: imageHeightPx,
+          eventId: eventId,
+          headers: delegatedHeaders,
+        );
+
+        http.Response uploadResponse =
+            await _uploadCaptureImageBytesToBlobStorage(
+              uploadUrl: uploadUrl,
+              contentType: contentType,
+              imageBytes: imageBytes,
+            );
+
+        if (uploadResponse.statusCode == 403) {
+          // Presigned URLs expire quickly; retry once with a fresh URL.
+          final String freshUploadUrl =
+              await _presignSingleCaptureSessionUploadUrl(
+                captureSessionId: captureSessionId,
+                focalPlaneIndex: focalPlaneIndex,
+                zHeightMicrometers: zHeightMicrometers,
+                contentType: contentType,
+                fileSizeBytes: imageBytes.length,
+                imageWidthPx: imageWidthPx,
+                imageHeightPx: imageHeightPx,
+                eventId: eventId,
+                headers: delegatedHeaders,
+              );
+          uploadResponse = await _uploadCaptureImageBytesToBlobStorage(
+            uploadUrl: freshUploadUrl,
+            contentType: contentType,
+            imageBytes: imageBytes,
+          );
+        }
+
+        if (uploadResponse.statusCode ~/ 100 != 2) {
+          throw FetchDataException(
+            'Cannot upload capture image bytes via presigned URL: '
+            '${uploadResponse.statusCode} ${uploadResponse.reasonPhrase}',
+          );
+        }
+      },
     );
-
-    http.Response uploadResponse = await _uploadCaptureImageBytesToBlobStorage(
-      uploadUrl: uploadUrl,
-      contentType: contentType,
-      imageBytes: imageBytes,
-    );
-
-    if (uploadResponse.statusCode == 403) {
-      // Presigned URLs expire quickly; retry once with a fresh URL.
-      final String freshUploadUrl = await _presignSingleCaptureSessionUploadUrl(
-        captureSessionId: captureSessionId,
-        focalPlaneIndex: focalPlaneIndex,
-        zHeightMicrometers: zHeightMicrometers,
-        contentType: contentType,
-        fileSizeBytes: imageBytes.length,
-        imageWidthPx: imageWidthPx,
-        imageHeightPx: imageHeightPx,
-        eventId: eventId,
-      );
-      uploadResponse = await _uploadCaptureImageBytesToBlobStorage(
-        uploadUrl: freshUploadUrl,
-        contentType: contentType,
-        imageBytes: imageBytes,
-      );
-    }
-
-    if (uploadResponse.statusCode ~/ 100 != 2) {
-      throw FetchDataException(
-        'Cannot upload capture image bytes via presigned URL: '
-        '${uploadResponse.statusCode} ${uploadResponse.reasonPhrase}',
-      );
-    }
   }
 
   Future<String> _presignSingleCaptureSessionUploadUrl({
@@ -219,6 +249,7 @@ class LabLincApi extends BaseNetworkApi {
     int? imageWidthPx,
     int? imageHeightPx,
     String? eventId,
+    required Map<String, String> headers,
   }) async {
     final String encodedCaptureSessionId = Uri.encodeComponent(
       captureSessionId,
@@ -241,7 +272,7 @@ class LabLincApi extends BaseNetworkApi {
 
     final http.Response response = await RestClient.post(
       uri,
-      headers: createBearerAuthNetworkHeaders(),
+      headers: headers,
       body: jsonEncode(<String, dynamic>{
         'images': <Map<String, dynamic>>[imagePayload],
       }),
@@ -315,13 +346,14 @@ class LabLincApi extends BaseNetworkApi {
     required Uri uri,
     required Map<String, String> fields,
     required _CaptureImageUploadPayload payload,
+    required Map<String, String> headers,
   }) {
     return RestClient.multipartFileRequest(
       uri,
       fields,
       <String, List<int>>{'image': payload.bytes},
       payload.filename,
-      headers: _multipartBearerAuthHeaders(),
+      headers: headers,
       fileContentType: payload.contentType,
     );
   }
@@ -373,21 +405,49 @@ class LabLincApi extends BaseNetworkApi {
   }
 
   Future<void> closeCaptureSession(String captureSessionId) async {
-    final encodedCaptureSessionId = Uri.encodeComponent(captureSessionId);
-    final response = await RestClient.post(
-      Uri.parse(
-        '$host/api/v1/device/capture-sessions/$encodedCaptureSessionId/close',
-      ),
-      headers: <String, String>{
-        ..._multipartBearerAuthHeaders(),
-        'Content-Type': 'text/plain;charset=UTF-8',
-      },
-      body: '',
-    );
+    return _withDelegatedHeaders<void>(
+      operationName: 'close capture session',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final encodedCaptureSessionId = Uri.encodeComponent(captureSessionId);
+        final response = await RestClient.post(
+          Uri.parse(
+            '$host/api/v1/device/capture-sessions/$encodedCaptureSessionId/close',
+          ),
+          headers: <String, String>{
+            ..._multipartHeaders(delegatedHeaders),
+            'Content-Type': 'text/plain;charset=UTF-8',
+          },
+          body: '',
+        );
 
-    if (response.statusCode ~/ 100 != 2) {
-      errorHandler(response, 'Cannot close capture session $captureSessionId');
-    }
+        if (response.statusCode ~/ 100 != 2) {
+          errorHandler(response, 'Cannot close capture session $captureSessionId');
+        }
+      },
+    );
+  }
+
+  Future<void> endDeviceSession() async {
+    await _withDelegatedHeaders<void>(
+      operationName: 'end device session',
+      operation: (Map<String, String> delegatedHeaders) async {
+        final response = await RestClient.post(
+          Uri.parse('$host/api/v1/device/session/end'),
+          headers: <String, String>{
+            ..._multipartHeaders(delegatedHeaders),
+            'Content-Type': 'text/plain;charset=UTF-8',
+          },
+          body: '',
+        );
+
+        if (response.statusCode ~/ 100 != 2) {
+          errorHandler(response, 'Cannot end delegated device session');
+        }
+      },
+    );
+    DelegatedDeviceSessionService.instance.clearSession(
+      reason: 'Delegated session ended by device request.',
+    );
   }
 
   Future<AuthCodeResponse> fetchAuthCode() async {
@@ -960,12 +1020,48 @@ class LabLincApi extends BaseNetworkApi {
     return '';
   }
 
-  Map<String, String> _multipartBearerAuthHeaders() {
+  Future<T> _withDelegatedHeaders<T>({
+    required String operationName,
+    required Future<T> Function(Map<String, String> delegatedHeaders)
+    operation,
+  }) async {
+    final Map<String, String> delegatedHeaders;
+    try {
+      delegatedHeaders = _delegatedSessionHeaders();
+    } on StateError catch (error) {
+      throw FetchDataException('Cannot $operationName: $error');
+    }
+
+    try {
+      return await operation(delegatedHeaders);
+    } on UnauthorisedException {
+      DelegatedDeviceSessionService.instance.clearSession(
+        reason:
+            'Delegated session rejected by server while calling $operationName.',
+        logAsWarning: true,
+      );
+      throw FetchDataException(
+        'Cannot $operationName: delegated session is no longer authorized. '
+        'Please scan QR code again.',
+      );
+    }
+  }
+
+  Map<String, String> _delegatedSessionHeaders() {
     final Map<String, String> headers = Map<String, String>.from(
       createBearerAuthNetworkHeaders(),
     );
-    headers.remove('Content-Type');
-    return headers;
+    return DelegatedDeviceSessionService.instance.createDelegatedHeaders(
+      headers,
+    );
+  }
+
+  Map<String, String> _multipartHeaders(Map<String, String> headers) {
+    final Map<String, String> multipartHeaders = Map<String, String>.from(
+      headers,
+    );
+    multipartHeaders.remove('Content-Type');
+    return multipartHeaders;
   }
 
   List<Map<String, dynamic>> _dishPayloadVariants(String dishBarcode) {
