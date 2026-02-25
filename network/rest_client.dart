@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 import 'package:http_parser/http_parser.dart';
 
+import 'client_info_provider.dart';
 import 'paper_trail.dart';
 
 class RestClient {
@@ -26,8 +27,9 @@ class RestClient {
     }
     final stopwatch = Stopwatch();
     stopwatch.start();
+    final Map<String, String>? requestHeaders = _headersWithClientInfo(headers);
     return _client
-        .get(url, headers: headers)
+        .get(url, headers: requestHeaders)
         .then((response) {
           if (!silentMode) {
             PaperTrailClient.sendInfoMessageToPaperTrail(
@@ -59,8 +61,9 @@ class RestClient {
     }
     final stopwatch = Stopwatch();
     stopwatch.start();
+    final Map<String, String>? requestHeaders = _headersWithClientInfo(headers);
     return _client
-        .post(url, headers: headers, body: body)
+        .post(url, headers: requestHeaders, body: body)
         .then((response) {
           if (!silentMode) {
             PaperTrailClient.sendInfoMessageToPaperTrail(
@@ -92,8 +95,9 @@ class RestClient {
     }
     final stopwatch = Stopwatch();
     stopwatch.start();
+    final Map<String, String>? requestHeaders = _headersWithClientInfo(headers);
     return _client
-        .put(url, headers: headers, body: body)
+        .put(url, headers: requestHeaders, body: body)
         .then((response) {
           if (!silentMode) {
             PaperTrailClient.sendInfoMessageToPaperTrail(
@@ -129,10 +133,11 @@ class RestClient {
     final stopwatch = Stopwatch();
     stopwatch.start();
 
+    final Map<String, String>? requestHeaders = _headersWithClientInfo(headers);
     var request = http.MultipartRequest('POST', url);
     request.fields.addAll(fields);
-    if (headers != null) {
-      request.headers.addAll(headers);
+    if (requestHeaders != null) {
+      request.headers.addAll(requestHeaders);
     }
     files.forEach((String key, List<int> value) {
       request.files.add(
@@ -177,8 +182,9 @@ class RestClient {
     }
     final stopwatch = Stopwatch();
     stopwatch.start();
+    final Map<String, String>? requestHeaders = _headersWithClientInfo(headers);
     return _client
-        .patch(url, headers: headers, body: body)
+        .patch(url, headers: requestHeaders, body: body)
         .then((response) {
           if (!silentMode) {
             PaperTrailClient.sendInfoMessageToPaperTrail(
@@ -210,8 +216,9 @@ class RestClient {
     }
     final stopwatch = Stopwatch();
     stopwatch.start();
+    final Map<String, String>? requestHeaders = _headersWithClientInfo(headers);
     return _client
-        .delete(url, headers: headers, body: body)
+        .delete(url, headers: requestHeaders, body: body)
         .then((response) {
           if (!silentMode) {
             PaperTrailClient.sendInfoMessageToPaperTrail(
@@ -228,5 +235,36 @@ class RestClient {
           stopwatch.stop();
           throw e;
         });
+  }
+
+  static Map<String, String>? _headersWithClientInfo(
+    Map<String, String>? headers,
+  ) {
+    if (!_hasAuthorizationHeader(headers)) {
+      return headers;
+    }
+
+    final String clientInfoValue = ClientInfoProvider.instance.headerValue;
+    if (clientInfoValue.isEmpty) {
+      return headers;
+    }
+
+    final Map<String, String> updatedHeaders = <String, String>{...?headers};
+    updatedHeaders['Client-Info'] = clientInfoValue;
+    return updatedHeaders;
+  }
+
+  static bool _hasAuthorizationHeader(Map<String, String>? headers) {
+    if (headers == null || headers.isEmpty) {
+      return false;
+    }
+
+    for (final MapEntry<String, String> entry in headers.entries) {
+      if (entry.key.toLowerCase() == 'authorization' &&
+          entry.value.trim().isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
   }
 }

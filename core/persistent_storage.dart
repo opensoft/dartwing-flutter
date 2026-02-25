@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentStorage {
+  static const String _installationIdKey = 'client_info_installation_id';
+
   static Future<void> saveAppId(String appId) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setString('app_id', appId);
@@ -9,6 +11,16 @@ class PersistentStorage {
   static Future<String> getAppId() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getString('app_id') ?? '';
+  }
+
+  static Future<void> saveInstallationId(String installationId) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setString(_installationIdKey, installationId);
+  }
+
+  static Future<String> getInstallationId() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getString(_installationIdKey) ?? '';
   }
 
   static Future<void> init() async {
