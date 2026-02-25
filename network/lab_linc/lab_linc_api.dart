@@ -23,6 +23,7 @@ class LabLincApi extends BaseNetworkApi {
     return await RestClient.post(
       Uri.parse('$host/api/v1/device/heartbeat'),
       headers: createBearerAuthNetworkHeaders(),
+      silentMode: true,
     ).then((response) {
       if (response.statusCode ~/ 100 != 2) {
         errorHandler(response, 'Cannot send heartbeat');
@@ -137,9 +138,9 @@ class LabLincApi extends BaseNetworkApi {
     if (response.statusCode ~/ 100 != 2 && preferredPayload.isZipArchive) {
       final _CaptureImageUploadPayload rawPayload =
           _buildRawCaptureImageUploadPayload(
-        filename: filename,
-        imageBytes: imageBytes,
-      );
+            filename: filename,
+            imageBytes: imageBytes,
+          );
       response = await _sendCaptureSessionImageMultipart(
         uri: uri,
         fields: fields,
@@ -219,7 +220,9 @@ class LabLincApi extends BaseNetworkApi {
     int? imageHeightPx,
     String? eventId,
   }) async {
-    final String encodedCaptureSessionId = Uri.encodeComponent(captureSessionId);
+    final String encodedCaptureSessionId = Uri.encodeComponent(
+      captureSessionId,
+    );
     final Uri uri = Uri.parse(
       '$host/api/v1/device/capture-sessions/'
       '$encodedCaptureSessionId/presign-upload',
@@ -493,7 +496,9 @@ class LabLincApi extends BaseNetworkApi {
   Future<DeviceSlotsResponse> fetchStationSlots(String deviceUid) async {
     final String trimmedDeviceUid = deviceUid.trim();
     if (trimmedDeviceUid.isEmpty) {
-      throw const FormatException('Cannot fetch station slots: empty deviceUid');
+      throw const FormatException(
+        'Cannot fetch station slots: empty deviceUid',
+      );
     }
 
     final String encodedDeviceUid = Uri.encodeComponent(trimmedDeviceUid);
@@ -502,7 +507,10 @@ class LabLincApi extends BaseNetworkApi {
       headers: createBearerAuthNetworkHeaders(),
     );
     if (response.statusCode ~/ 100 != 2) {
-      errorHandler(response, 'Cannot fetch slots for station $trimmedDeviceUid');
+      errorHandler(
+        response,
+        'Cannot fetch slots for station $trimmedDeviceUid',
+      );
     }
     return _parseDeviceSlotsResponse(response.body);
   }
@@ -580,7 +588,10 @@ class LabLincApi extends BaseNetworkApi {
     );
   }
 
-  Future<StationSlotInfo> removeDishFromSlot(String deviceUid, int slotNumber) async {
+  Future<StationSlotInfo> removeDishFromSlot(
+    String deviceUid,
+    int slotNumber,
+  ) async {
     final encodedDeviceUid = Uri.encodeComponent(deviceUid);
     final encodedSlotNumber = Uri.encodeComponent(slotNumber.toString());
     final uri = Uri.parse(
@@ -817,7 +828,9 @@ class LabLincApi extends BaseNetworkApi {
     double? currentAngleDegrees;
 
     if (decoded is Map) {
-      final Map<String, dynamic> decodedMap = Map<String, dynamic>.from(decoded);
+      final Map<String, dynamic> decodedMap = Map<String, dynamic>.from(
+        decoded,
+      );
       final int parsedSlotCount = _intValue(decodedMap['slotCount']);
       if (parsedSlotCount > 0) {
         slotCount = parsedSlotCount;
@@ -896,7 +909,9 @@ class LabLincApi extends BaseNetworkApi {
 
   String _findCaptureSessionIdInJson(dynamic decoded) {
     if (decoded is Map) {
-      final Map<String, dynamic> decodedMap = Map<String, dynamic>.from(decoded);
+      final Map<String, dynamic> decodedMap = Map<String, dynamic>.from(
+        decoded,
+      );
       final String directMatch = _firstNonEmptyString([
         decodedMap['captureSessionId'],
         decodedMap['sessionId'],
