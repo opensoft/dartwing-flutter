@@ -2,6 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentStorage {
   static const String _installationIdKey = 'client_info_installation_id';
+  static const String _lastSelectedCameraDeviceIdKey =
+      'last_selected_camera_device_id';
 
   static Future<void> saveAppId(String appId) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
@@ -116,5 +118,15 @@ class PersistentStorage {
   static Future<String> getLastSuccessfulSerialPort() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getString('last_successful_serial_port') ?? '';
+  }
+
+  static Future<void> saveLastSelectedCameraDeviceId(String deviceId) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setString(_lastSelectedCameraDeviceIdKey, deviceId);
+  }
+
+  static Future<String> getLastSelectedCameraDeviceId() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getString(_lastSelectedCameraDeviceIdKey) ?? '';
   }
 }
