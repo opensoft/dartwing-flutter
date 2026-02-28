@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../network/paper_trail.dart';
+import 'package:get_it/get_it.dart';
+
+import '../core/logging/i_logger.dart';
 import 'widgets/base_scaffold.dart';
 
 class ScannerPage extends StatefulWidget {
@@ -27,7 +29,7 @@ class _ScannerPageState extends State<ScannerPage> {
 
   void _sendCode(String data,
       {String inputDevice = "", bool isEnteredManually = false}) {
-    PaperTrailClient.sendInfoMessageToPaperTrail(
+    GetIt.I<ILogger>().info(
         'QR or barcode ($inputDevice): $data');
     controller.stop();
     Navigator.of(context).pop(data);

@@ -1,14 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-import 'organization/choose_document_repository_page.dart';
-import 'organization/company_info_page.dart';
-import 'organization/create_company_organization_page.dart';
-import 'organization/document_repository_page.dart';
-import 'organization/organizations_list_page.dart';
-import 'organization/select_organization_type_page.dart';
-import 'scanner_page.dart';
+import 'screen_registry/i_screen_registry.dart';
 
 class BaseAppsRouters {
   static const String scannerPage = "scannerPage";
@@ -22,6 +17,8 @@ class BaseAppsRouters {
   static const String chooseDocumentRepositoryPage =
       "chooseDocumentRepositoryPage";
   static const String oneDriveExplorerPage = "oneDriveExplorerPage";
+
+  IScreenRegistry get _screenRegistry => GetIt.I<IScreenRegistry>();
 
   @override
   static Future<dynamic> showScannerPage(
@@ -44,37 +41,41 @@ class BaseAppsRouters {
       case scannerPage:
         var jsonObject = jsonDecode(settings.arguments.toString());
         return MaterialPageRoute(
-          builder: (_) => ScannerPage(
+          builder: (_) => _screenRegistry.getScannerScreen(
             pageTitle: jsonObject['pageTitle'],
             manualInputAllowed: jsonObject['manualInputAllowed'],
           ),
         );
       case organizationsListPage:
-        return MaterialPageRoute(builder: (_) => const OrganizationsListPage());
+        return MaterialPageRoute(
+          builder: (_) => _screenRegistry.getOrganizationsListScreen(),
+        );
       case selectOrganizationTypePage:
         return MaterialPageRoute(
-          builder: (_) => const SelectOrganizationTypePage(),
+          builder: (_) => _screenRegistry.getSelectOrganizationTypeScreen(),
         );
       case createCompanyOrganizationPage:
         return MaterialPageRoute(
-          builder: (_) => CreateCompanyOrganizationPage(
+          builder: (_) =>
+              _screenRegistry.getCreateCompanyOrganizationScreen(
             descriptionOfOrganization: settings.arguments.toString(),
           ),
         );
       case companyInfoPage:
         return MaterialPageRoute(
-          builder: (_) =>
-              CompanyInfoPage(companyName: settings.arguments.toString()),
+          builder: (_) => _screenRegistry.getCompanyInfoScreen(
+            companyName: settings.arguments.toString(),
+          ),
         );
       case documentRepositoryPage:
         return MaterialPageRoute(
-          builder: (_) => DocumentRepositoryPage(
+          builder: (_) => _screenRegistry.getDocumentRepositoryScreen(
             companyName: settings.arguments.toString(),
           ),
         );
       case chooseDocumentRepositoryPage:
         return MaterialPageRoute(
-          builder: (_) => ChooseDocumentRepositoryPage(
+          builder: (_) => _screenRegistry.getChooseDocumentRepositoryScreen(
             companyName: settings.arguments.toString(),
           ),
         );

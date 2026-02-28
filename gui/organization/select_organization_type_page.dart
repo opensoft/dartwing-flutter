@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../base_apps_routers.dart';
 import '../gui_helper.dart';
-import '../widgets/base_colors.dart';
+import '../theme/dartwing_theme.dart';
 import '../widgets/base_scaffold.dart';
 import '../../network/dart_wing/dart_wing_api_helper.dart';
 
@@ -41,10 +41,12 @@ class _SelectOrganizationTypePageState
 
   @override
   Widget build(BuildContext context) {
+    final theme = DartwingTheme.of(context);
+
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
-        backgroundColor: BaseColors.lightBackgroundColor,
+        backgroundColor: theme.lightBackgroundColor,
         title: Row(children: [
           Expanded(
               child: Text("Add Organization", textAlign: TextAlign.center)),
@@ -58,7 +60,6 @@ class _SelectOrganizationTypePageState
               secondary: SvgPicture.asset(
                 'lib/dart_wing/gui/images/company_icon.svg',
                 alignment: Alignment.center,
-                //width: 50,
               ),
               title:
                   Text(organizationInfoByType[OrganizationType.company]!.label),
@@ -74,7 +75,6 @@ class _SelectOrganizationTypePageState
               secondary: SvgPicture.asset(
                 'lib/dart_wing/gui/images/family_icon.svg',
                 alignment: Alignment.center,
-                //width: 50,
               ),
               title:
                   Text(organizationInfoByType[OrganizationType.family]!.label),
@@ -90,7 +90,6 @@ class _SelectOrganizationTypePageState
               secondary: SvgPicture.asset(
                 'lib/dart_wing/gui/images/club_icon.svg',
                 alignment: Alignment.center,
-                //width: 50,
               ),
               title: Text(organizationInfoByType[OrganizationType.club]!.label),
               value: OrganizationType.club,
@@ -105,7 +104,6 @@ class _SelectOrganizationTypePageState
               secondary: SvgPicture.asset(
                 'lib/dart_wing/gui/images/nonprofit_icon.svg',
                 alignment: Alignment.center,
-                //width: 50,
               ),
               title: Text(
                   organizationInfoByType[OrganizationType.nonProfit]!.label),
@@ -121,17 +119,13 @@ class _SelectOrganizationTypePageState
                 child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
-                      //keyboardType: TextInputType.emailAddress,
                       controller: _organizationDescriptionController,
-                      //style: const TextStyle(color: Colors.white),
                       onChanged: (_) {
                         setState(() {});
                       },
                       decoration: InputDecoration(
                         labelText: "Description",
-                        //labelStyle: const TextStyle(color: Colors.grey),
                         hintText: "Description",
-                        //hintStyle: const TextStyle(color: Colors.white24),
                         border: const OutlineInputBorder(),
                       ),
                     ))),

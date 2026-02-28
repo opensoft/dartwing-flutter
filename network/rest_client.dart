@@ -4,7 +4,7 @@ import 'package:http/retry.dart';
 import 'paper_trail.dart';
 
 class RestClient {
-  static final http.Client _client = RetryClient(http.Client(), retries: 2);
+  final http.Client _client = RetryClient(http.Client(), retries: 2);
   String token = "";
   String clientName = "";
   String email = "";
@@ -15,7 +15,7 @@ class RestClient {
     email = newEmail;
   }
 
-  static Future<http.Response> get(
+  Future<http.Response> get(
     Uri url, {
     Map<String, String>? headers,
     bool silentMode = false,
@@ -45,7 +45,7 @@ class RestClient {
         });
   }
 
-  static Future<http.Response> post(
+  Future<http.Response> post(
     Uri url, {
     Map<String, String>? headers,
     Object? body,
@@ -78,7 +78,7 @@ class RestClient {
         });
   }
 
-  static Future<http.Response> put(
+  Future<http.Response> put(
     Uri url, {
     Map<String, String>? headers,
     Object? body,
@@ -111,7 +111,7 @@ class RestClient {
         });
   }
 
-  static Future<http.Response> multipartFileRequest(
+  Future<http.Response> multipartFileRequest(
     Uri url,
     Map<String, String> fields,
     Map<String, List<int>> files,
@@ -157,7 +157,7 @@ class RestClient {
         });
   }
 
-  static Future<http.Response> patch(
+  Future<http.Response> patch(
     Uri url, {
     Map<String, String>? headers,
     Object? body,
@@ -190,7 +190,7 @@ class RestClient {
         });
   }
 
-  static Future<http.Response> delete(
+  Future<http.Response> delete(
     Uri url, {
     Map<String, String>? headers,
     Object? body,

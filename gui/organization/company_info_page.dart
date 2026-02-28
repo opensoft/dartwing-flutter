@@ -2,12 +2,13 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
 
 import '../notification.dart';
-import '../widgets/base_colors.dart';
+import '../theme/dartwing_theme.dart';
 import '../widgets/base_scaffold.dart';
 import '../../network/dart_wing/data/organization.dart';
-import '../../network/network_clients.dart';
+import '../../network/interfaces/i_dart_wing_api.dart';
 import '../base_apps_routers.dart';
 
 class CompanyInfoPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    NetworkClients.dartWingApi
+    GetIt.I<IDartWingApi>()
         .fetchOrganization(widget.companyName)
         .then((company) {
       setState(() {
@@ -56,10 +57,12 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = DartwingTheme.of(context);
+
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
-        backgroundColor: BaseColors.lightBackgroundColor,
+        backgroundColor: theme.lightBackgroundColor,
         title: Row(children: [
           Expanded(child: Text("Company", textAlign: TextAlign.center)),
         ]),
@@ -73,8 +76,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
-                      borderRadius:
-                          BorderRadius.circular(8), // Optional rounded corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
                         onTap: () {},
@@ -86,7 +88,6 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                                   child: SvgPicture.asset(
                                     'lib/dart_wing/gui/images/company_icon.svg',
                                     alignment: Alignment.center,
-                                    //width: 50,
                                   )),
                               Expanded(
                                   child: Align(
@@ -104,8 +105,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
-                      borderRadius:
-                          BorderRadius.circular(8), // Optional rounded corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
                         onTap: () {},
@@ -128,8 +128,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
-                      borderRadius:
-                          BorderRadius.circular(8), // Optional rounded corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
                         onTap: () {},
@@ -152,8 +151,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
-                      borderRadius:
-                          BorderRadius.circular(8), // Optional rounded corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
                         onTap: () {},
@@ -176,8 +174,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
-                      borderRadius:
-                          BorderRadius.circular(8), // Optional rounded corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
                         onTap: () {},
@@ -200,8 +197,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
-                      borderRadius:
-                          BorderRadius.circular(8), // Optional rounded corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
                         onTap: () {},
@@ -222,8 +218,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                 height: 80,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey, width: 1),
-                  borderRadius:
-                      BorderRadius.circular(8), // Optional rounded corners
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: InkWell(
                     onTap: () {

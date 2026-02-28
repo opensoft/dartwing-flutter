@@ -1,13 +1,14 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../network/dart_wing/data/organization.dart';
+import '../../network/interfaces/i_dart_wing_api.dart';
 import '../base_apps_routers.dart';
 import '../notification.dart';
-import '../widgets/base_colors.dart';
+import '../theme/dartwing_theme.dart';
 import '../widgets/base_scaffold.dart';
-import '../../network/network_clients.dart';
 
 class OrganizationsListPage extends StatefulWidget {
   const OrganizationsListPage({super.key});
@@ -22,11 +23,13 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
 
   List<Organization> _organizations = [];
 
+  IDartWingApi get _dartWingApi => GetIt.I<IDartWingApi>();
+
   void _fetchOrganizations() {
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    NetworkClients.dartWingApi.fetchOrganizations().then((organizations) {
+    _dartWingApi.fetchOrganizations().then((organizations) {
       setState(() {
         _organizations = organizations;
         _loadingOverlayEnabled = false;
@@ -55,10 +58,12 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = DartwingTheme.of(context);
+
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
-        backgroundColor: BaseColors.lightBackgroundColor,
+        backgroundColor: theme.lightBackgroundColor,
         title: Row(children: [
           Expanded(child: Text("Organizations", textAlign: TextAlign.center)),
           InkWell(
@@ -99,8 +104,7 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
                         height: 80,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey, width: 1),
-                          borderRadius: BorderRadius.circular(
-                              8), // Optional rounded corners
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: InkWell(
                             onTap: () {

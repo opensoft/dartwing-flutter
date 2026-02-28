@@ -2,15 +2,17 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../network/paper_trail.dart';
+import '../../core/app_state.dart';
+import '../../core/logging/i_logger.dart';
 import '../notification.dart';
-import '../widgets/base_colors.dart';
+import '../theme/dartwing_theme.dart';
 import '../widgets/base_scaffold.dart';
 import '../../network/dart_wing/data/folder.dart';
 import '../../network/dart_wing/data/provider.dart';
-import '../../network/network_clients.dart';
+import '../../network/interfaces/i_dart_wing_api.dart';
 
 class ChooseDocumentRepositoryPage extends StatefulWidget {
   const ChooseDocumentRepositoryPage({super.key, required this.companyName});
@@ -32,6 +34,10 @@ class _ChooseDocumentRepositoryPageState
 
   final List<Folder> _selectedFolders = [];
 
+  IDartWingApi get _dartWingApi => GetIt.I<IDartWingApi>();
+  AppState get _appState => GetIt.I<AppState>();
+  ILogger get _logger => GetIt.I<ILogger>();
+
   bool _canBeSelected() {
     return _selectedFolders.isNotEmpty
         ? _selectedFolders.last.canBeSelected
@@ -50,7 +56,7 @@ class _ChooseDocumentRepositoryPageState
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    return NetworkClients.dartWingApi
+    return _dartWingApi
         .saveOrganizationPath(widget.companyName, _currentPath())
         .then((_) {
       setState(() {
@@ -69,13 +75,12 @@ class _ChooseDocumentRepositoryPageState
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    NetworkClients.dartWingApi
+    _dartWingApi
         .fetchOrganizationProviders(widget.companyName)
         .then((providers) {
       if (_currentProvider.name.isEmpty) {
         _currentProvider = Provider();
       }
-      //providers.insert(0, _currentProvider);
       setState(() {
         _loadingOverlayEnabled = false;
         _providers = providers;
@@ -93,7 +98,7 @@ class _ChooseDocumentRepositoryPageState
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    return NetworkClients.dartWingApi
+    return _dartWingApi
         .fetchFolders(_currentProvider.alias.toString(), widget.companyName,
             _currentPath())
         .then((folderResponse) {
@@ -110,9 +115,8 @@ class _ChooseDocumentRepositoryPageState
 
         final updatedQueryParams =
             Map<String, String>.from(uri.queryParameters);
-        //updatedQueryParams['client_id'] = 'dartwingmobile';
         if (kIsWeb) {
-          updatedQueryParams['redirect_uri'] = NetworkClients.qaModeEnabled
+          updatedQueryParams['redirect_uri'] = _appState.qaModeEnabled
               ? 'https://app-dev.ledgerlinc.com'
               : 'https://app.ledgerlinc.com';
         } else {
@@ -123,10 +127,7 @@ class _ChooseDocumentRepositoryPageState
           queryParameters: updatedQueryParams,
         );
 
-        //uri.queryParameters['redirect_uri'] =
-        //    "сom.opensoft.dartwing://login-callback";
-        //uri.queryParameters['client_id'] = "dartwingmobile";
-        PaperTrailClient.sendInfoMessageToPaperTrail(updatedUri.toString());
+        _logger.info(updatedUri.toString());
         launchUrl(updatedUri, mode: LaunchMode.externalApplication)
             .then((success) {
           Navigator.of(context).pop();
@@ -162,10 +163,12 @@ class _ChooseDocumentRepositoryPageState
 
   @override
   Widget build(BuildContext context) {
+    final theme = DartwingTheme.of(context);
+
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
-        backgroundColor: BaseColors.lightBackgroundColor,
+        backgroundColor: theme.lightBackgroundColor,
         title: Row(children: [
           Expanded(
               child: Text("Choose Document Repository",
@@ -210,7 +213,6 @@ class _ChooseDocumentRepositoryPageState
                 iconEnabledColor: Colors.white,
                 elevation: 16,
                 style: const TextStyle(color: Colors.black, fontSize: 22),
-                //dropdownColor: BaseColors.lightBackgroundColor,
                 decoration: const InputDecoration(
                   labelStyle: TextStyle(color: Colors.black),
                 ),

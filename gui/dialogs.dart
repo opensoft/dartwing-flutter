@@ -1,15 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-import '../network/paper_trail.dart';
-import 'widgets/base_colors.dart';
+import '../core/logging/i_logger.dart';
+import 'theme/dartwing_theme.dart';
 
 class Dialogs {
   static final TextEditingController _textController = TextEditingController();
 
+  static ILogger get _logger => GetIt.I<ILogger>();
+
   static Future<dynamic> showWarningDialog(
       BuildContext context, String message) {
-    PaperTrailClient.sendWarningMessageToPaperTrail(message);
+    _logger.warning(message);
     return showBaseDialog(
         context, tr("Warning"), message, Colors.deepOrangeAccent);
   }
@@ -21,7 +24,7 @@ class Dialogs {
       String additionalButtonText = "",
       Color backgroundColor = Colors.white,
       bool textFieldEnabled = false}) {
-    PaperTrailClient.sendInfoMessageToPaperTrail("$titleText: $message");
+    _logger.info("$titleText: $message");
     return showSecondBaseDialog(context, message,
         titleText: tr(titleText),
         okButtonText: tr(okButtonText),
@@ -57,8 +60,11 @@ class Dialogs {
       String okButtonText = "",
       String cancelButtonText = "",
       String additionalButtonText = "",
-      Color backgroundColor = BaseColors.lightBackgroundColor,
+      Color? backgroundColor,
       bool textFieldEnabled = false}) {
+    final theme = DartwingTheme.of(context);
+    final bgColor = backgroundColor ?? theme.lightBackgroundColor;
+
     _textController.text = "";
     return showDialog(
         context: context,
@@ -68,7 +74,7 @@ class Dialogs {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
-              backgroundColor: backgroundColor,
+              backgroundColor: bgColor,
               title: Text(tr(titleText),
                   style: const TextStyle(
                     fontSize: 25,
@@ -102,8 +108,7 @@ class Dialogs {
                   visible: additionalButtonText.isNotEmpty,
                   child: ElevatedButton(
                     onPressed: () {
-                      PaperTrailClient.sendInfoMessageToPaperTrail(
-                          "$titleText: $additionalButtonText");
+                      _logger.info("$titleText: $additionalButtonText");
                       Navigator.pop(context, false);
                     },
                     style: TextButton.styleFrom(
@@ -118,8 +123,7 @@ class Dialogs {
                   visible: cancelButtonText.isNotEmpty,
                   child: ElevatedButton(
                     onPressed: () {
-                      PaperTrailClient.sendInfoMessageToPaperTrail(
-                          "$titleText: $cancelButtonText");
+                      _logger.info("$titleText: $cancelButtonText");
                       Navigator.pop(context, null);
                     },
                     child: Text(cancelButtonText,
@@ -134,8 +138,7 @@ class Dialogs {
                     onPressed: !textFieldEnabled ||
                             _textController.text.isNotEmpty
                         ? () {
-                            PaperTrailClient.sendInfoMessageToPaperTrail(
-                                "$titleText: $okButtonText");
+                            _logger.info("$titleText: $okButtonText");
                             Navigator.pop(context,
                                 textFieldEnabled ? _textController.text : true);
                           }

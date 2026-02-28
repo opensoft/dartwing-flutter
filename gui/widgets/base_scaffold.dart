@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../core/globals.dart';
-import '../../network/paper_trail.dart';
-import 'base_colors.dart';
+import '../../core/app_state.dart';
+import '../../core/logging/i_logger.dart';
+import '../theme/dartwing_theme.dart';
 import 'base_sidebar.dart';
 
 class BaseScaffold extends StatefulWidget {
@@ -21,6 +22,7 @@ class BaseScaffold extends StatefulWidget {
   final bool loadingOverlayEnabled;
   Widget? floatingActionButton;
   bool canPop;
+  bool enableKeyboardListener;
 
   BaseScaffold(
       {super.key,
@@ -34,7 +36,8 @@ class BaseScaffold extends StatefulWidget {
       this.pageTitle = '',
       this.onPostLogout,
       this.defaultAppMenuEnabled = false,
-      this.additionalSidebarXItems = const []});
+      this.additionalSidebarXItems = const [],
+      this.enableKeyboardListener = true});
 
   @override
   _BaseScaffoldState createState() => _BaseScaffoldState();
@@ -47,6 +50,9 @@ class _BaseScaffoldState extends State<BaseScaffold> {
   String _bufferForBarcode = "";
   bool _initFocus = false;
   final _key = GlobalKey<ScaffoldState>();
+
+  AppState get _appState => GetIt.I<AppState>();
+  ILogger get _logger => GetIt.I<ILogger>();
 
   RawKeyEvent _handleKey(RawKeyEvent key) {
     if (key is RawKeyDownEvent && key.character != null) {
@@ -61,25 +67,23 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         }
       } else if (!(isControl && isModifiers)) {
         _bufferForBarcode += key.character!;
-        //PaperTrailClient.sendInfoMessageToPaperTrail("Keyboard buffer: $_bufferForBarcode, character: ${key.character!} logicalKey: ${key.logicalKey!} physicalKey: ${key.physicalKey!} enter: ${key.character == "\n"} control: $isControl, modifiers: $isModifiers");
       }
 
       if (_bufferForBarcode
-          .contains(Globals.applicationInfo.barcodeScanner.prefix)) {
+          .contains(_appState.applicationInfo.barcodeScanner.prefix)) {
         _bufferForBarcode = "";
       } else if ((_bufferForBarcode
-                  .endsWith(Globals.applicationInfo.barcodeScanner.postfix) ||
+                  .endsWith(_appState.applicationInfo.barcodeScanner.postfix) ||
               key.character == "\n" ||
               (isControl && !isModifiers && !isBackSpace)) &&
           _bufferForBarcode.length > 1) {
         String barcode = _bufferForBarcode
-            .replaceAll(Globals.applicationInfo.barcodeScanner.postfix, '')
+            .replaceAll(_appState.applicationInfo.barcodeScanner.postfix, '')
             .trim();
         _bufferForBarcode = "";
-        PaperTrailClient.sendInfoMessageToPaperTrail(
+        _logger.info(
             "Barcode: $barcode, character: ${key.character!} control: $isControl, modifiers: $isModifiers");
-        PaperTrailClient.sendInfoMessageToPaperTrail(
-            'QR or barcode (laser scanner): $barcode');
+        _logger.info('QR or barcode (laser scanner): $barcode');
         if (widget.onBarcodeFetched != null) {
           widget.onBarcodeFetched!(barcode);
         }
@@ -90,18 +94,40 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_initFocus) {
+    final theme = DartwingTheme.of(context);
+
+    if (!_initFocus && widget.enableKeyboardListener) {
       _initFocus = true;
       FocusScope.of(context).requestFocus(_textNode);
     }
+
+    Widget bodyContent = Center(
+      child: LoadingOverlay(
+        isLoading: widget.loadingOverlayEnabled,
+        child: SafeArea(
+          left: false,
+          right: false,
+          child: widget.body,
+        ),
+      ),
+    );
+
+    if (widget.enableKeyboardListener) {
+      bodyContent = RawKeyboardListener(
+        focusNode: _textNode,
+        onKey: (key) => _handleKey(key),
+        child: bodyContent,
+      );
+    }
+
     return Scaffold(
       key: _key,
-      backgroundColor: BaseColors.backgroundColor, // const Color(0xFF605c7d)
+      backgroundColor: theme.backgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: widget.appBar ??
           (widget.defaultAppMenuEnabled
               ? AppBar(
-                  backgroundColor: BaseColors.lightBackgroundColor,
+                  backgroundColor: theme.lightBackgroundColor,
                   title: Text(widget.pageTitle),
                   leading: IconButton(
                     onPressed: () {
@@ -122,20 +148,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           : null,
       body: PopScope(
         canPop: widget.canPop && !widget.loadingOverlayEnabled,
-        child: RawKeyboardListener(
-          focusNode: _textNode,
-          onKey: (key) => _handleKey(key),
-          child: Center(
-            child: LoadingOverlay(
-              isLoading: widget.loadingOverlayEnabled,
-              child: SafeArea(
-                left: false,
-                right: false,
-                child: widget.body,
-              ),
-            ),
-          ),
-        ),
+        child: bodyContent,
       ),
     );
   }

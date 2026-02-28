@@ -1,14 +1,15 @@
 import 'dart:convert';
 
 import '../base_api.dart';
-import '../rest_client.dart';
 import 'data/user.dart';
 
-class UsersApi extends BaseNetworkApi {
+import '../interfaces/i_users_api.dart';
+
+class UsersApi extends BaseNetworkApi implements IUsersApi {
   UsersApi(super.restClient, super.host, super.site, super.company);
 
   Future<User> createUser(User user) async {
-    return await RestClient.post(
+    return await restClient.post(
       Uri.parse('$host/api/resource/User'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(user.toJson()),
@@ -21,7 +22,7 @@ class UsersApi extends BaseNetworkApi {
   }
 
   Future<User> updateUser(User user) async {
-    return await RestClient.put(
+    return await restClient.put(
       Uri.parse('$host/api/resource/User/${user.email}'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(user.toJson()),
@@ -34,7 +35,7 @@ class UsersApi extends BaseNetworkApi {
   }
 
   Future<User> fetchUser(String userEmail) async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/User/$userEmail?limit_start=0&limit_page_length=100',
       ),
@@ -48,7 +49,7 @@ class UsersApi extends BaseNetworkApi {
   }
 
   Future<List<User>> fetchUsers() async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/User?limit_start=0&limit_page_length=100&fields=["*"]',
       ),

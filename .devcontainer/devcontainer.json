@@ -1,14 +1,30 @@
 {
   "name": "DartWing Flutter Development",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".",
-    "args": {
-      "USER_UID": "1000",
-      "USER_GID": "1000",
-      "USERNAME": "brett"
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "flutter",
+  "workspaceFolder": "/workspace",
+
+  "initializeCommand": "bash -c 'IMAGE=\"flutter-bench:$(whoami)\"; if ! docker image inspect \"$IMAGE\" >/dev/null 2>&1; then echo \"\"; echo \"❌ ERROR: $IMAGE image not found!\"; echo \"\"; echo \"The DartWing devcontainer requires the flutterBench image from Opensoft.\"; echo \"Please install it from: https://github.com/Opensoft/flutterBench\"; echo \"\"; exit 1; fi'",
+
+  "forwardPorts": [3000, 8080, 5037, 5554, 5555, 1455],
+
+  "portsAttributes": {
+    "3000": {
+      "label": "Flutter Web Server",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "General Web Server",
+      "onAutoForward": "notify"
+    },
+    "1455": {
+      "label": "Codex auth callback",
+      "onAutoForward": "notify"
     }
   },
+
+  "shutdownAction": "stopCompose",
+
   "customizations": {
     "vscode": {
       "extensions": [
@@ -30,20 +46,57 @@
         "localizely.flutter-intl",
         "Nash.awesome-flutter-snippets",
         "humao.rest-client",
-        "ryanluker.vscode-coverage-gutters"
+        "ryanluker.vscode-coverage-gutters",
+        "continue.continue",
+        "anthropic.claude-code",
+        "openai.chatgpt",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "Google.geminicodeassist",
+        "google.gemini-cli-vscode-ide-companion",
+        "vadbeg.vsclaude",
+        "d3j.gemini-cli-on-vscode"
       ],
       "settings": {
         "dart.flutterSdkPath": "/opt/flutter",
-        "dart.sdkPath": "/opt/flutter/bin/cache/dart-sdk"
+        "dart.sdkPath": "/opt/flutter/bin/cache/dart-sdk",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh",
+            "args": ["-l"]
+          },
+          "Codex": {
+            "path": "/bin/zsh",
+            "args": ["-c", "codex cmd; exec zsh"]
+          },
+          "Claude Code": {
+            "path": "/bin/zsh",
+            "args": ["-c", "claude cmd; exec zsh"]
+          }
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
   },
-  "forwardPorts": [
-    3000,
-    8080
+
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/root/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.codex,target=/root/.codex,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude,target=${localEnv:HOME}/.claude,type=bind",
+    "source=${localEnv:HOME}/.codex,target=${localEnv:HOME}/.codex,type=bind"
   ],
-  "postCreateCommand": "flutter doctor -v || true",
-  "remoteUser": "brett",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-  "workspaceFolder": "/workspace"
+
+  "remoteUser": "${localEnv:USER}",
+
+  "containerEnv": {
+    "SHELL": "/bin/zsh",
+    "TERM_PROGRAM": "${localEnv:TERM_PROGRAM}",
+    "WARP_HONOR_PS1": "1",
+    "WARP_USE_SSH_WRAPPER": "${localEnv:WARP_USE_SSH_WRAPPER}",
+    "WARP_IS_LOCAL_SHELL_SESSION": "${localEnv:WARP_IS_LOCAL_SHELL_SESSION}",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000"
+  },
+
+  "postCreateCommand": "cp --update=none .devcontainer/.env.example .devcontainer/.env || true && flutter doctor -v || true",
+  "postAttachCommand": "echo 'Connected to DartWing Flutter development environment'"
 }

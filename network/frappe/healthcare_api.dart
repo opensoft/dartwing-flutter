@@ -1,16 +1,17 @@
 import 'dart:convert';
 
 import '../base_api.dart';
-import '../rest_client.dart';
 import 'data/dish.dart';
 import 'data/doctor.dart';
 import 'data/patient.dart';
 
-class HealthcareApi extends BaseNetworkApi {
+import '../interfaces/i_healthcare_api.dart';
+
+class HealthcareApi extends BaseNetworkApi implements IHealthcareApi {
   HealthcareApi(super.restClient, super.host, super.site, super.company);
 
   Future<Patient> createPatient(Patient patient) async {
-    return await RestClient.post(
+    return await restClient.post(
       Uri.parse('$host/api/resource/Patient'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(patient.toJson()),
@@ -23,7 +24,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Patient> updatePatient(Patient patient) async {
-    return await RestClient.put(
+    return await restClient.put(
       Uri.parse('$host/api/resource/Patient/${patient.id}'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(patient.toJson()),
@@ -36,7 +37,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Patient> fetchPatient(String patientId) async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/Patient/$patientId?limit_start=0&limit_page_length=100',
       ),
@@ -50,7 +51,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Patient> fetchPatientByUserId(String userId) async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/Patient?fields=["*"]&filters=[["Patient","user_id","=","$userId"]]',
       ),
@@ -68,7 +69,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<List<Patient>> fetchPatients() async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/Patient?limit_start=0&limit_page_length=100&fields=["*"]',
       ),
@@ -87,7 +88,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Doctor> createDoctor(Doctor doctor) async {
-    return await RestClient.post(
+    return await restClient.post(
       Uri.parse('$host/api/resource/Healthcare Practitioner'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(doctor.toJson()),
@@ -100,7 +101,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Doctor> updateDoctor(Doctor doctor) async {
-    return await RestClient.put(
+    return await restClient.put(
       Uri.parse('$host/api/resource/Healthcare Practitioner/${doctor.id}'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(doctor.toJson()),
@@ -113,7 +114,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Doctor> fetchDoctor(String doctorId) async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/Healthcare Practitioner/$doctorId?limit_start=0&limit_page_length=100',
       ),
@@ -127,7 +128,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<List<Doctor>> fetchDoctors() async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/Healthcare Practitioner?limit_start=0&limit_page_length=100&fields=["*"]',
       ),
@@ -146,7 +147,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Dish> createDish(Dish dish) async {
-    return await RestClient.post(
+    return await restClient.post(
       Uri.parse('$host/api/resource/Dish'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(dish.toJson()),
@@ -159,7 +160,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<Dish> updateDish(Dish dish) async {
-    return await RestClient.put(
+    return await restClient.put(
       Uri.parse('$host/api/resource/Dish/${dish.name}'),
       headers: createTokenAuthNetworkHeaders(),
       body: jsonEncode(dish.toJson()),
@@ -172,7 +173,7 @@ class HealthcareApi extends BaseNetworkApi {
   }
 
   Future<List<Dish>> fetchDishes() async {
-    return await RestClient.get(
+    return await restClient.get(
       Uri.parse(
         '$host/api/resource/Dish?limit_start=0&limit_page_length=100&fields=["*"]',
       ),

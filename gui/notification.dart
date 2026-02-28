@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-import '../network/paper_trail.dart';
+import '../core/logging/i_logger.dart';
 
 void showInfoNotification(BuildContext context, String message) {
-  PaperTrailClient.sendInfoMessageToPaperTrail(message);
+  GetIt.I<ILogger>().info(message);
   showNotification(context, message);
 }
 
 void showWarningNotification(BuildContext context, String message) {
-  PaperTrailClient.sendWarningMessageToPaperTrail(message);
+  GetIt.I<ILogger>().warning(message);
   if (context.mounted) {
     showNotification(context, message, warning: true);
   }

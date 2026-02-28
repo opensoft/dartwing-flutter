@@ -1,14 +1,15 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../base_apps_routers.dart';
 import '../notification.dart';
-import '../widgets/base_colors.dart';
+import '../theme/dartwing_theme.dart';
 import '../widgets/base_scaffold.dart';
 import '../../network/dart_wing/dart_wing_api_helper.dart';
 import '../../network/dart_wing/data/organization.dart';
-import '../../network/network_clients.dart';
+import '../../network/interfaces/i_dart_wing_api.dart';
 
 class CreateCompanyOrganizationPage extends StatefulWidget {
   const CreateCompanyOrganizationPage(
@@ -30,6 +31,8 @@ class _CreateCompanyOrganizationPageState
   final _focusNode = FocusNode();
   final Organization _organization = Organization();
 
+  IDartWingApi get _dartWingApi => GetIt.I<IDartWingApi>();
+
   void _createCompany() {
     _organization.name = _organizationNameController.text;
     _organization.abbreviation = _organizationAbbrController.text;
@@ -39,7 +42,7 @@ class _CreateCompanyOrganizationPageState
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    NetworkClients.dartWingApi
+    _dartWingApi
         .createOrganization(_organization)
         .then((company) {
       setState(() {
@@ -73,10 +76,12 @@ class _CreateCompanyOrganizationPageState
 
   @override
   Widget build(BuildContext context) {
+    final theme = DartwingTheme.of(context);
+
     return BaseScaffold(
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
-        backgroundColor: BaseColors.lightBackgroundColor,
+        backgroundColor: theme.lightBackgroundColor,
         title: Row(children: [
           Expanded(
               child: Text(
@@ -92,15 +97,12 @@ class _CreateCompanyOrganizationPageState
                 child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
-                      //keyboardType: TextInputType.emailAddress,
                       controller: _organizationNameController,
-                      //style: const TextStyle(color: Colors.white),
                       onChanged: (_) {
                         setState(() {});
                       },
                       decoration: InputDecoration(
                         labelText: "Company Name",
-                        //labelStyle: const TextStyle(color: Colors.grey),
                         hintText: "Company Name",
                         hintStyle: const TextStyle(color: Colors.grey),
                         border: const OutlineInputBorder(),
@@ -110,15 +112,12 @@ class _CreateCompanyOrganizationPageState
                 child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
-                      //keyboardType: TextInputType.emailAddress,
                       controller: _organizationAbbrController,
-                      //style: const TextStyle(color: Colors.white),
                       onChanged: (_) {
                         setState(() {});
                       },
                       decoration: InputDecoration(
                         labelText: "Abbreviation",
-                        //labelStyle: const TextStyle(color: Colors.grey),
                         hintText: "Abbreviation",
                         hintStyle: const TextStyle(color: Colors.grey),
                         border: const OutlineInputBorder(),

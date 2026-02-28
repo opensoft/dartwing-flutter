@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../core/globals.dart';
-import 'base_colors.dart';
+import '../../core/app_state.dart';
+import '../theme/dartwing_theme.dart';
 
 class BaseSideBar extends StatelessWidget {
   BaseSideBar({
@@ -16,6 +17,8 @@ class BaseSideBar extends StatelessWidget {
   final void Function()? onPostLogout;
   List<SidebarXItem> additionalSidebarXItems = const [];
 
+  AppState get _appState => GetIt.I<AppState>();
+
   void _logout(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
     if (onPostLogout != null) {
@@ -25,6 +28,8 @@ class BaseSideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = DartwingTheme.of(context);
+
     List<SidebarXItem> sidebarItems = [];
     sidebarItems.addAll(additionalSidebarXItems);
     sidebarItems.addAll([
@@ -32,7 +37,7 @@ class BaseSideBar extends StatelessWidget {
           icon: Icons.quora,
           label: tr("QA mode switch"),
           onTap: () {
-            Globals.qaModeEnabled = !Globals.qaModeEnabled;
+            _appState.qaModeEnabled = !_appState.qaModeEnabled;
             _logout(context);
           }),
       SidebarXItem(
@@ -44,19 +49,15 @@ class BaseSideBar extends StatelessWidget {
     ]);
     return SidebarX(
       controller: _controller,
-      theme: const SidebarXTheme(
-        itemTextPadding: EdgeInsets.only(left: 10),
-        selectedItemTextPadding: EdgeInsets.only(left: 10),
-        itemPadding: EdgeInsets.all(5),
+      theme: SidebarXTheme(
+        itemTextPadding: const EdgeInsets.only(left: 10),
+        selectedItemTextPadding: const EdgeInsets.only(left: 10),
+        itemPadding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: BaseColors.backgroundColor,
-            borderRadius: BorderRadius.only(
+            color: theme.backgroundColor,
+            borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(20),
                 bottomRight: Radius.circular(20))),
-        //iconTheme: IconThemeData(
-        //  color: Colors.white,
-        //),
-        //textStyle: TextStyle(color: Colors.white),
         selectedTextStyle: null,
         selectedItemDecoration: null,
       ),
@@ -71,18 +72,17 @@ class BaseSideBar extends StatelessWidget {
             const Icon(
               Icons.person,
               size: 70,
-              //color: Colors.white,
               semanticLabel: "user",
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 5),
                 child: Text(
-                  Globals.applicationInfo.username,
+                  _appState.applicationInfo.username,
                 )),
             Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 10),
                 child: Text(
-                  Globals.applicationInfo.userEmail,
+                  _appState.applicationInfo.userEmail,
                   style: const TextStyle(fontSize: 10),
                 )),
           ]),
