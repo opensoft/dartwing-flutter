@@ -1,9 +1,16 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentStorage {
   static const String _installationIdKey = 'client_info_installation_id';
   static const String _lastSelectedCameraDeviceIdKey =
       'last_selected_camera_device_id';
+  static const String _accessUmsTokenKey = 'access_ums_token';
+  static const String _keycloakClientSecretKey = 'keycloak_client_secret';
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   static Future<void> saveAppId(String appId) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
@@ -61,13 +68,18 @@ class PersistentStorage {
   }
 
   static Future<void> saveAccessUmsToken(String token) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('access_ums_token', token);
+    await _saveSensitiveString(
+      key: _accessUmsTokenKey,
+      value: token,
+      legacyPrefsKey: _accessUmsTokenKey,
+    );
   }
 
   static Future<String> getAccessUmsToken() async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('access_ums_token') ?? '';
+    return _readSensitiveString(
+      key: _accessUmsTokenKey,
+      legacyPrefsKey: _accessUmsTokenKey,
+    );
   }
 
   static Future<void> saveAccessUmsTokenExpiryEpochMs(int epochMs) async {
@@ -91,13 +103,18 @@ class PersistentStorage {
   }
 
   static Future<void> saveKeycloakClientSecret(String clientSecret) async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString('keycloak_client_secret', clientSecret);
+    await _saveSensitiveString(
+      key: _keycloakClientSecretKey,
+      value: clientSecret,
+      legacyPrefsKey: _keycloakClientSecretKey,
+    );
   }
 
   static Future<String> getKeycloakClientSecret() async {
-    SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getString('keycloak_client_secret') ?? '';
+    return _readSensitiveString(
+      key: _keycloakClientSecretKey,
+      legacyPrefsKey: _keycloakClientSecretKey,
+    );
   }
 
   static Future<bool> isComplaintNotificationEnabled() async {
@@ -128,5 +145,58 @@ class PersistentStorage {
   static Future<String> getLastSelectedCameraDeviceId() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getString(_lastSelectedCameraDeviceIdKey) ?? '';
+  }
+
+  static Future<void> _saveSensitiveString({
+    required String key,
+    required String value,
+    required String legacyPrefsKey,
+  }) async {
+    final SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    final String normalized = value.trim();
+    try {
+      if (normalized.isEmpty) {
+        await _secureStorage.delete(key: key);
+      } else {
+        await _secureStorage.write(key: key, value: normalized);
+      }
+      await myPrefs.remove(legacyPrefsKey);
+    } catch (error, stackTrace) {
+      debugPrint('Secure storage write failed for $key: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (normalized.isEmpty) {
+        await myPrefs.remove(legacyPrefsKey);
+      } else {
+        await myPrefs.setString(legacyPrefsKey, normalized);
+      }
+    }
+  }
+
+  static Future<String> _readSensitiveString({
+    required String key,
+    required String legacyPrefsKey,
+  }) async {
+    final SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    try {
+      final String? secureValue = await _secureStorage.read(key: key);
+      if (secureValue != null && secureValue.isNotEmpty) {
+        return secureValue;
+      }
+    } catch (error, stackTrace) {
+      debugPrint('Secure storage read failed for $key: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+
+    final String legacyValue = myPrefs.getString(legacyPrefsKey) ?? '';
+    if (legacyValue.isNotEmpty) {
+      unawaited(
+        _saveSensitiveString(
+          key: key,
+          value: legacyValue,
+          legacyPrefsKey: legacyPrefsKey,
+        ),
+      );
+    }
+    return legacyValue;
   }
 }
