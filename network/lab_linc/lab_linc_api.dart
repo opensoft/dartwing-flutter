@@ -518,15 +518,27 @@ class LabLincApi extends BaseNetworkApi {
     });
   }
 
-  Future<DeviceInfo?> authorizeStationByQrCode(String qrCode) async {
+  Future<DeviceInfo?> authorizeStationByQrCode(
+    String qrCode, {
+    String temporaryUserToken = '',
+  }) async {
     final trimmedQrCode = qrCode.trim();
     if (trimmedQrCode.isEmpty) {
       return null;
     }
 
+    final String normalizedTemporaryUserToken = temporaryUserToken.trim();
+    final Map<String, String> headers = normalizedTemporaryUserToken.isEmpty
+        ? createBearerAuthNetworkHeaders()
+        : <String, String>{
+            'Accept': '*/*',
+            'Authorization': 'Bearer $normalizedTemporaryUserToken',
+            'Content-Type': 'application/json',
+          };
+
     final response = await RestClient.post(
       Uri.parse('$host/api/v1/stations/authorize'),
-      headers: createBearerAuthNetworkHeaders(),
+      headers: headers,
       body: jsonEncode({'qrCode': trimmedQrCode}),
     );
 
