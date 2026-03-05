@@ -12,7 +12,7 @@ class CustomException implements Exception {
 
 class FetchDataException extends CustomException {
   FetchDataException(String message)
-      : super(message, "Error During Communication: ");
+    : super(message, "Error During Communication: ");
 }
 
 class BadRequestException extends CustomException {
@@ -33,7 +33,7 @@ class ConflictException extends CustomException {
 
 class PayloadTooLargeException extends CustomException {
   PayloadTooLargeException(String message)
-      : super(message, "Payload Too Large: ");
+    : super(message, "Payload Too Large: ");
 }
 
 class InvalidInputException extends CustomException {

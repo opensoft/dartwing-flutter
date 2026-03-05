@@ -11,8 +11,10 @@ import '../../network/dart_wing/data/organization.dart';
 import '../../network/network_clients.dart';
 
 class CreateCompanyOrganizationPage extends StatefulWidget {
-  const CreateCompanyOrganizationPage(
-      {super.key, required this.descriptionOfOrganization});
+  const CreateCompanyOrganizationPage({
+    super.key,
+    required this.descriptionOfOrganization,
+  });
   final String descriptionOfOrganization;
 
   @override
@@ -42,23 +44,25 @@ class _CreateCompanyOrganizationPageState
     NetworkClients.dartWingApi
         .createOrganization(_organization)
         .then((company) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      Navigator.of(context)
-          .pushNamed(BaseAppsRouters.companyInfoPage, arguments: company.name);
-    }).catchError((e) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      showWarningNotification(context, e.toString());
-    });
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          Navigator.of(
+            context,
+          ).pushNamed(BaseAppsRouters.companyInfoPage, arguments: company.name);
+        })
+        .catchError((e) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          showWarningNotification(context, e.toString());
+        });
   }
 
   @override
@@ -66,7 +70,8 @@ class _CreateCompanyOrganizationPageState
     _organization.companyType = OrganizationType.company;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => FocusScope.of(context).requestFocus(_focusNode));
+      (_) => FocusScope.of(context).requestFocus(_focusNode),
+    );
   }
 
   @override
@@ -83,75 +88,88 @@ class _CreateCompanyOrganizationPageState
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
         backgroundColor: BaseColors.lightBackgroundColor,
-        title: Row(children: [
-          Expanded(
+        title: Row(
+          children: [
+            Expanded(
               child: Text(
-                  widget.descriptionOfOrganization.toString().toUpperCase(),
-                  textAlign: TextAlign.center)),
-        ]),
+                widget.descriptionOfOrganization.toString().toUpperCase(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
             Flexible(
-                child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextFormField(
-                      //keyboardType: TextInputType.emailAddress,
-                      controller: _organizationNameController,
-                      //style: const TextStyle(color: Colors.white),
-                      onChanged: (_) {
-                        setState(() {});
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Company Name",
-                        //labelStyle: const TextStyle(color: Colors.grey),
-                        hintText: "Company Name",
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: const OutlineInputBorder(),
-                      ),
-                    ))),
-            Flexible(
-                child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextFormField(
-                      //keyboardType: TextInputType.emailAddress,
-                      controller: _organizationAbbrController,
-                      //style: const TextStyle(color: Colors.white),
-                      onChanged: (_) {
-                        setState(() {});
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Abbreviation",
-                        //labelStyle: const TextStyle(color: Colors.grey),
-                        hintText: "Abbreviation",
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: const OutlineInputBorder(),
-                      ),
-                    ))),
-            Padding(
+              child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[200],
-                      minimumSize: const Size.fromHeight(60),
+                child: TextFormField(
+                  //keyboardType: TextInputType.emailAddress,
+                  controller: _organizationNameController,
+                  //style: const TextStyle(color: Colors.white),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Company Name",
+                    //labelStyle: const TextStyle(color: Colors.grey),
+                    hintText: "Company Name",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  //keyboardType: TextInputType.emailAddress,
+                  controller: _organizationAbbrController,
+                  //style: const TextStyle(color: Colors.white),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Abbreviation",
+                    //labelStyle: const TextStyle(color: Colors.grey),
+                    hintText: "Abbreviation",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange[200],
+                  minimumSize: const Size.fromHeight(60),
+                ),
+                onPressed:
+                    _organizationNameController.text.isNotEmpty &&
+                        _organizationAbbrController.text.isNotEmpty
+                    ? () {
+                        _createCompany();
+                      }
+                    : null,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Create",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18),
+                      ),
                     ),
-                    onPressed: _organizationNameController.text.isNotEmpty &&
-                            _organizationAbbrController.text.isNotEmpty
-                        ? () {
-                            _createCompany();
-                          }
-                        : null,
-                    child: Row(children: [
-                      Expanded(
-                        child: Text(
-                          "Create",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      )
-                    ])))
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

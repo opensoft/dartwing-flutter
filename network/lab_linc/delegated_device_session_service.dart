@@ -83,10 +83,7 @@ class DelegatedDeviceSessionService {
     );
   }
 
-  void clearSession({
-    String reason = '',
-    bool logAsWarning = false,
-  }) {
+  void clearSession({String reason = '', bool logAsWarning = false}) {
     final String normalizedReason = reason.trim();
     final bool hadSession = _activeSession != null;
 

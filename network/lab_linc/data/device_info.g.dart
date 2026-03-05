@@ -10,10 +10,9 @@ DeviceInfo _$DeviceInfoFromJson(Map<String, dynamic> json) => DeviceInfo()
   ..deviceUid = json['deviceUid'] as String? ?? ''
   ..name = json['name'] as String? ?? ''
   ..slotCount = json['slotCount'] == null ? 0 : _intFromJson(json['slotCount'])
-  ..occupiedSlotCount =
-      json['occupiedSlotCount'] == null
-          ? 0
-          : _intFromJson(json['occupiedSlotCount'])
+  ..occupiedSlotCount = json['occupiedSlotCount'] == null
+      ? 0
+      : _intFromJson(json['occupiedSlotCount'])
   ..keycloakClientId = json['keycloakClientId'] as String?
   ..companyId = json['companyId'] as String?
   ..companyName = json['companyName'] as String?

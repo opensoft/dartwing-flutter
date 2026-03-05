@@ -14,7 +14,11 @@ void showWarningNotification(BuildContext context, String message) {
   }
 }
 
-void showNotification(BuildContext context, String message, {bool warning = false}) {
+void showNotification(
+  BuildContext context,
+  String message, {
+  bool warning = false,
+}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),

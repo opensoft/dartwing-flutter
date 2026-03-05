@@ -26,23 +26,26 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
     setState(() {
       _loadingOverlayEnabled = true;
     });
-    NetworkClients.dartWingApi.fetchOrganizations().then((organizations) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _organizations = organizations;
-        _loadingOverlayEnabled = false;
-      });
-    }).catchError((e) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      showWarningNotification(context, e.toString());
-    });
+    NetworkClients.dartWingApi
+        .fetchOrganizations()
+        .then((organizations) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _organizations = organizations;
+            _loadingOverlayEnabled = false;
+          });
+        })
+        .catchError((e) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          showWarningNotification(context, e.toString());
+        });
   }
 
   @override
@@ -50,7 +53,8 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
     _fetchOrganizations();
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => FocusScope.of(context).requestFocus(_focusNode));
+      (_) => FocusScope.of(context).requestFocus(_focusNode),
+    );
   }
 
   @override
@@ -65,27 +69,29 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
         backgroundColor: BaseColors.lightBackgroundColor,
-        title: Row(children: [
-          Expanded(child: Text("Organizations", textAlign: TextAlign.center)),
-          InkWell(
-            borderRadius: BorderRadius.circular(15),
-            onTap: () {
-              Navigator.of(context)
-                  .pushNamed(BaseAppsRouters.selectOrganizationTypePage);
-            },
-            child: Container(
+        title: Row(
+          children: [
+            Expanded(child: Text("Organizations", textAlign: TextAlign.center)),
+            InkWell(
+              borderRadius: BorderRadius.circular(15),
+              onTap: () {
+                Navigator.of(
+                  context,
+                ).pushNamed(BaseAppsRouters.selectOrganizationTypePage);
+              },
+              child: Container(
                 decoration: BoxDecoration(
                   color: Colors.amber,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      "Add",
-                      style: TextStyle(fontSize: 16),
-                    ))),
-          )
-        ]),
+                  padding: const EdgeInsets.all(10),
+                  child: Text("Add", style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -93,44 +99,52 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
           children: [
             Expanded(
               child: ListView.separated(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.only(top: 20, bottom: 20),
-                  itemCount: _organizations.length,
-                  separatorBuilder: (context, index) => const Divider(
-                        indent: 8,
-                        color: Colors.grey,
-                      ),
-                  itemBuilder: (BuildContext context, int i) {
-                    return Container(
-                        height: 80,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1),
-                          borderRadius: BorderRadius.circular(
-                              8), // Optional rounded corners
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(top: 20, bottom: 20),
+                itemCount: _organizations.length,
+                separatorBuilder: (context, index) =>
+                    const Divider(indent: 8, color: Colors.grey),
+                itemBuilder: (BuildContext context, int i) {
+                  return Container(
+                    height: 80,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 1),
+                      borderRadius: BorderRadius.circular(
+                        8,
+                      ), // Optional rounded corners
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(
+                              BaseAppsRouters.companyInfoPage,
+                              arguments: _organizations[i].name,
+                            )
+                            .then((_) {
+                              _fetchOrganizations();
+                            });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _organizations[i].name ?? '',
+                                  style: const TextStyle(fontSize: 19),
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.navigate_next),
+                          ],
                         ),
-                        child: InkWell(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .pushNamed(BaseAppsRouters.companyInfoPage,
-                                      arguments: _organizations[i].name)
-                                  .then((_) {
-                                _fetchOrganizations();
-                              });
-                            },
-                            child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Row(children: [
-                                  Expanded(
-                                      child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      _organizations[i].name ?? '',
-                                      style: const TextStyle(fontSize: 19),
-                                    ),
-                                  )),
-                                  const Icon(Icons.navigate_next)
-                                ]))));
-                  }),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),

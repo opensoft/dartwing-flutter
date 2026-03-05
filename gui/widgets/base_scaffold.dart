@@ -22,27 +22,30 @@ class BaseScaffold extends StatefulWidget {
   final Widget? floatingActionButton;
   final bool canPop;
 
-  const BaseScaffold(
-      {super.key,
-      this.appBar,
-      this.bottomNavigatorBar,
-      required this.body,
-      this.onBarcodeFetched,
-      required this.loadingOverlayEnabled,
-      this.floatingActionButton,
-      this.canPop = true,
-      this.pageTitle = '',
-      this.onPostLogout,
-      this.defaultAppMenuEnabled = false,
-      this.additionalSidebarXItems = const []});
+  const BaseScaffold({
+    super.key,
+    this.appBar,
+    this.bottomNavigatorBar,
+    required this.body,
+    this.onBarcodeFetched,
+    required this.loadingOverlayEnabled,
+    this.floatingActionButton,
+    this.canPop = true,
+    this.pageTitle = '',
+    this.onPostLogout,
+    this.defaultAppMenuEnabled = false,
+    this.additionalSidebarXItems = const [],
+  });
 
   @override
   State<BaseScaffold> createState() => _BaseScaffoldState();
 }
 
 class _BaseScaffoldState extends State<BaseScaffold> {
-  final _sideBarController =
-      SidebarXController(selectedIndex: 0, extended: true);
+  final _sideBarController = SidebarXController(
+    selectedIndex: 0,
+    extended: true,
+  );
   final FocusNode _textNode = FocusNode();
   String _bufferForBarcode = "";
   bool _initFocus = false;
@@ -59,18 +62,23 @@ class _BaseScaffoldState extends State<BaseScaffold> {
       if (isBackSpace) {
         if (_bufferForBarcode.isNotEmpty) {
           _bufferForBarcode = _bufferForBarcode.replaceRange(
-              _bufferForBarcode.length - 2, _bufferForBarcode.length - 1, '');
+            _bufferForBarcode.length - 2,
+            _bufferForBarcode.length - 1,
+            '',
+          );
         }
       } else if (!(isControl && isModifiers)) {
         _bufferForBarcode += character;
         //PaperTrailClient.sendInfoMessageToPaperTrail("Keyboard buffer: $_bufferForBarcode, character: ${key.character!} logicalKey: ${key.logicalKey!} physicalKey: ${key.physicalKey!} enter: ${key.character == "\n"} control: $isControl, modifiers: $isModifiers");
       }
 
-      if (_bufferForBarcode
-          .contains(Globals.applicationInfo.barcodeScanner.prefix)) {
+      if (_bufferForBarcode.contains(
+        Globals.applicationInfo.barcodeScanner.prefix,
+      )) {
         _bufferForBarcode = "";
-      } else if ((_bufferForBarcode
-                  .endsWith(Globals.applicationInfo.barcodeScanner.postfix) ||
+      } else if ((_bufferForBarcode.endsWith(
+                Globals.applicationInfo.barcodeScanner.postfix,
+              ) ||
               character == "\n" ||
               (isControl && !isModifiers && !isBackSpace)) &&
           _bufferForBarcode.length > 1) {
@@ -79,9 +87,11 @@ class _BaseScaffoldState extends State<BaseScaffold> {
             .trim();
         _bufferForBarcode = "";
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Barcode: $barcode, character: $character control: $isControl, modifiers: $isModifiers");
+          "Barcode: $barcode, character: $character control: $isControl, modifiers: $isModifiers",
+        );
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            'QR or barcode (laser scanner): $barcode');
+          'QR or barcode (laser scanner): $barcode',
+        );
         if (widget.onBarcodeFetched != null) {
           widget.onBarcodeFetched!(barcode);
         }
@@ -99,7 +109,8 @@ class _BaseScaffoldState extends State<BaseScaffold> {
       key: _key,
       backgroundColor: BaseColors.backgroundColor, // const Color(0xFF605c7d)
       resizeToAvoidBottomInset: false,
-      appBar: widget.appBar ??
+      appBar:
+          widget.appBar ??
           (widget.defaultAppMenuEnabled
               ? AppBar(
                   backgroundColor: BaseColors.lightBackgroundColor,
@@ -129,11 +140,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           child: Center(
             child: LoadingOverlay(
               isLoading: widget.loadingOverlayEnabled,
-              child: SafeArea(
-                left: false,
-                right: false,
-                child: widget.body,
-              ),
+              child: SafeArea(left: false, right: false, child: widget.body),
             ),
           ),
         ),

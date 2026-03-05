@@ -8,7 +8,7 @@ enum OrganizationType {
   @JsonValue("Club")
   club,
   @JsonValue("Non profit")
-  nonProfit
+  nonProfit,
 }
 
 enum SiteStatus {
@@ -19,5 +19,5 @@ enum SiteStatus {
   @JsonValue("Finished")
   finished,
   @JsonValue("Failed")
-  failed
+  failed,
 }

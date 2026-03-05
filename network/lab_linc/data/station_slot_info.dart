@@ -42,55 +42,60 @@ class StationSlotInfo {
   }
 
   factory StationSlotInfo.fromApiJson(Map<String, dynamic> json) {
-    final slotNumber = _firstInt(
-      json,
-      const [
-        'slotNumber',
-        'slot',
-        'position',
-        'index',
-        'slotIndex',
-        'positionNumber',
-        'positionNo',
-      ],
-    );
-    final status = _firstString(
-      json,
-      const ['status', 'slotStatus', 'state', 'slotState'],
-    );
-    final dishExternalId = _firstNullableString(
-      json,
-      const ['dishExternalId', 'dishId', 'dishBarcode', 'dishCode', 'dishNumber'],
-    );
-    final patientExternalId = _firstNullableString(
-      json,
-      const ['patientExternalId', 'patientId'],
-    );
-    final patientName = _firstNullableString(
-      json,
-      const ['patientName', 'patientDisplayName', 'patient'],
-    );
-    final embryosCount = _firstInt(
-      json,
-      const [
-        'embryosCount',
-        'embryoCount',
-        'embryos',
-        'occupiedEmbryosCount',
-      ],
-    );
-    final embryoStatus = _firstNullableString(
-      json,
-      const ['embryoStatus', 'qualityStatus', 'quality', 'stage', 'statusText'],
-    );
-    final positionLabel = _firstNullableString(
-      json,
-      const ['positionLabel', 'positionCode', 'positionName'],
-    );
-    final lastEventAtUtc = _firstNullableString(
-      json,
-      const ['lastEventAtUtc', 'updatedAtUtc', 'timestamp'],
-    );
+    final slotNumber = _firstInt(json, const [
+      'slotNumber',
+      'slot',
+      'position',
+      'index',
+      'slotIndex',
+      'positionNumber',
+      'positionNo',
+    ]);
+    final status = _firstString(json, const [
+      'status',
+      'slotStatus',
+      'state',
+      'slotState',
+    ]);
+    final dishExternalId = _firstNullableString(json, const [
+      'dishExternalId',
+      'dishId',
+      'dishBarcode',
+      'dishCode',
+      'dishNumber',
+    ]);
+    final patientExternalId = _firstNullableString(json, const [
+      'patientExternalId',
+      'patientId',
+    ]);
+    final patientName = _firstNullableString(json, const [
+      'patientName',
+      'patientDisplayName',
+      'patient',
+    ]);
+    final embryosCount = _firstInt(json, const [
+      'embryosCount',
+      'embryoCount',
+      'embryos',
+      'occupiedEmbryosCount',
+    ]);
+    final embryoStatus = _firstNullableString(json, const [
+      'embryoStatus',
+      'qualityStatus',
+      'quality',
+      'stage',
+      'statusText',
+    ]);
+    final positionLabel = _firstNullableString(json, const [
+      'positionLabel',
+      'positionCode',
+      'positionName',
+    ]);
+    final lastEventAtUtc = _firstNullableString(json, const [
+      'lastEventAtUtc',
+      'updatedAtUtc',
+      'timestamp',
+    ]);
 
     final normalizedStatus = status.toLowerCase();
     final hasDish = dishExternalId != null && dishExternalId.isNotEmpty;
@@ -100,11 +105,12 @@ class StationSlotInfo {
         normalizedStatus.contains('active') ||
         normalizedStatus.contains('load') ||
         normalizedStatus.contains('full');
-    final isOccupied = _firstBool(
-      json,
-      const ['isOccupied', 'occupied', 'hasDish', 'isFilled'],
-      defaultValue: occupiedFallback,
-    );
+    final isOccupied = _firstBool(json, const [
+      'isOccupied',
+      'occupied',
+      'hasDish',
+      'isFilled',
+    ], defaultValue: occupiedFallback);
     final isRecentlyAdded = _firstBool(
       json,
       const ['isRecentlyAdded', 'recentlyAdded', 'recentAdded', 'isNew'],
@@ -220,10 +226,12 @@ class StationSlotInfo {
     }
     if (value is Map) {
       final mapValue = Map<String, dynamic>.from(value);
-      final nestedValue = _firstNullableString(
-        mapValue,
-        const ['name', 'displayName', 'id', 'value'],
-      );
+      final nestedValue = _firstNullableString(mapValue, const [
+        'name',
+        'displayName',
+        'id',
+        'value',
+      ]);
       return nestedValue;
     }
     return null;

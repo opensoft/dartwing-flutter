@@ -425,7 +425,10 @@ class LabLincApi extends BaseNetworkApi {
         );
 
         if (response.statusCode ~/ 100 != 2) {
-          errorHandler(response, 'Cannot close capture session $captureSessionId');
+          errorHandler(
+            response,
+            'Cannot close capture session $captureSessionId',
+          );
         }
       },
     );
@@ -1035,8 +1038,7 @@ class LabLincApi extends BaseNetworkApi {
 
   Future<T> _withDelegatedHeaders<T>({
     required String operationName,
-    required Future<T> Function(Map<String, String> delegatedHeaders)
-    operation,
+    required Future<T> Function(Map<String, String> delegatedHeaders) operation,
   }) async {
     final Map<String, String> delegatedHeaders;
     try {

@@ -11,24 +11,32 @@ class ScannerPage extends StatefulWidget {
   final String pageTitle;
   final bool manualInputAllowed;
 
-  const ScannerPage(
-      {super.key, required this.pageTitle, required this.manualInputAllowed});
+  const ScannerPage({
+    super.key,
+    required this.pageTitle,
+    required this.manualInputAllowed,
+  });
 
   @override
   State<ScannerPage> createState() => _ScannerPageState();
 }
 
 class _ScannerPageState extends State<ScannerPage> {
-  final MobileScannerController controller =
-      MobileScannerController(detectionSpeed: DetectionSpeed.noDuplicates);
+  final MobileScannerController controller = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+  );
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final TextEditingController _textController = TextEditingController();
 
-  void _sendCode(String data,
-      {String inputDevice = "", bool isEnteredManually = false}) {
+  void _sendCode(
+    String data, {
+    String inputDevice = "",
+    bool isEnteredManually = false,
+  }) {
     PaperTrailClient.sendInfoMessageToPaperTrail(
-        'QR or barcode ($inputDevice): $data');
+      'QR or barcode ($inputDevice): $data',
+    );
     controller.stop();
     Navigator.of(context).pop(data);
   }
@@ -85,79 +93,75 @@ class _ScannerPageState extends State<ScannerPage> {
         ],
       );
     }
-    return Text(
-      widget.pageTitle,
-      style: const TextStyle(fontSize: 28),
-    );
+    return Text(widget.pageTitle, style: const TextStyle(fontSize: 28));
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       loadingOverlayEnabled: false,
-      appBar: AppBar(
-        title: Text(widget.pageTitle),
-      ),
+      appBar: AppBar(title: Text(widget.pageTitle)),
       onBarcodeFetched: (String barcode) {
         Navigator.of(context).pop(barcode);
       },
-      body: Column(children: [
-        Expanded(
-          child: _cameraOrScannerView(),
-        ),
-        Visibility(
-          visible: widget.manualInputAllowed,
-          child: Row(children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: _textController,
-                  decoration: const InputDecoration(
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
+      body: Column(
+        children: [
+          Expanded(child: _cameraOrScannerView()),
+          Visibility(
+            visible: widget.manualInputAllowed,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: _textController,
+                      decoration: const InputDecoration(
+                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: 'Enter barcode',
                       ),
-                      hintText: 'Enter barcode'),
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(20),
-                      padding: const EdgeInsets.all(10),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
-                    onPressed: _textController.text.isEmpty
-                        ? null
-                        : () {
-                            _sendCode(_textController.text,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(20),
+                        padding: const EdgeInsets.all(10),
+                      ),
+                      onPressed: _textController.text.isEmpty
+                          ? null
+                          : () {
+                              _sendCode(
+                                _textController.text,
                                 inputDevice: "manually",
-                                isEnteredManually: true);
-                          },
-                    child: const Text("->",
+                                isEnteredManually: true,
+                              );
+                            },
+                      child: const Text(
+                        "->",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                        ))),
-              ),
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ]),
-        ),
-      ]),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class ScannerOverlay extends CustomPainter {
-  const ScannerOverlay({
-    required this.scanWindow,
-    this.borderRadius = 12.0,
-  });
+  const ScannerOverlay({required this.scanWindow, this.borderRadius = 12.0});
 
   final Rect scanWindow;
   final double borderRadius;
@@ -260,10 +264,7 @@ class ToggleFlashlightButton extends StatelessWidget {
               },
             );
           case TorchState.unavailable:
-            return const Icon(
-              Icons.no_flash,
-              color: Colors.grey,
-            );
+            return const Icon(Icons.no_flash, color: Colors.grey);
         }
       },
     );
@@ -305,17 +306,18 @@ class OverlayShape extends ShapeBorder {
     double? cutOutWidth,
     double? cutOutHeight,
     this.cutOutBottomOffset = 0,
-  })  : cutOutWidth = cutOutWidth ?? cutOutSize ?? 250,
-        cutOutHeight = cutOutHeight ?? cutOutSize ?? 250 {
+  }) : cutOutWidth = cutOutWidth ?? cutOutSize ?? 250,
+       cutOutHeight = cutOutHeight ?? cutOutSize ?? 250 {
     assert(
       borderLength <=
           min(this.cutOutWidth, this.cutOutHeight) / 2 + borderWidth * 2,
       "Border can't be larger than ${min(this.cutOutWidth, this.cutOutHeight) / 2 + borderWidth * 2}",
     );
     assert(
-        (cutOutWidth == null && cutOutHeight == null) ||
-            (cutOutSize == 0.0 && cutOutWidth != null && cutOutHeight != null),
-        'Use only cutOutWidth and cutOutHeight or only cutOutSize');
+      (cutOutWidth == null && cutOutHeight == null) ||
+          (cutOutSize == 0.0 && cutOutWidth != null && cutOutHeight != null),
+      'Use only cutOutWidth and cutOutHeight or only cutOutSize',
+    );
   }
 
   @override
@@ -338,18 +340,9 @@ class OverlayShape extends ShapeBorder {
     }
 
     return getLeftTopPath(rect)
-      ..lineTo(
-        rect.right,
-        rect.bottom,
-      )
-      ..lineTo(
-        rect.left,
-        rect.bottom,
-      )
-      ..lineTo(
-        rect.left,
-        rect.top,
-      );
+      ..lineTo(rect.right, rect.bottom)
+      ..lineTo(rect.left, rect.bottom)
+      ..lineTo(rect.left, rect.top);
   }
 
   @override
@@ -360,11 +353,12 @@ class OverlayShape extends ShapeBorder {
     final borderOffset = borderWidth / 2;
     final bLength =
         borderLength > min(cutOutHeight, cutOutHeight) / 2 + borderWidth * 2
-            ? borderWidthSize / 2
-            : borderLength;
+        ? borderWidthSize / 2
+        : borderLength;
     final cutWidth = cutOutWidth < width ? cutOutWidth : width - borderOffset;
-    final cutHeight =
-        cutOutHeight < height ? cutOutHeight : height - borderOffset;
+    final cutHeight = cutOutHeight < height
+        ? cutOutHeight
+        : height - borderOffset;
 
     final backgroundPaint = Paint()
       ..color = overlayColor
@@ -392,15 +386,8 @@ class OverlayShape extends ShapeBorder {
     );
 
     canvas
-      ..saveLayer(
-        rect,
-        backgroundPaint,
-      )
-      ..drawRect(
-        rect,
-        backgroundPaint,
-      )
-
+      ..saveLayer(rect, backgroundPaint)
+      ..drawRect(rect, backgroundPaint)
       /// Draw top right corner
       ..drawRRect(
         RRect.fromLTRBAndCorners(
@@ -412,7 +399,6 @@ class OverlayShape extends ShapeBorder {
         ),
         borderPaint,
       )
-
       /// Draw top left corner
       ..drawRRect(
         RRect.fromLTRBAndCorners(
@@ -424,7 +410,6 @@ class OverlayShape extends ShapeBorder {
         ),
         borderPaint,
       )
-
       /// Draw bottom right corner
       ..drawRRect(
         RRect.fromLTRBAndCorners(
@@ -436,7 +421,6 @@ class OverlayShape extends ShapeBorder {
         ),
         borderPaint,
       )
-
       /// Draw bottom left corner
       ..drawRRect(
         RRect.fromLTRBAndCorners(
@@ -449,10 +433,7 @@ class OverlayShape extends ShapeBorder {
         borderPaint,
       )
       ..drawRRect(
-        RRect.fromRectAndRadius(
-          cutOutRect,
-          Radius.circular(borderRadius),
-        ),
+        RRect.fromRectAndRadius(cutOutRect, Radius.circular(borderRadius)),
         boxPaint,
       )
       ..restore();

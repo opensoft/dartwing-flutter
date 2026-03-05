@@ -30,7 +30,9 @@ class PaperTrailClient {
   }
 
   static void sendMessageToPaperTrail(
-      String message, String severityName) async {
+    String message,
+    String severityName,
+  ) async {
     message = message.replaceAll('\r\n', ' ');
     message = message.replaceAll('\n', ' ');
     var newFormat = DateFormat("yyyy-MM-ddTHH:mm:ss");

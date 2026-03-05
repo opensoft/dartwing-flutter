@@ -29,18 +29,20 @@ class BaseSideBar extends StatelessWidget {
     sidebarItems.addAll(additionalSidebarXItems);
     sidebarItems.addAll([
       SidebarXItem(
-          icon: Icons.quora,
-          label: tr("QA mode switch"),
-          onTap: () {
-            Globals.qaModeEnabled = !Globals.qaModeEnabled;
-            _logout(context);
-          }),
+        icon: Icons.quora,
+        label: tr("QA mode switch"),
+        onTap: () {
+          Globals.qaModeEnabled = !Globals.qaModeEnabled;
+          _logout(context);
+        },
+      ),
       SidebarXItem(
-          icon: Icons.exit_to_app,
-          label: tr('Logout'),
-          onTap: () {
-            _logout(context);
-          }),
+        icon: Icons.exit_to_app,
+        label: tr('Logout'),
+        onTap: () {
+          _logout(context);
+        },
+      ),
     ]);
     return SidebarX(
       controller: _controller,
@@ -49,10 +51,12 @@ class BaseSideBar extends StatelessWidget {
         selectedItemTextPadding: EdgeInsets.only(left: 10),
         itemPadding: EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: BaseColors.backgroundColor,
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20),
-                bottomRight: Radius.circular(20))),
+          color: BaseColors.backgroundColor,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+        ),
         //iconTheme: IconThemeData(
         //  color: Colors.white,
         //),
@@ -61,32 +65,34 @@ class BaseSideBar extends StatelessWidget {
         selectedItemDecoration: null,
       ),
       extendedTheme: const SidebarXTheme(width: 250),
-      footerDivider:
-          Divider(color: Colors.black.withValues(alpha: 0.8), height: 1),
+      footerDivider: Divider(
+        color: Colors.black.withValues(alpha: 0.8),
+        height: 1,
+      ),
       headerBuilder: (context, extended) {
         return Padding(
-          padding: const EdgeInsets.only(
-            top: 40,
-          ),
-          child: Column(children: [
-            const Icon(
-              Icons.person,
-              size: 70,
-              //color: Colors.white,
-              semanticLabel: "user",
-            ),
-            Padding(
+          padding: const EdgeInsets.only(top: 40),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.person,
+                size: 70,
+                //color: Colors.white,
+                semanticLabel: "user",
+              ),
+              Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: Text(
-                  Globals.applicationInfo.username,
-                )),
-            Padding(
+                child: Text(Globals.applicationInfo.username),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 10),
                 child: Text(
                   Globals.applicationInfo.userEmail,
                   style: const TextStyle(fontSize: 10),
-                )),
-          ]),
+                ),
+              ),
+            ],
+          ),
         );
       },
       items: sidebarItems,

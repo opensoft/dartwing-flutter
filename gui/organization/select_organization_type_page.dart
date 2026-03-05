@@ -29,7 +29,8 @@ class _SelectOrganizationTypePageState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => FocusScope.of(context).requestFocus(_focusNode));
+      (_) => FocusScope.of(context).requestFocus(_focusNode),
+    );
   }
 
   @override
@@ -45,10 +46,13 @@ class _SelectOrganizationTypePageState
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
         backgroundColor: BaseColors.lightBackgroundColor,
-        title: Row(children: [
-          Expanded(
-              child: Text("Add Organization", textAlign: TextAlign.center)),
-        ]),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text("Add Organization", textAlign: TextAlign.center),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -111,68 +115,74 @@ class _SelectOrganizationTypePageState
               ),
             ),
             Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextFormField(
-                      //keyboardType: TextInputType.emailAddress,
-                      controller: _organizationDescriptionController,
-                      //style: const TextStyle(color: Colors.white),
-                      onChanged: (_) {
-                        setState(() {});
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Description",
-                        //labelStyle: const TextStyle(color: Colors.grey),
-                        hintText: "Description",
-                        //hintStyle: const TextStyle(color: Colors.white24),
-                        border: const OutlineInputBorder(),
-                      ),
-                    ))),
-            Padding(
+              child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[200],
-                      minimumSize: const Size.fromHeight(60),
+                child: TextFormField(
+                  //keyboardType: TextInputType.emailAddress,
+                  controller: _organizationDescriptionController,
+                  //style: const TextStyle(color: Colors.white),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Description",
+                    //labelStyle: const TextStyle(color: Colors.grey),
+                    hintText: "Description",
+                    //hintStyle: const TextStyle(color: Colors.white24),
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange[200],
+                  minimumSize: const Size.fromHeight(60),
+                ),
+                onPressed: _selectedOrganizationType != null
+                    ? () {
+                        if (_selectedOrganizationType ==
+                            OrganizationType.company) {
+                          Navigator.of(context).pushNamed(
+                            BaseAppsRouters.createCompanyOrganizationPage,
+                            arguments: _organizationDescriptionController.text,
+                          );
+                        } else if (_selectedOrganizationType ==
+                            OrganizationType.family) {
+                          Navigator.of(context).pushNamed(
+                            BaseAppsRouters.createCompanyOrganizationPage,
+                            arguments: _organizationDescriptionController.text,
+                          );
+                        } else if (_selectedOrganizationType ==
+                            OrganizationType.club) {
+                          Navigator.of(context).pushNamed(
+                            BaseAppsRouters.createCompanyOrganizationPage,
+                            arguments: _organizationDescriptionController.text,
+                          );
+                        } else if (_selectedOrganizationType ==
+                            OrganizationType.nonProfit) {
+                          Navigator.of(context).pushNamed(
+                            BaseAppsRouters.createCompanyOrganizationPage,
+                            arguments: _organizationDescriptionController.text,
+                          );
+                        }
+                      }
+                    : null,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Add",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18),
+                      ),
                     ),
-                    onPressed: _selectedOrganizationType != null
-                        ? () {
-                            if (_selectedOrganizationType ==
-                                OrganizationType.company) {
-                              Navigator.of(context).pushNamed(
-                                  BaseAppsRouters.createCompanyOrganizationPage,
-                                  arguments:
-                                      _organizationDescriptionController.text);
-                            } else if (_selectedOrganizationType ==
-                                OrganizationType.family) {
-                              Navigator.of(context).pushNamed(
-                                  BaseAppsRouters.createCompanyOrganizationPage,
-                                  arguments:
-                                      _organizationDescriptionController.text);
-                            } else if (_selectedOrganizationType ==
-                                OrganizationType.club) {
-                              Navigator.of(context).pushNamed(
-                                  BaseAppsRouters.createCompanyOrganizationPage,
-                                  arguments:
-                                      _organizationDescriptionController.text);
-                            } else if (_selectedOrganizationType ==
-                                OrganizationType.nonProfit) {
-                              Navigator.of(context).pushNamed(
-                                  BaseAppsRouters.createCompanyOrganizationPage,
-                                  arguments:
-                                      _organizationDescriptionController.text);
-                            }
-                          }
-                        : null,
-                    child: Row(children: [
-                      Expanded(
-                        child: Text(
-                          "Add",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      )
-                    ]))),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

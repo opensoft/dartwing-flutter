@@ -53,22 +53,23 @@ class _ChooseDocumentRepositoryPageState
     return NetworkClients.dartWingApi
         .saveOrganizationPath(widget.companyName, _currentPath())
         .then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      Navigator.of(context).pop();
-    }).catchError((e) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      showWarningNotification(context, e.toString());
-    });
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          Navigator.of(context).pop();
+        })
+        .catchError((e) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          showWarningNotification(context, e.toString());
+        });
   }
 
   void _fetchCompanyProviders() {
@@ -78,27 +79,28 @@ class _ChooseDocumentRepositoryPageState
     NetworkClients.dartWingApi
         .fetchOrganizationProviders(widget.companyName)
         .then((providers) {
-      if (!mounted) {
-        return;
-      }
-      if (_currentProvider.name.isEmpty) {
-        _currentProvider = Provider();
-      }
-      //providers.insert(0, _currentProvider);
-      setState(() {
-        _loadingOverlayEnabled = false;
-        _providers = providers;
-        _setProvider(providers.first);
-      });
-    }).catchError((e) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      showWarningNotification(context, e.toString());
-    });
+          if (!mounted) {
+            return;
+          }
+          if (_currentProvider.name.isEmpty) {
+            _currentProvider = Provider();
+          }
+          //providers.insert(0, _currentProvider);
+          setState(() {
+            _loadingOverlayEnabled = false;
+            _providers = providers;
+            _setProvider(providers.first);
+          });
+        })
+        .catchError((e) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          showWarningNotification(context, e.toString());
+        });
   }
 
   Future _fetchFolders() {
@@ -106,59 +108,63 @@ class _ChooseDocumentRepositoryPageState
       _loadingOverlayEnabled = true;
     });
     return NetworkClients.dartWingApi
-        .fetchFolders(_currentProvider.alias.toString(), widget.companyName,
-            _currentPath())
+        .fetchFolders(
+          _currentProvider.alias.toString(),
+          widget.companyName,
+          _currentPath(),
+        )
         .then((folderResponse) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      if (folderResponse.folders != null) {
-        _folders = folderResponse.folders!;
-      }
-
-      if (folderResponse.redirectUrl != null &&
-          folderResponse.redirectUrl!.isNotEmpty) {
-        Uri uri = Uri.parse(folderResponse.redirectUrl!);
-
-        final updatedQueryParams =
-            Map<String, String>.from(uri.queryParameters);
-        //updatedQueryParams['client_id'] = 'dartwingmobile';
-        if (kIsWeb) {
-          updatedQueryParams['redirect_uri'] = NetworkClients.qaModeEnabled
-              ? 'https://app-dev.ledgerlinc.com'
-              : 'https://app.ledgerlinc.com';
-        } else {
-          updatedQueryParams['redirect_uri'] =
-              'com.opensoft.ledgerlinc://login-callback';
-        }
-        Uri updatedUri = uri.replace(
-          queryParameters: updatedQueryParams,
-        );
-
-        //uri.queryParameters['redirect_uri'] =
-        //    "сom.opensoft.dartwing://login-callback";
-        //uri.queryParameters['client_id'] = "dartwingmobile";
-        PaperTrailClient.sendInfoMessageToPaperTrail(updatedUri.toString());
-        launchUrl(updatedUri, mode: LaunchMode.externalApplication)
-            .then((success) {
           if (!mounted) {
             return;
           }
-          Navigator.of(context).pop();
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          if (folderResponse.folders != null) {
+            _folders = folderResponse.folders!;
+          }
+
+          if (folderResponse.redirectUrl != null &&
+              folderResponse.redirectUrl!.isNotEmpty) {
+            Uri uri = Uri.parse(folderResponse.redirectUrl!);
+
+            final updatedQueryParams = Map<String, String>.from(
+              uri.queryParameters,
+            );
+            //updatedQueryParams['client_id'] = 'dartwingmobile';
+            if (kIsWeb) {
+              updatedQueryParams['redirect_uri'] = NetworkClients.qaModeEnabled
+                  ? 'https://app-dev.ledgerlinc.com'
+                  : 'https://app.ledgerlinc.com';
+            } else {
+              updatedQueryParams['redirect_uri'] =
+                  'com.opensoft.ledgerlinc://login-callback';
+            }
+            Uri updatedUri = uri.replace(queryParameters: updatedQueryParams);
+
+            //uri.queryParameters['redirect_uri'] =
+            //    "сom.opensoft.dartwing://login-callback";
+            //uri.queryParameters['client_id'] = "dartwingmobile";
+            PaperTrailClient.sendInfoMessageToPaperTrail(updatedUri.toString());
+            launchUrl(updatedUri, mode: LaunchMode.externalApplication).then((
+              success,
+            ) {
+              if (!mounted) {
+                return;
+              }
+              Navigator.of(context).pop();
+            });
+          }
+        })
+        .catchError((e) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          showWarningNotification(context, e.toString());
         });
-      }
-    }).catchError((e) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      showWarningNotification(context, e.toString());
-    });
   }
 
   void _setProvider(Provider provider) {
@@ -187,40 +193,49 @@ class _ChooseDocumentRepositoryPageState
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
         backgroundColor: BaseColors.lightBackgroundColor,
-        title: Row(children: [
-          Expanded(
-              child: Text("Choose Document Repository",
-                  textAlign: TextAlign.center)),
-        ]),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                "Choose Document Repository",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Row(children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  if (_selectedFolders.isNotEmpty) {
-                    _selectedFolders.removeLast();
-                  }
-                  _fetchFolders();
-                },
-                tooltip: 'Back',
-              ),
-              Expanded(
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    if (_selectedFolders.isNotEmpty) {
+                      _selectedFolders.removeLast();
+                    }
+                    _fetchFolders();
+                  },
+                  tooltip: 'Back',
+                ),
+                Expanded(
                   child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(_currentPath(),
-                          style: TextStyle(fontSize: 14)))),
-              IconButton(
-                iconSize: 25,
-                icon: Icon(Icons.save),
-                onPressed:
-                    _canBeSelected() ? _saveFolderForDocumentRepository : null,
-                tooltip: 'Save Directory',
-              ),
-            ]),
+                    padding: EdgeInsets.all(20),
+                    child: Text(_currentPath(), style: TextStyle(fontSize: 14)),
+                  ),
+                ),
+                IconButton(
+                  iconSize: 25,
+                  icon: Icon(Icons.save),
+                  onPressed: _canBeSelected()
+                      ? _saveFolderForDocumentRepository
+                      : null,
+                  tooltip: 'Save Directory',
+                ),
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField<Provider>(
@@ -238,56 +253,60 @@ class _ChooseDocumentRepositoryPageState
                 onChanged: (Provider? provider) {
                   _setProvider(provider!);
                 },
-                items: _providers
-                    .map<DropdownMenuItem<Provider>>((Provider provider) {
+                items: _providers.map<DropdownMenuItem<Provider>>((
+                  Provider provider,
+                ) {
                   return DropdownMenuItem<Provider>(
                     value: provider,
                     child: Center(
-                      child: Text(
-                        provider.name,
-                        textAlign: TextAlign.center,
-                      ),
+                      child: Text(provider.name, textAlign: TextAlign.center),
                     ),
                   );
                 }).toList(),
               ),
             ),
             Expanded(
-                child: ListView.builder(
-              itemCount: _folders.length,
-              itemBuilder: (context, index) {
-                final folder = _folders[index];
-                return ListTile(
+              child: ListView.builder(
+                itemCount: _folders.length,
+                itemBuilder: (context, index) {
+                  final folder = _folders[index];
+                  return ListTile(
                     leading: Icon(Icons.folder),
                     title: Text(folder.displayName),
                     subtitle: Text(folder.folderType),
                     onTap: () {
                       _selectedFolders.add(folder);
                       _fetchFolders();
-                    });
-              },
-            )),
+                    },
+                  );
+                },
+              ),
+            ),
             Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[200],
-                      minimumSize: const Size.fromHeight(60),
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange[200],
+                  minimumSize: const Size.fromHeight(60),
+                ),
+                onPressed: _selectedFolders.isNotEmpty && _canBeSelected()
+                    ? () {
+                        _saveFolderForDocumentRepository();
+                      }
+                    : null,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Select",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18),
+                      ),
                     ),
-                    onPressed: _selectedFolders.isNotEmpty && _canBeSelected()
-                        ? () {
-                            _saveFolderForDocumentRepository();
-                          }
-                        : null,
-                    child: Row(children: [
-                      Expanded(
-                        child: Text(
-                          "Select",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      )
-                    ]))),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

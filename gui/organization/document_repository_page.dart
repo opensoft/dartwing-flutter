@@ -28,22 +28,23 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
     NetworkClients.dartWingApi
         .fetchOrganizationPath(widget.companyName)
         .then((path) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _folderPathController.text = path;
-        _loadingOverlayEnabled = false;
-      });
-    }).catchError((e) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadingOverlayEnabled = false;
-      });
-      showWarningNotification(context, e.toString());
-    });
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _folderPathController.text = path;
+            _loadingOverlayEnabled = false;
+          });
+        })
+        .catchError((e) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _loadingOverlayEnabled = false;
+          });
+          showWarningNotification(context, e.toString());
+        });
   }
 
   @override
@@ -64,13 +65,15 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
       loadingOverlayEnabled: _loadingOverlayEnabled,
       appBar: AppBar(
         backgroundColor: BaseColors.lightBackgroundColor,
-        title: Row(children: [
-          const Expanded(
-              child: Text("Document Repository", textAlign: TextAlign.center)),
-          InkWell(
-            borderRadius: BorderRadius.circular(15),
-            onTap: () {
-              /*
+        title: Row(
+          children: [
+            const Expanded(
+              child: Text("Document Repository", textAlign: TextAlign.center),
+            ),
+            InkWell(
+              borderRadius: BorderRadius.circular(15),
+              onTap: () {
+                /*
               PackageInfo.fromPlatform().then((packageInfo) {
                 Navigator.of(context)
                     .pushNamed(BaseAppsRouters.oneDriveExplorerPage,
@@ -84,52 +87,58 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
               });
               return;
                */
-              Navigator.of(context)
-                  .pushNamed(BaseAppsRouters.chooseDocumentRepositoryPage,
-                      arguments: widget.companyName)
-                  .then((_) {
-                _fetchOrganizationPath();
-              });
-            },
-            child: Container(
+                Navigator.of(context)
+                    .pushNamed(
+                      BaseAppsRouters.chooseDocumentRepositoryPage,
+                      arguments: widget.companyName,
+                    )
+                    .then((_) {
+                      _fetchOrganizationPath();
+                    });
+              },
+              child: Container(
                 decoration: BoxDecoration(
                   color: Colors.amber,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      "Select",
-                      style: TextStyle(fontSize: 16),
-                    ))),
-          )
-        ]),
+                  padding: EdgeInsets.all(10),
+                  child: Text("Select", style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(children: [
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
             Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  readOnly: true,
-                  //keyboardType: TextInputType.emailAddress,
-                  controller: _folderPathController,
-                  //style: const TextStyle(color: Colors.white),
-                  onChanged: (_) {
-                    setState(() {});
-                  },
-                  style: const TextStyle(fontSize: 14),
-                  decoration: InputDecoration(
-                    labelText: _folderPathController.text.isEmpty
-                        ? "Please select folder"
-                        : "Folder Path",
-                    //labelStyle: const TextStyle(color: Colors.grey),
-                    hintText: "Please select folder",
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: const OutlineInputBorder(),
-                  ),
-                )),
-          ])),
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
+                readOnly: true,
+                //keyboardType: TextInputType.emailAddress,
+                controller: _folderPathController,
+                //style: const TextStyle(color: Colors.white),
+                onChanged: (_) {
+                  setState(() {});
+                },
+                style: const TextStyle(fontSize: 14),
+                decoration: InputDecoration(
+                  labelText: _folderPathController.text.isEmpty
+                      ? "Please select folder"
+                      : "Folder Path",
+                  //labelStyle: const TextStyle(color: Colors.grey),
+                  hintText: "Please select folder",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

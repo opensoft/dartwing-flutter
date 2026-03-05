@@ -175,7 +175,7 @@ class LabelsKeys {
   static const String updateQuantity = "updateQuantity";
   static const String stagingInArgToArg = "stagingInArgToArg";
   static const String
-      putComponentsArgToStagingAreaArgAndScanThisStagingAreaBarcode =
+  putComponentsArgToStagingAreaArgAndScanThisStagingAreaBarcode =
       "putComponentsArgToStagingAreaArgAndScanThisStagingAreaBarcode";
   static const String scanStagingAreaArg = "scanStagingAreaArg";
   static const String componentsArgInStagingAreaArg =
