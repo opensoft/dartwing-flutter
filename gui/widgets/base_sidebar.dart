@@ -6,7 +6,7 @@ import '../../core/globals.dart';
 import 'base_colors.dart';
 
 class BaseSideBar extends StatelessWidget {
-  BaseSideBar({
+  const BaseSideBar({
     super.key,
     required SidebarXController controller,
     this.onPostLogout,
@@ -14,7 +14,7 @@ class BaseSideBar extends StatelessWidget {
   }) : _controller = controller;
   final SidebarXController _controller;
   final void Function()? onPostLogout;
-  List<SidebarXItem> additionalSidebarXItems = const [];
+  final List<SidebarXItem> additionalSidebarXItems;
 
   void _logout(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -61,7 +61,8 @@ class BaseSideBar extends StatelessWidget {
         selectedItemDecoration: null,
       ),
       extendedTheme: const SidebarXTheme(width: 250),
-      footerDivider: Divider(color: Colors.black.withOpacity(0.8), height: 1),
+      footerDivider:
+          Divider(color: Colors.black.withValues(alpha: 0.8), height: 1),
       headerBuilder: (context, extended) {
         return Padding(
           padding: const EdgeInsets.only(

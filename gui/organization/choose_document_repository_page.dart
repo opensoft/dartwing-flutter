@@ -17,7 +17,7 @@ class ChooseDocumentRepositoryPage extends StatefulWidget {
   final String companyName;
 
   @override
-  _ChooseDocumentRepositoryPageState createState() =>
+  State<ChooseDocumentRepositoryPage> createState() =>
       _ChooseDocumentRepositoryPageState();
 }
 
@@ -53,11 +53,17 @@ class _ChooseDocumentRepositoryPageState
     return NetworkClients.dartWingApi
         .saveOrganizationPath(widget.companyName, _currentPath())
         .then((_) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });
       Navigator.of(context).pop();
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });
@@ -72,6 +78,9 @@ class _ChooseDocumentRepositoryPageState
     NetworkClients.dartWingApi
         .fetchOrganizationProviders(widget.companyName)
         .then((providers) {
+      if (!mounted) {
+        return;
+      }
       if (_currentProvider.name.isEmpty) {
         _currentProvider = Provider();
       }
@@ -82,6 +91,9 @@ class _ChooseDocumentRepositoryPageState
         _setProvider(providers.first);
       });
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });
@@ -97,6 +109,9 @@ class _ChooseDocumentRepositoryPageState
         .fetchFolders(_currentProvider.alias.toString(), widget.companyName,
             _currentPath())
         .then((folderResponse) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });
@@ -129,10 +144,16 @@ class _ChooseDocumentRepositoryPageState
         PaperTrailClient.sendInfoMessageToPaperTrail(updatedUri.toString());
         launchUrl(updatedUri, mode: LaunchMode.externalApplication)
             .then((success) {
+          if (!mounted) {
+            return;
+          }
           Navigator.of(context).pop();
         });
       }
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });

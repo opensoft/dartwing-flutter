@@ -23,7 +23,6 @@ class BaseAppsRouters {
       "chooseDocumentRepositoryPage";
   static const String oneDriveExplorerPage = "oneDriveExplorerPage";
 
-  @override
   static Future<dynamic> showScannerPage(
     BuildContext context,
     String pageTitle, {
@@ -38,7 +37,6 @@ class BaseAppsRouters {
     );
   }
 
-  @override
   Route<dynamic> generateRouters(RouteSettings settings) {
     switch (settings.name) {
       case scannerPage:

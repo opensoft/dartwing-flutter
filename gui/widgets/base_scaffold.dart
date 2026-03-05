@@ -12,17 +12,17 @@ class BaseScaffold extends StatefulWidget {
   final PreferredSizeWidget? appBar;
   final Widget? bottomNavigatorBar;
   final Widget body;
-  String pageTitle;
-  bool defaultAppMenuEnabled = false;
-  List<SidebarXItem> additionalSidebarXItems = [];
+  final String pageTitle;
+  final bool defaultAppMenuEnabled;
+  final List<SidebarXItem> additionalSidebarXItems;
 
   final void Function(String barcode)? onBarcodeFetched;
   final void Function()? onPostLogout;
   final bool loadingOverlayEnabled;
-  Widget? floatingActionButton;
-  bool canPop;
+  final Widget? floatingActionButton;
+  final bool canPop;
 
-  BaseScaffold(
+  const BaseScaffold(
       {super.key,
       this.appBar,
       this.bottomNavigatorBar,
@@ -37,7 +37,7 @@ class BaseScaffold extends StatefulWidget {
       this.additionalSidebarXItems = const []});
 
   @override
-  _BaseScaffoldState createState() => _BaseScaffoldState();
+  State<BaseScaffold> createState() => _BaseScaffoldState();
 }
 
 class _BaseScaffoldState extends State<BaseScaffold> {
@@ -48,11 +48,13 @@ class _BaseScaffoldState extends State<BaseScaffold> {
   bool _initFocus = false;
   final _key = GlobalKey<ScaffoldState>();
 
-  RawKeyEvent _handleKey(RawKeyEvent key) {
-    if (key is RawKeyDownEvent && key.character != null) {
-      bool isControl = LogicalKeyboardKey.isControlCharacter(key.character!);
-      bool isModifiers = key.data.isShiftPressed;
-      bool isBackSpace = key.character == "\b";
+  void _handleKey(KeyEvent key) {
+    final String? character = key.character;
+    if (key is KeyDownEvent && character != null) {
+      bool isControl = LogicalKeyboardKey.isControlCharacter(character);
+      bool isModifiers = HardwareKeyboard.instance.isShiftPressed;
+      bool isBackSpace =
+          key.logicalKey == LogicalKeyboardKey.backspace || character == "\b";
 
       if (isBackSpace) {
         if (_bufferForBarcode.isNotEmpty) {
@@ -60,7 +62,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
               _bufferForBarcode.length - 2, _bufferForBarcode.length - 1, '');
         }
       } else if (!(isControl && isModifiers)) {
-        _bufferForBarcode += key.character!;
+        _bufferForBarcode += character;
         //PaperTrailClient.sendInfoMessageToPaperTrail("Keyboard buffer: $_bufferForBarcode, character: ${key.character!} logicalKey: ${key.logicalKey!} physicalKey: ${key.physicalKey!} enter: ${key.character == "\n"} control: $isControl, modifiers: $isModifiers");
       }
 
@@ -69,7 +71,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         _bufferForBarcode = "";
       } else if ((_bufferForBarcode
                   .endsWith(Globals.applicationInfo.barcodeScanner.postfix) ||
-              key.character == "\n" ||
+              character == "\n" ||
               (isControl && !isModifiers && !isBackSpace)) &&
           _bufferForBarcode.length > 1) {
         String barcode = _bufferForBarcode
@@ -77,7 +79,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
             .trim();
         _bufferForBarcode = "";
         PaperTrailClient.sendInfoMessageToPaperTrail(
-            "Barcode: $barcode, character: ${key.character!} control: $isControl, modifiers: $isModifiers");
+            "Barcode: $barcode, character: $character control: $isControl, modifiers: $isModifiers");
         PaperTrailClient.sendInfoMessageToPaperTrail(
             'QR or barcode (laser scanner): $barcode');
         if (widget.onBarcodeFetched != null) {
@@ -85,7 +87,6 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         }
       }
     }
-    return key;
   }
 
   @override
@@ -122,9 +123,9 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           : null,
       body: PopScope(
         canPop: widget.canPop && !widget.loadingOverlayEnabled,
-        child: RawKeyboardListener(
+        child: KeyboardListener(
           focusNode: _textNode,
-          onKey: (key) => _handleKey(key),
+          onKeyEvent: _handleKey,
           child: Center(
             child: LoadingOverlay(
               isLoading: widget.loadingOverlayEnabled,

@@ -16,7 +16,7 @@ class CreateCompanyOrganizationPage extends StatefulWidget {
   final String descriptionOfOrganization;
 
   @override
-  _CreateCompanyOrganizationPageState createState() =>
+  State<CreateCompanyOrganizationPage> createState() =>
       _CreateCompanyOrganizationPageState();
 }
 
@@ -42,12 +42,18 @@ class _CreateCompanyOrganizationPageState
     NetworkClients.dartWingApi
         .createOrganization(_organization)
         .then((company) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });
       Navigator.of(context)
           .pushNamed(BaseAppsRouters.companyInfoPage, arguments: company.name);
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });

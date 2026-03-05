@@ -13,7 +13,7 @@ class OrganizationsListPage extends StatefulWidget {
   const OrganizationsListPage({super.key});
 
   @override
-  _OrganizationsListPageState createState() => _OrganizationsListPageState();
+  State<OrganizationsListPage> createState() => _OrganizationsListPageState();
 }
 
 class _OrganizationsListPageState extends State<OrganizationsListPage> {
@@ -27,11 +27,17 @@ class _OrganizationsListPageState extends State<OrganizationsListPage> {
       _loadingOverlayEnabled = true;
     });
     NetworkClients.dartWingApi.fetchOrganizations().then((organizations) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _organizations = organizations;
         _loadingOverlayEnabled = false;
       });
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });

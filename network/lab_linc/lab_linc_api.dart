@@ -266,9 +266,13 @@ class LabLincApi extends BaseNetworkApi {
       'fileSizeBytes': fileSizeBytes,
       if (eventId != null && eventId.trim().isNotEmpty)
         'eventId': eventId.trim(),
-      if (imageWidthPx != null) 'imageWidthPx': imageWidthPx,
-      if (imageHeightPx != null) 'imageHeightPx': imageHeightPx,
     };
+    if (imageWidthPx != null) {
+      imagePayload['imageWidthPx'] = imageWidthPx;
+    }
+    if (imageHeightPx != null) {
+      imagePayload['imageHeightPx'] = imageHeightPx;
+    }
 
     final http.Response response = await RestClient.post(
       uri,
@@ -376,7 +380,7 @@ class LabLincApi extends BaseNetworkApi {
     }
     return _CaptureImageUploadPayload(
       bytes: zipBytes,
-      filename: '${filename}.zip',
+      filename: '$filename.zip',
       contentType: MediaType('application', 'zip'),
       isZipArchive: true,
     );
@@ -511,8 +515,7 @@ class LabLincApi extends BaseNetworkApi {
       return decoded
           .whereType<Map>()
           .map(
-            (item) =>
-                _deviceInfoFromApiJson(Map<String, dynamic>.from(item as Map)),
+            (item) => _deviceInfoFromApiJson(Map<String, dynamic>.from(item)),
           )
           .toList();
     });
@@ -856,8 +859,6 @@ class LabLincApi extends BaseNetworkApi {
 
   String _stringValue(dynamic value) => value is String ? value : '';
 
-  String? _nullableStringValue(dynamic value) => value is String ? value : null;
-
   String _firstNonEmptyString(List<dynamic> values) {
     for (final value in values) {
       final text = value?.toString().trim() ?? '';
@@ -1108,17 +1109,6 @@ class LabLincApi extends BaseNetworkApi {
 
   List<Uri> _deviceInfoPaths({required String suffix}) {
     final paths = <Uri>[Uri.parse('$host/api/v1/device/$suffix')];
-    return paths;
-  }
-
-  List<Uri> _stationInfoPaths({required String suffix, String? deviceUid}) {
-    final paths = <Uri>[Uri.parse('$host/api/v1/stations/$suffix')];
-
-    final trimmedDeviceUid = deviceUid?.trim() ?? '';
-    if (trimmedDeviceUid.isNotEmpty) {
-      final encodedDeviceUid = Uri.encodeComponent(trimmedDeviceUid);
-      paths.add(Uri.parse('$host/api/v1/stations/$encodedDeviceUid/$suffix'));
-    }
     return paths;
   }
 

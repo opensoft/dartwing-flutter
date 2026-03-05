@@ -15,7 +15,7 @@ class ScannerPage extends StatefulWidget {
       {super.key, required this.pageTitle, required this.manualInputAllowed});
 
   @override
-  _ScannerPageState createState() => _ScannerPageState();
+  State<ScannerPage> createState() => _ScannerPageState();
 }
 
 class _ScannerPageState extends State<ScannerPage> {
@@ -180,7 +180,7 @@ class ScannerOverlay extends CustomPainter {
       );
 
     final backgroundPaint = Paint()
-      ..color = Colors.black.withOpacity(0.9)
+      ..color = Colors.black.withValues(alpha: 0.9)
       ..style = PaintingStyle.fill
       ..blendMode = BlendMode.dstOut;
 

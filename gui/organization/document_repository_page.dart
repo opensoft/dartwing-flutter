@@ -13,7 +13,7 @@ class DocumentRepositoryPage extends StatefulWidget {
   final String companyName;
 
   @override
-  _DocumentRepositoryPageState createState() => _DocumentRepositoryPageState();
+  State<DocumentRepositoryPage> createState() => _DocumentRepositoryPageState();
 }
 
 class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
@@ -28,11 +28,17 @@ class _DocumentRepositoryPageState extends State<DocumentRepositoryPage> {
     NetworkClients.dartWingApi
         .fetchOrganizationPath(widget.companyName)
         .then((path) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _folderPathController.text = path;
         _loadingOverlayEnabled = false;
       });
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });

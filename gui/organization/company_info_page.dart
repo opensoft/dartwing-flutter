@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import '../notification.dart';
 import '../widgets/base_colors.dart';
 import '../widgets/base_scaffold.dart';
-import '../../network/dart_wing/data/organization.dart';
 import '../../network/network_clients.dart';
 import '../base_apps_routers.dart';
 
@@ -15,7 +14,7 @@ class CompanyInfoPage extends StatefulWidget {
   final String companyName;
 
   @override
-  _CompanyInfoPageState createState() => _CompanyInfoPageState();
+  State<CompanyInfoPage> createState() => _CompanyInfoPageState();
 }
 
 class _CompanyInfoPageState extends State<CompanyInfoPage> {
@@ -29,10 +28,16 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
     NetworkClients.dartWingApi
         .fetchOrganization(widget.companyName)
         .then((company) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });
     }).catchError((e) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _loadingOverlayEnabled = false;
       });

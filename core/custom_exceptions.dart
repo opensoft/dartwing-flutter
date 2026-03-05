@@ -1,8 +1,6 @@
 class CustomException implements Exception {
-  // ignore: prefer_typing_uninitialized_variables
-  final _message;
-  // ignore: prefer_typing_uninitialized_variables
-  final _prefix;
+  final String? _message;
+  final String? _prefix;
 
   CustomException([this._message, this._prefix]);
 
@@ -18,23 +16,24 @@ class FetchDataException extends CustomException {
 }
 
 class BadRequestException extends CustomException {
-  BadRequestException(message) : super(message, "Invalid Request: ");
+  BadRequestException(String message) : super(message, "Invalid Request: ");
 }
 
 class UnauthorisedException extends CustomException {
-  UnauthorisedException(message) : super(message, "Unauthorised: ");
+  UnauthorisedException(String message) : super(message, "Unauthorised: ");
 }
 
 class CancelLoginException extends CustomException {
-  CancelLoginException(message) : super(message, "Cancel Login: ");
+  CancelLoginException(String message) : super(message, "Cancel Login: ");
 }
 
 class ConflictException extends CustomException {
-  ConflictException(message) : super(message, "Conflict: ");
+  ConflictException(String message) : super(message, "Conflict: ");
 }
 
 class PayloadTooLargeException extends CustomException {
-  PayloadTooLargeException(message) : super(message, "Payload Too Large: ");
+  PayloadTooLargeException(String message)
+      : super(message, "Payload Too Large: ");
 }
 
 class InvalidInputException extends CustomException {
