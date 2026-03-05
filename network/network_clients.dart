@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../core/persistent_storage.dart';
 import 'dart_wing/dart_wing_api.dart';
 import 'frappe/healthcare_api.dart';
@@ -45,9 +47,23 @@ class NetworkClients {
             PersistentStorage.saveSite(Globals.applicationInfo.defaultSite);
           }
 
+          String papertrailDeviceUid = Globals.applicationInfo.deviceId.trim();
+          if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+            final String user =
+                (Platform.environment['USERNAME'] ??
+                        Platform.environment['USER'] ??
+                        'unknown')
+                    .trim();
+            final String normalizedUser = user.isEmpty ? 'unknown' : user;
+            papertrailDeviceUid = <String>[
+              papertrailDeviceUid,
+              normalizedUser,
+            ].where((String value) => value.isNotEmpty).join('-');
+          }
+
           String appId = [
             Globals.applicationInfo.defaultSite,
-            Globals.applicationInfo.deviceId,
+            papertrailDeviceUid,
             Globals.applicationInfo.userEmail,
           ].where((e) => e.isNotEmpty).join('-').toLowerCase();
           PaperTrailClient.init(
