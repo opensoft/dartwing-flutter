@@ -1047,19 +1047,7 @@ class LabLincApi extends BaseNetworkApi {
       throw FetchDataException('Cannot $operationName: $error');
     }
 
-    try {
-      return await operation(delegatedHeaders);
-    } on UnauthorisedException {
-      DelegatedDeviceSessionService.instance.clearSession(
-        reason:
-            'Delegated session rejected by server while calling $operationName.',
-        logAsWarning: true,
-      );
-      throw FetchDataException(
-        'Cannot $operationName: delegated session is no longer authorized. '
-        'Please scan QR code again.',
-      );
-    }
+    return await operation(delegatedHeaders);
   }
 
   Map<String, String> _delegatedSessionHeaders() {
