@@ -51,6 +51,13 @@ class _BaseScaffoldState extends State<BaseScaffold> {
   bool _initFocus = false;
   final _key = GlobalKey<ScaffoldState>();
 
+  @override
+  void dispose() {
+    _textNode.dispose();
+    _sideBarController.dispose();
+    super.dispose();
+  }
+
   void _handleKey(KeyEvent key) {
     final String? character = key.character;
     if (key is KeyDownEvent && character != null) {
