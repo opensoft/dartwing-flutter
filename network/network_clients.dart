@@ -112,7 +112,7 @@ class NetworkClients {
               Globals.applicationInfo.defaultSite,
             );
             labLincApi.init(
-              "https://lablincdotnet-qa.tech-corps.com",
+              "https://midnet.lablinc.opensoft.dev",
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
