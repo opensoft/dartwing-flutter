@@ -114,7 +114,8 @@ class DelegatedDeviceSessionService {
     final DelegatedDeviceSession session = _activeSessionOrThrow();
     return <String, String>{
       ...baseHeaders,
-      'Authorization': 'Bearer ${session.delegatedToken}',
+      // Device APIs stay authenticated as the station; the delegated session
+      // is carried separately so login-only user tokens are not reused.
       'Device-Session-Id': session.sessionId,
     };
   }

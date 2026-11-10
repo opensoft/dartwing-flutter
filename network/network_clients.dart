@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 import '../core/persistent_storage.dart';
 import 'dart_wing/dart_wing_api.dart';
 import 'frappe/healthcare_api.dart';
@@ -49,7 +51,8 @@ class NetworkClients {
           }
 
           String papertrailDeviceUid = Globals.applicationInfo.deviceId.trim();
-          if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+          if (!kIsWeb &&
+              (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
             final String user =
                 (Platform.environment['USERNAME'] ??
                         Platform.environment['USER'] ??
@@ -110,7 +113,7 @@ class NetworkClients {
               Globals.applicationInfo.defaultSite,
             );
             labLincApi.init(
-              qaLabLincApiHostOverride ?? "https://lablincdotnet-qa.tech-corps.com",
+              qaLabLincApiHostOverride ?? "https://midnet.lablinc.opensoft.dev",
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
