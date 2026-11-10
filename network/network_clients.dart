@@ -12,6 +12,7 @@ import '../core/globals.dart';
 
 class NetworkClients {
   static bool qaModeEnabled = false;
+  static String? qaLabLincApiHostOverride;
 
   static Future<void> init({
     String? token,
@@ -109,7 +110,7 @@ class NetworkClients {
               Globals.applicationInfo.defaultSite,
             );
             labLincApi.init(
-              "https://lablincdotnet-qa.tech-corps.com",
+              qaLabLincApiHostOverride ?? "https://lablincdotnet-qa.tech-corps.com",
               Globals.applicationInfo.defaultSite,
             );
             healthcareApi.init(
